@@ -1,0 +1,60 @@
+{
+  "sections": {
+    "crown-configurator": {
+      "type": "crown-product-configurator",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_vendor": true,
+        "description_open": false,
+        "enable_arms": false,
+        "enable_quantity": true,
+        "show_dynamic_checkout": false,
+        "show_trust_badges": true
+      },
+      "blocks": {
+        "material_vinyl": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Medical Grade Vinyl",
+            "material_price": 0
+          }
+        },
+        "material_ultra": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Ultra Leather",
+            "material_price": 180
+          }
+        },
+        "material_silvertex": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Silvertex",
+            "material_price": 180
+          }
+        },
+        "material_stakleen": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "StaKleen",
+            "material_price": 180
+          }
+        }
+      },
+      "block_order": [
+        "material_vinyl",
+        "material_ultra",
+        "material_silvertex",
+        "material_stakleen"
+      ]
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "settings": {}
+    }
+  },
+  "order": [
+    "crown-configurator",
+    "product-recommendations"
+  ]
+}

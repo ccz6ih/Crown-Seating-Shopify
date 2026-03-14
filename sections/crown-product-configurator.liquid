@@ -1,0 +1,1256 @@
+{% comment %}
+  Crown Seating Product Configurator
+  A luxurious product configuration experience for dental stools.
+  Replaces DPO (Dynamic Product Options) with native Shopify functionality.
+
+  Features:
+  - Upholstery material type selection with price modifiers
+  - Visual color swatch grids with fabric images
+  - Optional arm configuration with product images
+  - Dynamic price updates based on selections
+  - Conditional visibility (color grid shows based on material selection)
+{% endcomment %}
+
+{% liquid
+  assign product = closest.product | default: product
+  assign current_variant = product.selected_or_first_available_variant
+  assign base_price = current_variant.price
+%}
+
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+<div
+  class="crown-configurator section color-{{ section.settings.color_scheme }}"
+  data-section-id="{{ section.id }}"
+  data-base-price="{{ base_price }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="crown-configurator__layout page-width">
+    {%- comment -%} LEFT: Product Media Gallery {%- endcomment -%}
+    <div class="crown-configurator__media">
+      {% if product.media.size > 0 %}
+        <div class="crown-configurator__media-main" id="crown-main-media">
+          {% assign first_media = product.featured_media | default: product.media[0] %}
+          {% if first_media.media_type == 'video' %}
+            {{ first_media | video_tag: autoplay: false, muted: false, loop: false, playsinline: true, controls: true, class: 'crown-configurator__video' }}
+          {% else %}
+            <img
+              src="{{ first_media | image_url: width: 1200 }}"
+              alt="{{ first_media.alt | escape }}"
+              class="crown-configurator__main-image"
+              loading="eager"
+            >
+          {% endif %}
+        </div>
+        {% if product.media.size > 1 %}
+          <div class="crown-configurator__thumbnails">
+            {% for media in product.media %}
+              <button
+                class="crown-configurator__thumbnail {% if forloop.first %}active{% endif %}"
+                data-media-index="{{ forloop.index0 }}"
+                data-media-type="{{ media.media_type }}"
+                aria-label="View {{ media.alt | default: product.title }}"
+              >
+                {% if media.media_type == 'video' %}
+                  <img
+                    src="{{ media.preview_image | image_url: width: 120 }}"
+                    alt="{{ media.alt | escape }}"
+                    loading="lazy"
+                  >
+                  <span class="crown-configurator__play-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                  </span>
+                {% else %}
+                  <img
+                    src="{{ media | image_url: width: 120 }}"
+                    alt="{{ media.alt | escape }}"
+                    loading="lazy"
+                  >
+                {% endif %}
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'crown-configurator__placeholder' }}
+      {% endif %}
+    </div>
+
+    {%- comment -%} RIGHT: Product Details + Configurator {%- endcomment -%}
+    <div class="crown-configurator__details">
+      {%- comment -%} Product Title & Price {%- endcomment -%}
+      <div class="crown-configurator__header">
+        {% if section.settings.show_vendor and product.vendor %}
+          <p class="crown-configurator__vendor">{{ product.vendor }}</p>
+        {% endif %}
+        <h1 class="crown-configurator__title">{{ product.title }}</h1>
+        <div class="crown-configurator__price-display">
+          <span class="crown-configurator__base-label">Base Price</span>
+          <span class="crown-configurator__price" id="crown-base-price" data-base-price="{{ base_price }}">
+            {{ base_price | money }}
+          </span>
+        </div>
+      </div>
+
+      {%- comment -%} Product Description (collapsible) {%- endcomment -%}
+      {% if product.description != blank %}
+        <details class="crown-configurator__description-wrap" {% if section.settings.description_open %}open{% endif %}>
+          <summary class="crown-configurator__description-toggle">
+            <span>Product Details</span>
+            <svg class="crown-configurator__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="crown-configurator__description rte">
+            {{ product.description }}
+          </div>
+        </details>
+      {% endif %}
+
+      <div class="crown-configurator__divider"></div>
+
+      {%- comment -%} === CONFIGURATOR OPTIONS === {%- endcomment -%}
+      <form id="crown-product-form" action="/cart/add" method="post">
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+        {%- comment -%} Arm Configuration (if enabled) {%- endcomment -%}
+        {% if section.settings.enable_arms %}
+          <div class="crown-configurator__option-group" data-option-group="arms">
+            <div class="crown-configurator__option-header">
+              <h3 class="crown-configurator__option-title">
+                <span class="crown-configurator__option-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </span>
+                Select Arm Configuration
+              </h3>
+              <span class="crown-configurator__option-badge" id="arm-price-badge">Optional</span>
+            </div>
+            <div class="crown-configurator__arm-grid">
+              <button
+                type="button"
+                class="crown-configurator__arm-card active"
+                data-arm-value="none"
+                data-arm-price="0"
+              >
+                <div class="crown-configurator__arm-card-inner">
+                  <div class="crown-configurator__arm-icon-wrap">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+                  </div>
+                  <span class="crown-configurator__arm-name">No Arms</span>
+                  <span class="crown-configurator__arm-price">Included</span>
+                </div>
+              </button>
+              {% for block in section.blocks %}
+                {% if block.type == 'arm_option' %}
+                  <button
+                    type="button"
+                    class="crown-configurator__arm-card"
+                    data-arm-value="{{ block.settings.arm_title | handleize }}"
+                    data-arm-price="{{ block.settings.arm_price | times: 100 }}"
+                    {{ block.shopify_attributes }}
+                  >
+                    <div class="crown-configurator__arm-card-inner">
+                      {% if block.settings.arm_image != blank %}
+                        <img
+                          src="{{ block.settings.arm_image | image_url: width: 300 }}"
+                          alt="{{ block.settings.arm_title | escape }}"
+                          class="crown-configurator__arm-image"
+                          loading="lazy"
+                        >
+                      {% endif %}
+                      <span class="crown-configurator__arm-name">{{ block.settings.arm_title }}</span>
+                      <span class="crown-configurator__arm-price">
+                        {% if block.settings.arm_price > 0 %}
+                          +{{ block.settings.arm_price | times: 100 | money }}
+                        {% else %}
+                          Included
+                        {% endif %}
+                      </span>
+                    </div>
+                  </button>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <input type="hidden" name="properties[Arm Configuration]" id="arm-config-input" value="No Arms">
+            <input type="hidden" name="properties[_arm_price]" id="arm-price-input" value="0">
+          </div>
+          <div class="crown-configurator__divider"></div>
+        {% endif %}
+
+        {%- comment -%} Upholstery Material Selection {%- endcomment -%}
+        <div class="crown-configurator__option-group" data-option-group="upholstery">
+          <div class="crown-configurator__option-header">
+            <h3 class="crown-configurator__option-title">
+              <span class="crown-configurator__option-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+              </span>
+              Select Upholstery Material
+            </h3>
+            <span class="crown-configurator__option-badge crown-configurator__option-badge--required">Required</span>
+          </div>
+          <div class="crown-configurator__material-grid">
+            {% for block in section.blocks %}
+              {% if block.type == 'material_type' %}
+                <button
+                  type="button"
+                  class="crown-configurator__material-card"
+                  data-material="{{ block.settings.material_title | handleize }}"
+                  data-material-price="{{ block.settings.material_price | times: 100 }}"
+                  data-color-group="{{ block.settings.material_title | handleize }}"
+                  {{ block.shopify_attributes }}
+                >
+                  <div class="crown-configurator__material-card-inner">
+                    <span class="crown-configurator__material-check">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="crown-configurator__material-name">{{ block.settings.material_title }}</span>
+                    {% if block.settings.material_price > 0 %}
+                      <span class="crown-configurator__material-upcharge">+{{ block.settings.material_price | times: 100 | money }}</span>
+                    {% else %}
+                      <span class="crown-configurator__material-upcharge crown-configurator__material-upcharge--included">Included</span>
+                    {% endif %}
+                  </div>
+                </button>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <input type="hidden" name="properties[Upholstery Material]" id="material-input" value="">
+          <input type="hidden" name="properties[_material_price]" id="material-price-input" value="0">
+        </div>
+
+        {%- comment -%} Color Selection Panels - rendered from snippet files {%- endcomment -%}
+        {% for block in section.blocks %}
+          {% if block.type == 'material_type' %}
+            {% assign mat_handle = block.settings.material_title | handleize %}
+            <div
+              class="crown-configurator__color-panel"
+              data-color-panel="{{ mat_handle }}"
+              style="display: none;"
+            >
+              <div class="crown-configurator__divider"></div>
+              <div class="crown-configurator__option-header">
+                <h3 class="crown-configurator__option-title">
+                  <span class="crown-configurator__option-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                  </span>
+                  {{ block.settings.material_title }} Colors
+                </h3>
+                <span class="crown-configurator__selected-color" id="selected-color-{{ mat_handle }}">Choose a color</span>
+              </div>
+              <div class="crown-configurator__swatch-grid">
+                {% case mat_handle %}
+                  {% when 'medical-grade-vinyl' %}
+                    {% render 'crown-colors-medical-grade-vinyl' %}
+                  {% when 'ultra-leather' %}
+                    {% render 'crown-colors-ultra-leather' %}
+                  {% when 'silvertex' %}
+                    {% render 'crown-colors-silvertex' %}
+                  {% when 'stakleen' %}
+                    {% render 'crown-colors-stakleen' %}
+                {% endcase %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <input type="hidden" name="properties[Color]" id="color-input" value="">
+        <input type="hidden" name="properties[Color SKU]" id="color-sku-input" value="">
+
+        <div class="crown-configurator__divider"></div>
+
+        {%- comment -%} Total Price & Add to Cart {%- endcomment -%}
+        <div class="crown-configurator__summary">
+          <div class="crown-configurator__total-row">
+            <span class="crown-configurator__total-label">Your Configuration</span>
+          </div>
+          <div class="crown-configurator__breakdown" id="crown-price-breakdown">
+            <div class="crown-configurator__breakdown-row">
+              <span>Base Price</span>
+              <span id="crown-summary-base">{{ base_price | money }}</span>
+            </div>
+          </div>
+          <div class="crown-configurator__total-row crown-configurator__total-row--final">
+            <span class="crown-configurator__total-label--final">Total</span>
+            <span class="crown-configurator__total-price" id="crown-total-price">{{ base_price | money }}</span>
+          </div>
+        </div>
+
+        {% if section.settings.enable_quantity %}
+          <div class="crown-configurator__quantity">
+            <label for="crown-quantity" class="crown-configurator__quantity-label">Quantity</label>
+            <div class="crown-configurator__quantity-selector">
+              <button type="button" class="crown-configurator__qty-btn" data-action="decrease" aria-label="Decrease quantity">-</button>
+              <input type="number" id="crown-quantity" name="quantity" value="1" min="1" class="crown-configurator__qty-input">
+              <button type="button" class="crown-configurator__qty-btn" data-action="increase" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+        {% endif %}
+
+        <button
+          type="submit"
+          class="crown-configurator__add-to-cart"
+          id="crown-add-to-cart"
+          {% unless current_variant.available %}disabled{% endunless %}
+        >
+          {% if current_variant.available %}
+            <span class="crown-configurator__cart-text">Add to Cart</span>
+            <span class="crown-configurator__cart-price" id="crown-cart-price">{{ base_price | money }}</span>
+          {% else %}
+            Sold Out
+          {% endif %}
+        </button>
+
+        {% if section.settings.show_dynamic_checkout and current_variant.available %}
+          {{ form | payment_button }}
+        {% endif %}
+      </form>
+
+      {%- comment -%} Trust Badges {%- endcomment -%}
+      {% if section.settings.show_trust_badges %}
+        <div class="crown-configurator__trust">
+          <div class="crown-configurator__trust-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Secure Checkout</span>
+          </div>
+          <div class="crown-configurator__trust-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-3M5.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/></svg>
+            <span>Free Shipping</span>
+          </div>
+          <div class="crown-configurator__trust-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Quality Guaranteed</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% javascript %}
+  (function() {
+    const section = document.querySelector('.crown-configurator');
+    if (!section) return;
+
+    const basePrice = parseInt(section.dataset.basePrice, 10);
+    let selectedMaterial = null;
+    let materialPrice = 0;
+    let armPrice = 0;
+    let selectedColor = null;
+
+    function formatMoney(cents) {
+      return '$' + (cents / 100).toFixed(2);
+    }
+
+    function updatePriceDisplay() {
+      const total = basePrice + materialPrice + armPrice;
+      const totalEl = document.getElementById('crown-total-price');
+      const cartPriceEl = document.getElementById('crown-cart-price');
+      const breakdownEl = document.getElementById('crown-price-breakdown');
+
+      if (totalEl) totalEl.textContent = formatMoney(total);
+      if (cartPriceEl) cartPriceEl.textContent = formatMoney(total);
+
+      // Update breakdown
+      let html = '<div class="crown-configurator__breakdown-row"><span>Base Price</span><span>' + formatMoney(basePrice) + '</span></div>';
+      if (materialPrice > 0) {
+        html += '<div class="crown-configurator__breakdown-row"><span>Upholstery Upgrade</span><span>+' + formatMoney(materialPrice) + '</span></div>';
+      }
+      if (armPrice > 0) {
+        html += '<div class="crown-configurator__breakdown-row"><span>Arm Configuration</span><span>+' + formatMoney(armPrice) + '</span></div>';
+      }
+      if (breakdownEl) breakdownEl.innerHTML = html;
+    }
+
+    // Material selection
+    const materialCards = section.querySelectorAll('.crown-configurator__material-card');
+    materialCards.forEach(card => {
+      card.addEventListener('click', function() {
+        materialCards.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+
+        selectedMaterial = this.dataset.material;
+        materialPrice = parseInt(this.dataset.materialPrice, 10) || 0;
+
+        // Update hidden inputs
+        const materialInput = document.getElementById('material-input');
+        const materialPriceInput = document.getElementById('material-price-input');
+        if (materialInput) materialInput.value = this.querySelector('.crown-configurator__material-name').textContent.trim();
+        if (materialPriceInput) materialPriceInput.value = materialPrice;
+
+        // Show/hide color panels
+        const panels = section.querySelectorAll('.crown-configurator__color-panel');
+        panels.forEach(panel => {
+          if (panel.dataset.colorPanel === selectedMaterial) {
+            panel.style.display = '';
+            panel.style.animation = 'crownFadeIn 0.3s ease';
+          } else {
+            panel.style.display = 'none';
+          }
+        });
+
+        // Reset color selection when changing material
+        selectedColor = null;
+        document.getElementById('color-input').value = '';
+        document.getElementById('color-sku-input').value = '';
+        section.querySelectorAll('.crown-configurator__swatch').forEach(s => s.classList.remove('active'));
+        section.querySelectorAll('[id^="selected-color-"]').forEach(el => el.textContent = 'Choose a color');
+
+        updatePriceDisplay();
+        validateForm();
+      });
+    });
+
+    // Color swatch selection
+    section.querySelectorAll('.crown-configurator__swatch').forEach(swatch => {
+      swatch.addEventListener('click', function() {
+        const group = this.dataset.materialGroup;
+        // Deselect others in same group
+        section.querySelectorAll('.crown-configurator__swatch[data-material-group="' + group + '"]').forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+
+        selectedColor = this.dataset.colorName;
+        document.getElementById('color-input').value = selectedColor;
+        document.getElementById('color-sku-input').value = this.dataset.colorSku || '';
+
+        const selectedLabel = document.getElementById('selected-color-' + group);
+        if (selectedLabel) selectedLabel.textContent = selectedColor;
+
+        validateForm();
+      });
+    });
+
+    // Arm selection
+    const armCards = section.querySelectorAll('.crown-configurator__arm-card');
+    armCards.forEach(card => {
+      card.addEventListener('click', function() {
+        armCards.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+
+        armPrice = parseInt(this.dataset.armPrice, 10) || 0;
+        const armName = this.querySelector('.crown-configurator__arm-name').textContent.trim();
+
+        document.getElementById('arm-config-input').value = armName;
+        document.getElementById('arm-price-input').value = armPrice;
+
+        const badge = document.getElementById('arm-price-badge');
+        if (badge) {
+          badge.textContent = armPrice > 0 ? '+' + formatMoney(armPrice) : 'Optional';
+        }
+
+        updatePriceDisplay();
+      });
+    });
+
+    // Quantity controls
+    const qtyBtns = section.querySelectorAll('.crown-configurator__qty-btn');
+    const qtyInput = document.getElementById('crown-quantity');
+    qtyBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (!qtyInput) return;
+        let val = parseInt(qtyInput.value, 10) || 1;
+        if (this.dataset.action === 'increase') val++;
+        else if (this.dataset.action === 'decrease' && val > 1) val--;
+        qtyInput.value = val;
+      });
+    });
+
+    // Thumbnail gallery
+    const thumbnails = section.querySelectorAll('.crown-configurator__thumbnail');
+    const mainMedia = document.getElementById('crown-main-media');
+    const mediaItems = {{ product.media | json }};
+
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', function() {
+        thumbnails.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        const idx = parseInt(this.dataset.mediaIndex, 10);
+        const media = mediaItems[idx];
+        if (!media || !mainMedia) return;
+
+        if (media.media_type === 'video') {
+          mainMedia.innerHTML = '<video controls playsinline class="crown-configurator__video"><source src="' + media.sources[0].url + '" type="' + media.sources[0].mime_type + '"></video>';
+        } else {
+          const src = media.src ? media.src.replace(/\?.*/, '') + '?width=1200' : media.preview_image.src.replace(/\?.*/, '') + '?width=1200';
+          mainMedia.innerHTML = '<img src="' + src + '" alt="' + (media.alt || '') + '" class="crown-configurator__main-image">';
+        }
+      });
+    });
+
+    // Form validation
+    function validateForm() {
+      const addBtn = document.getElementById('crown-add-to-cart');
+      if (!addBtn) return;
+
+      const hasMaterial = document.getElementById('material-input').value !== '';
+      const hasColor = document.getElementById('color-input').value !== '';
+
+      if (hasMaterial && hasColor) {
+        addBtn.disabled = false;
+        addBtn.querySelector('.crown-configurator__cart-text').textContent = 'Add to Cart';
+      } else if (!hasMaterial) {
+        addBtn.disabled = true;
+        addBtn.querySelector('.crown-configurator__cart-text').textContent = 'Select Upholstery Material';
+      } else if (!hasColor) {
+        addBtn.disabled = true;
+        addBtn.querySelector('.crown-configurator__cart-text').textContent = 'Select a Color';
+      }
+    }
+
+    // Initial state
+    validateForm();
+  })();
+{% endjavascript %}
+
+{% stylesheet %}
+  @keyframes crownFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .crown-configurator {
+    --crown-accent: #1a1a2e;
+    --crown-accent-light: #16213e;
+    --crown-gold: #c9a96e;
+    --crown-gold-light: #d4b87a;
+    --crown-border: #e5e5e5;
+    --crown-bg-subtle: #fafaf8;
+    --crown-radius: 8px;
+    --crown-radius-lg: 12px;
+  }
+
+  .crown-configurator__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+  }
+
+  @media (min-width: 750px) {
+    .crown-configurator__layout {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      padding: 3rem 0;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .crown-configurator__layout {
+      grid-template-columns: 55% 1fr;
+      gap: 4rem;
+    }
+  }
+
+  /* Media Gallery */
+  .crown-configurator__media {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+  }
+
+  .crown-configurator__media-main {
+    border-radius: var(--crown-radius-lg);
+    overflow: hidden;
+    background: var(--crown-bg-subtle);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .crown-configurator__main-image,
+  .crown-configurator__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .crown-configurator__thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+  }
+
+  .crown-configurator__thumbnail {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--crown-radius);
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    background: var(--crown-bg-subtle);
+    padding: 0;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .crown-configurator__thumbnail.active {
+    border-color: var(--crown-gold);
+  }
+
+  .crown-configurator__thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .crown-configurator__play-badge {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    color: white;
+  }
+
+  /* Details */
+  .crown-configurator__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .crown-configurator__vendor {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+    color: var(--crown-gold);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .crown-configurator__title {
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin: 0 0 1rem;
+  }
+
+  @media (min-width: 750px) {
+    .crown-configurator__title {
+      font-size: 2.25rem;
+    }
+  }
+
+  .crown-configurator__price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .crown-configurator__base-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  .crown-configurator__price {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+
+  /* Description */
+  .crown-configurator__description-wrap {
+    margin-bottom: 0.5rem;
+  }
+
+  .crown-configurator__description-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    list-style: none;
+  }
+
+  .crown-configurator__description-toggle::-webkit-details-marker { display: none; }
+
+  .crown-configurator__chevron {
+    transition: transform 0.2s;
+  }
+
+  details[open] .crown-configurator__chevron {
+    transform: rotate(180deg);
+  }
+
+  .crown-configurator__description {
+    padding-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #555;
+  }
+
+  .crown-configurator__divider {
+    height: 1px;
+    background: var(--crown-border);
+    margin: 1.25rem 0;
+  }
+
+  /* Option Groups */
+  .crown-configurator__option-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .crown-configurator__option-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .crown-configurator__option-icon {
+    color: var(--crown-gold);
+    display: flex;
+  }
+
+  .crown-configurator__option-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    background: var(--crown-bg-subtle);
+    color: #888;
+    font-weight: 500;
+  }
+
+  .crown-configurator__option-badge--required {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  /* Arm Grid */
+  .crown-configurator__arm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .crown-configurator__arm-card {
+    border: 2px solid var(--crown-border);
+    border-radius: var(--crown-radius-lg);
+    padding: 0;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+
+  .crown-configurator__arm-card:hover {
+    border-color: var(--crown-gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .crown-configurator__arm-card.active {
+    border-color: var(--crown-gold);
+    box-shadow: 0 0 0 1px var(--crown-gold);
+  }
+
+  .crown-configurator__arm-card-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0.5rem;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .crown-configurator__arm-image {
+    width: 80px;
+    height: 60px;
+    object-fit: contain;
+  }
+
+  .crown-configurator__arm-icon-wrap {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+  }
+
+  .crown-configurator__arm-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .crown-configurator__arm-price {
+    font-size: 0.75rem;
+    color: var(--crown-gold);
+    font-weight: 500;
+  }
+
+  /* Material Grid */
+  .crown-configurator__material-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 500px) {
+    .crown-configurator__material-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .crown-configurator__material-card {
+    border: 2px solid var(--crown-border);
+    border-radius: var(--crown-radius-lg);
+    padding: 0;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .crown-configurator__material-card:hover {
+    border-color: var(--crown-gold-light);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .crown-configurator__material-card.active {
+    border-color: var(--crown-gold);
+    background: linear-gradient(135deg, #faf8f3 0%, #fff 100%);
+    box-shadow: 0 0 0 1px var(--crown-gold);
+  }
+
+  .crown-configurator__material-card.active .crown-configurator__material-check {
+    opacity: 1;
+  }
+
+  .crown-configurator__material-card-inner {
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .crown-configurator__material-check {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--crown-gold);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .crown-configurator__material-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .crown-configurator__material-upcharge {
+    font-size: 0.75rem;
+    color: var(--crown-gold);
+    font-weight: 500;
+  }
+
+  .crown-configurator__material-upcharge--included {
+    color: #4caf50;
+  }
+
+  /* Color Swatches */
+  .crown-configurator__selected-color {
+    font-size: 0.85rem;
+    color: var(--crown-gold);
+    font-weight: 500;
+  }
+
+  .crown-configurator__swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 750px) {
+    .crown-configurator__swatch-grid {
+      grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    }
+  }
+
+  .crown-configurator__swatch {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--crown-radius);
+    border: 2px solid var(--crown-border);
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    background: var(--crown-bg-subtle);
+    transition: all 0.15s;
+  }
+
+  .crown-configurator__swatch:hover {
+    border-color: var(--crown-gold-light);
+    transform: scale(1.05);
+    z-index: 1;
+  }
+
+  .crown-configurator__swatch.active {
+    border-color: var(--crown-gold);
+    box-shadow: 0 0 0 2px var(--crown-gold), 0 2px 8px rgba(201, 169, 110, 0.3);
+    transform: scale(1.08);
+    z-index: 2;
+  }
+
+  .crown-configurator__swatch-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .crown-configurator__swatch-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+
+  .crown-configurator__swatch-check {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .crown-configurator__swatch.active .crown-configurator__swatch-check {
+    opacity: 1;
+  }
+
+  .crown-configurator__swatch-count {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-top: 0.5rem;
+  }
+
+  /* Summary */
+  .crown-configurator__summary {
+    background: var(--crown-bg-subtle);
+    border-radius: var(--crown-radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .crown-configurator__total-row {
+    margin-bottom: 0.75rem;
+  }
+
+  .crown-configurator__total-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  .crown-configurator__breakdown {
+    border-bottom: 1px solid var(--crown-border);
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .crown-configurator__breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 0.25rem 0;
+    color: #555;
+  }
+
+  .crown-configurator__total-row--final {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0;
+  }
+
+  .crown-configurator__total-label--final {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .crown-configurator__total-price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--crown-accent);
+  }
+
+  /* Quantity */
+  .crown-configurator__quantity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .crown-configurator__quantity-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .crown-configurator__quantity-selector {
+    display: flex;
+    border: 1px solid var(--crown-border);
+    border-radius: var(--crown-radius);
+    overflow: hidden;
+  }
+
+  .crown-configurator__qty-btn {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.15s;
+  }
+
+  .crown-configurator__qty-btn:hover {
+    background: var(--crown-bg-subtle);
+  }
+
+  .crown-configurator__qty-input {
+    width: 50px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid var(--crown-border);
+    border-right: 1px solid var(--crown-border);
+    font-size: 0.9rem;
+    -moz-appearance: textfield;
+  }
+
+  .crown-configurator__qty-input::-webkit-outer-spin-button,
+  .crown-configurator__qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  /* Add to Cart */
+  .crown-configurator__add-to-cart {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: var(--crown-accent);
+    color: white;
+    border: none;
+    border-radius: var(--crown-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .crown-configurator__add-to-cart:hover:not(:disabled) {
+    background: var(--crown-accent-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(26,26,46,0.2);
+  }
+
+  .crown-configurator__add-to-cart:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .crown-configurator__cart-price {
+    font-weight: 300;
+    opacity: 0.8;
+  }
+
+  /* Trust Badges */
+  .crown-configurator__trust {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--crown-border);
+  }
+
+  .crown-configurator__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .crown-configurator__trust-item svg {
+    color: var(--crown-gold);
+  }
+
+  @media (max-width: 749px) {
+    .crown-configurator__media {
+      position: static;
+    }
+    .crown-configurator__trust {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Crown Configurator",
+  "tag": "section",
+  "class": "crown-product-configurator",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "description_open",
+      "label": "Description open by default",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_arms",
+      "label": "Enable arm configuration",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quantity",
+      "label": "Show quantity selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout button",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "material_type",
+      "name": "Upholstery Material",
+      "settings": [
+        {
+          "type": "text",
+          "id": "material_title",
+          "label": "Material name",
+          "default": "Medical Grade Vinyl"
+        },
+        {
+          "type": "number",
+          "id": "material_price",
+          "label": "Price upcharge ($)",
+          "default": 0,
+          "info": "Additional cost in dollars (e.g., 180 for $180 upcharge)"
+        }
+      ]
+    },
+    {
+      "type": "arm_option",
+      "name": "Arm Option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "arm_title",
+          "label": "Arm name",
+          "default": "Adjustable Arm"
+        },
+        {
+          "type": "number",
+          "id": "arm_price",
+          "label": "Price ($)",
+          "default": 0,
+          "info": "Price in dollars"
+        },
+        {
+          "type": "image_picker",
+          "id": "arm_image",
+          "label": "Arm image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Crown Configurator",
+      "category": "Products",
+      "blocks": [
+        {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Medical Grade Vinyl",
+            "material_price": 0
+          }
+        },
+        {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Ultra Leather",
+            "material_price": 180
+          }
+        },
+        {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Silvertex",
+            "material_price": 180
+          }
+        },
+        {
+          "type": "material_type",
+          "settings": {
+            "material_title": "StaKleen",
+            "material_price": 180
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

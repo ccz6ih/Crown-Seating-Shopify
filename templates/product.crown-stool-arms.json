@@ -1,0 +1,124 @@
+{
+  "sections": {
+    "crown-configurator": {
+      "type": "crown-product-configurator",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_vendor": true,
+        "description_open": false,
+        "enable_arms": true,
+        "enable_quantity": true,
+        "show_dynamic_checkout": false,
+        "show_trust_badges": true
+      },
+      "blocks": {
+        "arm_2d_single": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "2D Single Arm",
+            "arm_price": 385
+          }
+        },
+        "arm_2d_pair": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "2D Arm Pairs",
+            "arm_price": 642
+          }
+        },
+        "arm_dcra_single": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "DCRA Single Arm",
+            "arm_price": 185
+          }
+        },
+        "arm_dcra_pair": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "DCRA Arm Pairs",
+            "arm_price": 362
+          }
+        },
+        "arm_posiflex_single": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "Posiflex Single Arm",
+            "arm_price": 385
+          }
+        },
+        "arm_posiflex_pair": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "Posiflex Pair Arms",
+            "arm_price": 642
+          }
+        },
+        "arm_t_ratchet": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "T Ratchet Arm",
+            "arm_price": 385
+          }
+        },
+        "arm_adjustable_black": {
+          "type": "arm_option",
+          "settings": {
+            "arm_title": "Adjustable Black Arms",
+            "arm_price": 160
+          }
+        },
+        "material_vinyl": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Medical Grade Vinyl",
+            "material_price": 0
+          }
+        },
+        "material_ultra": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Ultra Leather",
+            "material_price": 180
+          }
+        },
+        "material_silvertex": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Silvertex",
+            "material_price": 180
+          }
+        },
+        "material_stakleen": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "StaKleen",
+            "material_price": 180
+          }
+        }
+      },
+      "block_order": [
+        "arm_2d_single",
+        "arm_2d_pair",
+        "arm_dcra_single",
+        "arm_dcra_pair",
+        "arm_posiflex_single",
+        "arm_posiflex_pair",
+        "arm_t_ratchet",
+        "arm_adjustable_black",
+        "material_vinyl",
+        "material_ultra",
+        "material_silvertex",
+        "material_stakleen"
+      ]
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "settings": {}
+    }
+  },
+  "order": [
+    "crown-configurator",
+    "product-recommendations"
+  ]
+}
