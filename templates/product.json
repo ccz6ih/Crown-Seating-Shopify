@@ -18,23 +18,21 @@
           "settings": {
             "media_presentation": "carousel",
             "media_columns": "two",
-            "image_gap": 1,
+            "image_gap": 11,
             "large_first_image": true,
-            "icons_style": "none",
+            "icons_style": "chevron_large",
             "slideshow_controls_style": "counter",
-            "slideshow_mobile_controls_style": "dots",
+            "slideshow_mobile_controls_style": "counter",
             "thumbnail_position": "bottom",
             "thumbnail_width": 44,
-            "thumbnail_radius": 0,
             "aspect_ratio": "adapt",
-            "constrain_to_viewport": true,
-            "media_fit": "contain",
             "media_radius": 0,
             "extend_media": true,
+            "constrain_to_viewport": true,
             "zoom": true,
             "video_loop": false,
             "hide_variants": false,
-            "padding-block-start": 0,
+            "padding-block-start": 8,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -46,7 +44,7 @@
           "static": true,
           "settings": {
             "width": "custom",
-            "custom_width": 90,
+            "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "height": "fit",
@@ -56,6 +54,7 @@
             "inherit_color_scheme": true,
             "color_scheme": "",
             "background_media": "none",
+            "video": "{{ closest.product.metafields.custom.product_video.value }}",
             "video_position": "cover",
             "background_image_position": "cover",
             "border": "none",
@@ -68,22 +67,21 @@
             "padding-inline-end": 12
           },
           "blocks": {
-            "text_tefwj7": {
+            "heading_m7KmQQ": {
               "type": "text",
-              "name": "t:names.title",
               "settings": {
                 "text": "<h1>{{ closest.product.title }}</h1>",
-                "width": "fit-content",
+                "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "h2",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
+                "font": "var(--font-primary--family)",
+                "font_size": "",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "color": "var(--color-foreground)",
+                "color": "",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -94,17 +92,9 @@
               },
               "blocks": {}
             },
-            "reviews": {
-              "type": "review",
-              "settings": {
-                "stars_style": "shaded",
-                "show_number": true,
-                "rating_color": "primary",
-                "type_preset": "paragraph",
-                "width": "100%",
-                "alignment": "left"
-              },
-              "blocks": {}
+            "judge_me_reviews_preview_badge_8wEGap": {
+              "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+              "settings": {}
             },
             "price_a7krng": {
               "type": "price",
@@ -128,36 +118,10 @@
               },
               "blocks": {}
             },
-            "text_gXMUag": {
-              "type": "text",
-              "name": "Product description",
-              "settings": {
-                "text": "{{ closest.product.description }}",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-primary--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
               "settings": {
-                "variant_style": "buttons",
+                "variant_style": "dropdowns",
                 "show_swatches": true,
                 "alignment": "left",
                 "padding-block-start": 12,
@@ -171,8 +135,7 @@
               "type": "buy-buttons",
               "settings": {
                 "stacking": false,
-                "show_pickup_availability": false,
-                "gift_card_form": true,
+                "show_pickup_availability": true,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -201,56 +164,42 @@
                 }
               },
               "block_order": []
-            }
-          },
-          "block_order": [
-            "text_tefwj7",
-            "reviews",
-            "price_a7krng",
-            "text_gXMUag",
-            "variant_picker_R3rGDr",
-            "buy_buttons_eYQEYi"
-          ]
-        }
-      },
-      "settings": {
-        "content_width": "content-center-aligned",
-        "desktop_media_position": "left",
-        "equal_columns": true,
-        "limit_details_width": false,
-        "gap": 0,
-        "enable_sticky_add_to_cart": true,
-        "color_scheme": "scheme-1",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
-    "product_recommendations_iA6pyd": {
-      "type": "product-recommendations",
-      "blocks": {
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 0,
-            "inherit_color_scheme": false,
-            "color_scheme": "scheme-2",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "product_card_gallery_8xaiqA": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
+            },
+            "text_gXMUag": {
+              "type": "text",
+              "name": "Product description",
               "settings": {
-                "image_ratio": "square",
+                "text": "{{ closest.product.description }}",
+                "width": "fit-content",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-primary--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "",
+                "background": true,
+                "background_color": "#dddddd0f",
+                "corner_radius": 13,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "accordion_3brNgj": {
+              "type": "accordion",
+              "name": "t:names.accordion",
+              "settings": {
+                "icon": "caret",
+                "dividers": true,
+                "type_preset": "h6",
+                "inherit_color_scheme": true,
+                "color_scheme": "",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
@@ -260,94 +209,24 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
-            },
-            "group_7YP4cy": {
-              "type": "_product-card-group",
-              "name": "t:names.group",
-              "settings": {
-                "content_direction": "column",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "space-between",
-                "vertical_alignment": "flex-start",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "space-between",
-                "gap": 4,
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "inherit_color_scheme": true,
-                "color_scheme": "scheme-2",
-                "background_media": "none",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "link": "",
-                "open_in_new_tab": false,
-                "padding-block-start": 12,
-                "padding-block-end": 12,
-                "padding-inline-start": 12,
-                "padding-inline-end": 12
-              },
               "blocks": {
-                "group_3RWczc": {
-                  "type": "_product-card-group",
-                  "name": "t:names.group",
+                "accordion_row_JrTNLr": {
+                  "type": "_accordion-row",
                   "settings": {
-                    "content_direction": "row",
-                    "vertical_on_mobile": true,
-                    "horizontal_alignment": "space-between",
-                    "vertical_alignment": "center",
-                    "align_baseline": false,
-                    "horizontal_alignment_flex_direction_column": "flex-start",
-                    "vertical_alignment_flex_direction_column": "flex-start",
-                    "gap": 8,
-                    "width": "fill",
-                    "custom_width": 75,
-                    "width_mobile": "fill",
-                    "custom_width_mobile": 75,
-                    "height": "fit",
-                    "custom_height": 100,
-                    "inherit_color_scheme": true,
-                    "color_scheme": "",
-                    "background_media": "none",
-                    "video_position": "cover",
-                    "background_image_position": "cover",
-                    "border": "none",
-                    "border_width": 1,
-                    "border_opacity": 100,
-                    "border_radius": 0,
-                    "toggle_overlay": false,
-                    "overlay_color": "#00000026",
-                    "overlay_style": "solid",
-                    "gradient_direction": "to top",
-                    "link": "",
-                    "open_in_new_tab": false,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
+                    "heading": "Features",
+                    "open_by_default": false,
+                    "icon": "clipboard",
+                    "width": 20
                   },
                   "blocks": {
-                    "product_title_wWUJwp": {
-                      "type": "product-title",
-                      "name": "t:names.product_title",
+                    "text_4k46eh": {
+                      "type": "text",
                       "settings": {
-                        "width": "fit-content",
+                        "text": "<p></p>{{ closest.product.metafields.custom.product_features | metafield_tag }}",
+                        "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
-                        "type_preset": "h5",
+                        "type_preset": "rte",
                         "font": "var(--font-body--family)",
                         "font_size": "1rem",
                         "line_height": "normal",
@@ -358,6 +237,84 @@
                         "background": false,
                         "background_color": "#00000026",
                         "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_4k46eh"
+                  ]
+                },
+                "accordion_row_zThBc3": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Specifications",
+                    "open_by_default": false,
+                    "icon": "clipboard",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "text_8K8JBi": {
+                      "type": "text",
+                      "settings": {
+                        "text": "{{ closest.product.metafields.custom.product_specifications | metafield_tag }}",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "rte",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "color": "var(--color-foreground)",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_8K8JBi"
+                  ]
+                },
+                "accordion_row_VMjyRK": {
+                  "type": "_accordion-row",
+                  "disabled": true,
+                  "settings": {
+                    "heading": "What Chair Should I buy?",
+                    "open_by_default": false,
+                    "icon": "question_mark",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "image_8wQgmA": {
+                      "type": "image",
+                      "name": "t:names.image",
+                      "disabled": true,
+                      "settings": {
+                        "image": "shopify://shop_images/287401624_355429966525743_1104663125083537622_n.webp",
+                        "link": "shopify://pages/seating-quiz",
+                        "image_ratio": "adapt",
+                        "width": "fill",
+                        "custom_width": 100,
+                        "width_mobile": "fill",
+                        "custom_width_mobile": 100,
+                        "height": "fill",
+                        "border": "solid",
+                        "border_width": 1,
+                        "border_opacity": 100,
+                        "border_radius": 0,
                         "padding-block-start": 0,
                         "padding-block-end": 0,
                         "padding-inline-start": 0,
@@ -365,90 +322,23 @@
                       },
                       "blocks": {}
                     },
-                    "price_NpRMFV": {
-                      "type": "price",
-                      "name": "t:names.product_price",
+                    "text_YrtBeY": {
+                      "type": "text",
+                      "name": "t:names.text",
+                      "disabled": true,
                       "settings": {
-                        "show_sale_price_first": true,
-                        "show_installments": false,
-                        "show_tax_info": false,
-                        "type_preset": "paragraph",
-                        "width": "fit-content",
-                        "alignment": "right",
+                        "text": "<p><strong>A good general rule of thumb if you have not tried one of our chairs in person. This guide can answer based on height for a good start. We still reccomend you to either take our quiz or try in person with a dealer or rep or at a tradeshow. </strong></p>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "alignment": "center",
+                        "type_preset": "h6",
                         "font": "var(--font-body--family)",
                         "font_size": "1rem",
                         "line_height": "normal",
                         "letter_spacing": "normal",
                         "case": "none",
-                        "color": "var(--color-foreground)",
-                        "padding-block-start": 0,
-                        "padding-block-end": 0,
-                        "padding-inline-start": 0,
-                        "padding-inline-end": 0
-                      },
-                      "blocks": {}
-                    }
-                  },
-                  "block_order": [
-                    "product_title_wWUJwp",
-                    "price_NpRMFV"
-                  ]
-                },
-                "group_HTthnM": {
-                  "type": "_product-card-group",
-                  "name": "t:names.group",
-                  "settings": {
-                    "content_direction": "column",
-                    "vertical_on_mobile": true,
-                    "horizontal_alignment": "flex-start",
-                    "vertical_alignment": "center",
-                    "align_baseline": false,
-                    "horizontal_alignment_flex_direction_column": "flex-start",
-                    "vertical_alignment_flex_direction_column": "flex-start",
-                    "gap": 12,
-                    "width": "fill",
-                    "custom_width": 100,
-                    "width_mobile": "custom",
-                    "custom_width_mobile": 25,
-                    "height": "fit",
-                    "custom_height": 100,
-                    "inherit_color_scheme": true,
-                    "color_scheme": "",
-                    "background_media": "none",
-                    "video_position": "cover",
-                    "background_image_position": "cover",
-                    "border": "none",
-                    "border_width": 1,
-                    "border_opacity": 100,
-                    "border_radius": 0,
-                    "toggle_overlay": false,
-                    "overlay_color": "#00000026",
-                    "overlay_style": "solid",
-                    "gradient_direction": "to top",
-                    "link": "",
-                    "open_in_new_tab": false,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {
-                    "text_Dj8eVT": {
-                      "type": "text",
-                      "name": "t:names.text",
-                      "settings": {
-                        "text": "<p>{{ closest.product.metafields.descriptors.subtitle.value }}</p>",
-                        "width": "100%",
-                        "max_width": "normal",
-                        "alignment": "left",
-                        "type_preset": "custom",
-                        "font": "var(--font-primary--family)",
-                        "font_size": "var(--font-size--body-md)",
-                        "line_height": "normal",
-                        "letter_spacing": "normal",
-                        "case": "none",
                         "wrap": "pretty",
-                        "color": "",
+                        "color": "var(--color-foreground)",
                         "background": false,
                         "background_color": "#00000026",
                         "corner_radius": 0,
@@ -461,45 +351,2896 @@
                     }
                   },
                   "block_order": [
-                    "text_Dj8eVT"
+                    "image_8wQgmA",
+                    "text_YrtBeY"
                   ]
                 }
               },
               "block_order": [
-                "group_3RWczc",
-                "group_HTthnM"
+                "accordion_row_JrTNLr",
+                "accordion_row_zThBc3",
+                "accordion_row_VMjyRK"
               ]
+            },
+            "product_recommendations_gHHrQM": {
+              "type": "product-recommendations",
+              "name": "t:names.product_recommendations",
+              "settings": {
+                "recommendation_type": "complementary",
+                "layout_type": "carousel",
+                "carousel_on_mobile": true,
+                "max_products": 2,
+                "columns_gap": 16,
+                "rows_gap": 16,
+                "icons_style": "arrow",
+                "icons_shape": "none",
+                "gap": 12,
+                "color_scheme": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0
+              },
+              "blocks": {
+                "text_MrLXkA": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h4>Related Products </h4>",
+                    "width": "fit-content",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "static-product-card": {
+                  "type": "_product-card",
+                  "static": true,
+                  "settings": {
+                    "product_card_gap": 16,
+                    "inherit_color_scheme": true,
+                    "color_scheme": "",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "product_card_gallery_QW4BwR": {
+                      "type": "_product-card-gallery",
+                      "settings": {
+                        "image_ratio": "portrait",
+                        "border": "none",
+                        "border_width": 1,
+                        "border_opacity": 100,
+                        "border_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "product_card_group_ULePgR": {
+                      "type": "_product-card-group",
+                      "settings": {
+                        "link": "",
+                        "open_in_new_tab": false,
+                        "content_direction": "column",
+                        "vertical_on_mobile": true,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "align_baseline": false,
+                        "horizontal_alignment_flex_direction_column": "flex-start",
+                        "vertical_alignment_flex_direction_column": "center",
+                        "gap": 4,
+                        "width": "fill",
+                        "custom_width": 100,
+                        "width_mobile": "fill",
+                        "custom_width_mobile": 100,
+                        "height": "fit",
+                        "custom_height": 100,
+                        "inherit_color_scheme": true,
+                        "color_scheme": "",
+                        "background_media": "none",
+                        "video_position": "cover",
+                        "background_image_position": "cover",
+                        "border": "none",
+                        "border_width": 1,
+                        "border_opacity": 100,
+                        "border_radius": 0,
+                        "toggle_overlay": false,
+                        "overlay_color": "#00000026",
+                        "overlay_style": "solid",
+                        "gradient_direction": "to top",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {
+                        "product_title_EFkYFX": {
+                          "type": "product-title",
+                          "name": "t:names.title",
+                          "settings": {
+                            "width": "fit-content",
+                            "max_width": "normal",
+                            "alignment": "left",
+                            "type_preset": "h5",
+                            "font": "var(--font-body--family)",
+                            "font_size": "1rem",
+                            "line_height": "normal",
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "wrap": "pretty",
+                            "color": "var(--color-foreground)",
+                            "background": false,
+                            "background_color": "#00000026",
+                            "corner_radius": 0,
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {}
+                        },
+                        "price_zhJdGi": {
+                          "type": "price",
+                          "settings": {
+                            "show_sale_price_first": true,
+                            "show_installments": false,
+                            "show_tax_info": false,
+                            "type_preset": "",
+                            "width": "100%",
+                            "alignment": "left",
+                            "font": "var(--font-body--family)",
+                            "font_size": "1rem",
+                            "line_height": "normal",
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "color": "var(--color-foreground)",
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {}
+                        },
+                        "swatches_xr38B8": {
+                          "type": "swatches",
+                          "disabled": true,
+                          "settings": {
+                            "product_swatches_alignment": "flex-start",
+                            "product_swatches_alignment_mobile": "flex-start",
+                            "hide_padding": false,
+                            "product_swatches_padding_top": 4,
+                            "product_swatches_padding_bottom": 0,
+                            "product_swatches_padding_left": 0,
+                            "product_swatches_padding_right": 0
+                          },
+                          "blocks": {}
+                        }
+                      },
+                      "block_order": [
+                        "product_title_EFkYFX",
+                        "price_zhJdGi",
+                        "swatches_xr38B8"
+                      ]
+                    }
+                  },
+                  "block_order": [
+                    "product_card_gallery_QW4BwR",
+                    "product_card_group_ULePgR"
+                  ]
+                }
+              },
+              "block_order": [
+                "text_MrLXkA"
+              ]
+            },
+            "text_jqN4G6": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<h4><strong>Not Sure What Seating Works For you Best?</strong></h4>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "button_Tn4T9N": {
+              "type": "button",
+              "name": "t:names.button",
+              "settings": {
+                "label": "TAKE THE QUIZ",
+                "link": "shopify://pages/seating-quiz",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
             }
           },
           "block_order": [
-            "product_card_gallery_8xaiqA",
-            "group_7YP4cy"
+            "heading_m7KmQQ",
+            "judge_me_reviews_preview_badge_8wEGap",
+            "price_a7krng",
+            "variant_picker_R3rGDr",
+            "buy_buttons_eYQEYi",
+            "text_gXMUag",
+            "accordion_3brNgj",
+            "product_recommendations_gHHrQM",
+            "text_jqN4G6",
+            "button_Tn4T9N"
           ]
         }
       },
-      "name": "t:names.product_recommendations",
       "settings": {
-        "product": "{{ closest.product }}",
-        "recommendation_type": "related",
-        "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "max_products": 6,
-        "columns": 3,
-        "mobile_columns": "1",
-        "columns_gap": 1,
-        "rows_gap": 2,
-        "icons_style": "arrow",
-        "icons_shape": "none",
-        "section_width": "full-width",
-        "gap": 0,
-        "color_scheme": "scheme-1",
-        "padding-block-start": 1,
-        "padding-block-end": 1
+        "content_width": "content-center-aligned",
+        "desktop_media_position": "left",
+        "equal_columns": true,
+        "limit_details_width": false,
+        "gap": 8,
+        "color_scheme": "scheme-6",
+        "padding-block-start": 25,
+        "padding-block-end": 0
+      }
+    },
+    "17518352607fb417f4": {
+      "type": "_blocks",
+      "blocks": {
+        "judge_me_reviews_review_widget_N9R99W": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "sample_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_N9R99W"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "material_navigation_nFftqe": {
+      "type": "material-navigation",
+      "blocks": {
+        "material_tab_mhNbQV": {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Standard Vinyl",
+            "target_section": "vinyl-colors"
+          }
+        },
+        "material_tab_mMPPpF": {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Ultra Leather",
+            "target_section": "ultra-leather-colors"
+          }
+        },
+        "material_tab_CnmTpt": {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Silvertex",
+            "target_section": "silvertex-colors"
+          }
+        },
+        "material_tab_TcRXyF": {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Sta-Kleen",
+            "target_section": "stakleen-colors"
+          }
+        },
+        "material_tab_GGhakn": {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Allante Free",
+            "target_section": "Allante-free"
+          }
+        }
+      },
+      "block_order": [
+        "material_tab_mhNbQV",
+        "material_tab_mMPPpF",
+        "material_tab_CnmTpt",
+        "material_tab_TcRXyF",
+        "material_tab_GGhakn"
+      ],
+      "name": "Material Navigation",
+      "settings": {
+        "main_title": "Upholstery Color Options",
+        "main_description": "Choose from our wide selection of premium upholstery materials and colors.",
+        "show_instructions": true,
+        "instructions_text": "Click on any tab below to view colors for that material. Click on individual colors to see them in high resolution.",
+        "background_color": "#ffffff",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "tab_background": "#f8f9fa",
+        "tab_text_color": "#333333",
+        "tab_border_color": "#e0e0e0",
+        "tab_hover_background": "#e9ecef",
+        "tab_active_background": "#008bd5",
+        "tab_active_text_color": "#ffffff",
+        "tab_active_border": "#008bd5",
+        "padding_top": 30,
+        "padding_bottom": 0
+      }
+    },
+    "vinyl_colors_V8g39g": {
+      "type": "vinyl-colors",
+      "blocks": {
+        "color_g3y8Wp": {
+          "type": "color",
+          "settings": {
+            "color_name": "Autumn Rain",
+            "color_sku": " AF-909",
+            "color_image": "shopify://shop_images/Allante-FRee-Autumn-Rain-2.jpg",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_AAFMP8": {
+          "type": "color",
+          "settings": {
+            "color_name": "Birch",
+            "color_sku": "AF-939",
+            "color_image": "shopify://shop_images/Allante-FRee-Birch-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_i9thjJ": {
+          "type": "color",
+          "settings": {
+            "color_name": "Bleached Sand",
+            "color_sku": "AF-907",
+            "color_image": "shopify://shop_images/Allante-FRee-Bleached-Sand-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_ErN7AP": {
+          "type": "color",
+          "settings": {
+            "color_name": "Blooming Dahlia",
+            "color_sku": "AF-940",
+            "color_image": "shopify://shop_images/Allante-FRee-Blooming-Dahlia-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_qpFWme": {
+          "type": "color",
+          "settings": {
+            "color_name": "Bright White",
+            "color_sku": "AF-901",
+            "color_image": "shopify://shop_images/Allante-FRee-Bright-White-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_p9QCPV": {
+          "type": "color",
+          "settings": {
+            "color_name": "Chateau Grey",
+            "color_sku": "AF-906",
+            "color_image": "shopify://shop_images/Allante-FRee-Chateau-Grey-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_8eFQxT": {
+          "type": "color",
+          "settings": {
+            "color_name": "Chocolate Sundae",
+            "color_sku": " AF-921",
+            "color_image": "shopify://shop_images/Allante-FRee-Chocolate-Sundae-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_KFgUbc": {
+          "type": "color",
+          "settings": {
+            "color_name": "Cookie",
+            "color_sku": "AF-915",
+            "color_image": "shopify://shop_images/Allante-FRee-Cookie-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_33RgxG": {
+          "type": "color",
+          "settings": {
+            "color_name": "Desert Sun",
+            "color_sku": "AF-941",
+            "color_image": "shopify://shop_images/Allante-FRee-Desert-Sun-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_Q9aryX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Eclipse",
+            "color_sku": "AF-919",
+            "color_image": "shopify://shop_images/Allante-FRee-Eclipse-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_9P7pFX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Elephant",
+            "color_sku": "AF-946",
+            "color_image": "shopify://shop_images/Allante-FRee-Elephant-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_GNDihq": {
+          "type": "color",
+          "settings": {
+            "color_name": "Flannel",
+            "color_sku": " AF-909",
+            "color_image": "shopify://shop_images/Allante-FRee-Flannel-600x600.jpg",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_HYTihg": {
+          "type": "color",
+          "settings": {
+            "color_name": "Galaxy ",
+            "color_sku": "AF-920",
+            "color_image": "shopify://shop_images/Allante-FRee-Galaxy-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_y8kbTi": {
+          "type": "color",
+          "settings": {
+            "color_name": "Garden Green",
+            "color_sku": "AF-904",
+            "color_image": "shopify://shop_images/Allante-FRee-Garden-Green-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_cYXbV9": {
+          "type": "color",
+          "settings": {
+            "color_name": "Gibraltar",
+            "color_sku": "AF-903",
+            "color_image": "shopify://shop_images/Allante-FRee-Gibraltar-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_CGinQh": {
+          "type": "color",
+          "settings": {
+            "color_name": "Ginger Spice",
+            "color_sku": "AF-942",
+            "color_image": "shopify://shop_images/Allante-FRee-Ginger-Spice-600x600_1.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_At3Vjh": {
+          "type": "color",
+          "settings": {
+            "color_name": "Golden Kiwi ",
+            "color_sku": "AF-937",
+            "color_image": "shopify://shop_images/Allante-FRee-Golden-Kiwi-600x600_1_d4ff17df-2056-47d2-93e5-b8260a223958.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_zeAYWb": {
+          "type": "color",
+          "settings": {
+            "color_name": "Granite ",
+            "color_sku": "AF-943",
+            "color_image": "shopify://shop_images/Allante-FRee-Granite_1.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_8LxRWj": {
+          "type": "color",
+          "settings": {
+            "color_name": "Hawaiian Surf",
+            "color_sku": "AF-931",
+            "color_image": "shopify://shop_images/Allante-FRee-Hawaiian-Surf-600x600_1.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_8hDCQY": {
+          "type": "color",
+          "settings": {
+            "color_name": "Horizon",
+            "color_sku": "AF-928",
+            "color_image": "shopify://shop_images/Allante-FRee-Horizon-600x600_1.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_CLQ8hJ": {
+          "type": "color",
+          "settings": {
+            "color_name": "Ice",
+            "color_sku": "AF-902",
+            "color_image": "shopify://shop_images/Allante-FRee-Ice-2-600x600_1.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_GhHCmY": {
+          "type": "color",
+          "settings": {
+            "color_name": "Illusion",
+            "color_sku": "AF-910",
+            "color_image": "shopify://shop_images/Allante-FRee-Illlusion-600x600_2.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_hcDB4g": {
+          "type": "color",
+          "settings": {
+            "color_name": "Ink ",
+            "color_sku": " AF-918",
+            "color_image": "shopify://shop_images/Allante-FRee-Ink-Black-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_8pybiX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Italian Rose",
+            "color_sku": "AF-925",
+            "color_image": "shopify://shop_images/Allante-FRee-Italian-Rose-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_7xMUzC": {
+          "type": "color",
+          "settings": {
+            "color_name": "Ivory",
+            "color_sku": "AF-922",
+            "color_image": "shopify://shop_images/Allante-FRee-Ivory-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_Vg9CNM": {
+          "type": "color",
+          "settings": {
+            "color_name": "Lagoon ",
+            "color_sku": "AF-936",
+            "color_image": "shopify://shop_images/Allante-FRee-Lagoon-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_E7wV7R": {
+          "type": "color",
+          "settings": {
+            "color_name": "Malibu Blue",
+            "color_sku": "AF-932",
+            "color_image": "shopify://shop_images/Allante-FRee-Malibu-Blue-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_4qxprJ": {
+          "type": "color",
+          "settings": {
+            "color_name": "Mist",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/Allante-FRee-Niagara-Mist-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_pFtXEp": {
+          "type": "color",
+          "settings": {
+            "color_name": "Mountain Sky",
+            "color_sku": "AF-923",
+            "color_image": "shopify://shop_images/Allante-FRee-Mountain-Sky-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_8WqbDX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Mystic Lilly",
+            "color_sku": "AF-933",
+            "color_image": "shopify://shop_images/Allante-FRee-Mystic-Lilly-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_hrRxHF": {
+          "type": "color",
+          "settings": {
+            "color_name": "Nautical Blue",
+            "color_sku": "AF-929",
+            "color_image": "shopify://shop_images/Allante-FRee-Nautical-Blue-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_ahT9k6": {
+          "type": "color",
+          "settings": {
+            "color_name": "Niagara Mist",
+            "color_sku": "AF-926",
+            "color_image": "shopify://shop_images/Allante-FRee-Niagara-Mist-600x600_1f5bfe56-ed4a-484c-9e7e-ea6209704122.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_WnJRPd": {
+          "type": "color",
+          "settings": {
+            "color_name": "Oasis Green",
+            "color_sku": "AF-914",
+            "color_image": "shopify://shop_images/Allante-FRee-Oasis-Green-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_GpdBei": {
+          "type": "color",
+          "settings": {
+            "color_name": "Old Navy",
+            "color_sku": "AF-908",
+            "color_image": "shopify://shop_images/Allante-FRee-Old-Navy-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_BMkcGn": {
+          "type": "color",
+          "settings": {
+            "color_name": "Pagoda",
+            "color_sku": "AF-935",
+            "color_image": "shopify://shop_images/Allante-FRee-Pagoda-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_CXMdU7": {
+          "type": "color",
+          "settings": {
+            "color_name": "Province Blue",
+            "color_sku": "AF-905",
+            "color_image": "shopify://shop_images/Allante-FRee-Province-Blue-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_dqtdB8": {
+          "type": "color",
+          "settings": {
+            "color_name": "Purple Impulse",
+            "color_sku": "AF-924",
+            "color_image": "shopify://shop_images/Allante-FRee-Purple-Impulse-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_UXPcyA": {
+          "type": "color",
+          "settings": {
+            "color_name": "Red Truffle",
+            "color_sku": " AF-916",
+            "color_image": "shopify://shop_images/Allante-FRee-Red-Truffle-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_PtxBim": {
+          "type": "color",
+          "settings": {
+            "color_name": "Regatta",
+            "color_sku": "AF-930",
+            "color_image": "shopify://shop_images/Allante-FRee-Regatta-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_KmewNX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Riverside",
+            "color_sku": "AF-927",
+            "color_image": "shopify://shop_images/Allante-FRee-Riverside-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_6YAeb3": {
+          "type": "color",
+          "settings": {
+            "color_name": "Sierra Brick",
+            "color_sku": "AF-912",
+            "color_image": "shopify://shop_images/Allante-FRee-Sierra-Brick-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_4CXm4x": {
+          "type": "color",
+          "settings": {
+            "color_name": "Taupe Fawn",
+            "color_sku": "AF-911",
+            "color_image": "shopify://shop_images/Allante-FRee-Taupe-Fawn-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_KntHgt": {
+          "type": "color",
+          "settings": {
+            "color_name": "Thais Red",
+            "color_sku": "AF-944",
+            "color_image": "shopify://shop_images/Allante-FRee-Thais-Red-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_qUBHxc": {
+          "type": "color",
+          "settings": {
+            "color_name": "Warm Smoke ",
+            "color_sku": "AF-913",
+            "color_image": "shopify://shop_images/Allante-FRee-Warm-Smoke-3-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_NkTnag": {
+          "type": "color",
+          "settings": {
+            "color_name": "White Crush",
+            "color_sku": "AF-917",
+            "color_image": "shopify://shop_images/Allante-FRee-White-Crush-2-600x600.jpg",
+            "color_hex": ""
+          }
+        },
+        "color_gKL3ne": {
+          "type": "color",
+          "settings": {
+            "color_name": "Winter Green",
+            "color_sku": "AF-934",
+            "color_image": "shopify://shop_images/Allante-FRee-Winter-Green-600x600.jpg",
+            "color_hex": ""
+          }
+        }
+      },
+      "block_order": [
+        "color_g3y8Wp",
+        "color_AAFMP8",
+        "color_i9thjJ",
+        "color_ErN7AP",
+        "color_qpFWme",
+        "color_p9QCPV",
+        "color_8eFQxT",
+        "color_KFgUbc",
+        "color_33RgxG",
+        "color_Q9aryX",
+        "color_9P7pFX",
+        "color_GNDihq",
+        "color_HYTihg",
+        "color_y8kbTi",
+        "color_cYXbV9",
+        "color_CGinQh",
+        "color_At3Vjh",
+        "color_zeAYWb",
+        "color_8LxRWj",
+        "color_8hDCQY",
+        "color_CLQ8hJ",
+        "color_GhHCmY",
+        "color_hcDB4g",
+        "color_8pybiX",
+        "color_7xMUzC",
+        "color_Vg9CNM",
+        "color_E7wV7R",
+        "color_4qxprJ",
+        "color_pFtXEp",
+        "color_8WqbDX",
+        "color_hrRxHF",
+        "color_ahT9k6",
+        "color_WnJRPd",
+        "color_GpdBei",
+        "color_BMkcGn",
+        "color_CXMdU7",
+        "color_dqtdB8",
+        "color_UXPcyA",
+        "color_PtxBim",
+        "color_KmewNX",
+        "color_6YAeb3",
+        "color_4CXm4x",
+        "color_KntHgt",
+        "color_qUBHxc",
+        "color_NkTnag",
+        "color_gKL3ne"
+      ],
+      "name": "Vinyl Colors",
+      "settings": {
+        "section_title": "Allante FRee Colors",
+        "section_description": "Choose from our wide selection of  colors.",
+        "hide_modal": false,
+        "grid_item_width": 250,
+        "grid_gap": 20,
+        "image_height": 200,
+        "background_color": "#f8f9fa",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "vinyl_colors_UDWWkH": {
+      "type": "vinyl-colors",
+      "blocks": {
+        "color_9Wrqnr": {
+          "type": "color",
+          "settings": {
+            "color_name": "Dream",
+            "color_sku": "532613",
+            "color_image": "shopify://shop_images/Vinyl-Dream-532613.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_wr6EKa": {
+          "type": "color",
+          "settings": {
+            "color_name": "Dream",
+            "color_sku": "532619",
+            "color_image": "shopify://shop_images/Vinyl-Magenta-532619.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_mkit3C": {
+          "type": "color",
+          "settings": {
+            "color_name": "manzanita",
+            "color_sku": "532613",
+            "color_image": "shopify://shop_images/vinyl-manzanita-521374.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_kDtEeP": {
+          "type": "color",
+          "settings": {
+            "color_name": "marigold",
+            "color_sku": "53523426",
+            "color_image": "shopify://shop_images/Vinyl-Marigold-523426.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_dyi7cx": {
+          "type": "color",
+          "settings": {
+            "color_name": "Verry Berry",
+            "color_sku": "532613",
+            "color_image": "shopify://shop_images/Vinyl-veryberry-523027.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_Tbbkwr": {
+          "type": "color",
+          "settings": {
+            "color_name": "nasturtium",
+            "color_sku": "517921",
+            "color_image": "shopify://shop_images/Vinyl-Nasturium-517921.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_TmC7RV": {
+          "type": "color",
+          "settings": {
+            "color_name": "Candy apple",
+            "color_sku": "518767",
+            "color_image": "shopify://shop_images/vinyl-candyapple-518767.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_73PiBK": {
+          "type": "color",
+          "settings": {
+            "color_name": "cerulean",
+            "color_sku": "532617",
+            "color_image": "shopify://shop_images/vinyl-cerulean-532617.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_thC9HL": {
+          "type": "color",
+          "settings": {
+            "color_name": "neptune",
+            "color_sku": "517424",
+            "color_image": "shopify://shop_images/Vinyl-neptune-517424.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_VXxYzF": {
+          "type": "color",
+          "settings": {
+            "color_name": "Grape",
+            "color_sku": "518775",
+            "color_image": "shopify://shop_images/Vinyl-grape-518775.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_cgVH9Q": {
+          "type": "color",
+          "settings": {
+            "color_name": "All Spice",
+            "color_sku": "518760",
+            "color_image": "shopify://shop_images/Vinyl-allspice-518760.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_3gwYFJ": {
+          "type": "color",
+          "settings": {
+            "color_name": "Berry",
+            "color_sku": "518761",
+            "color_image": "shopify://shop_images/Vinyl-Berry-518761.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_TELeqe": {
+          "type": "color",
+          "settings": {
+            "color_name": "perisimmon",
+            "color_sku": "518791",
+            "color_image": "shopify://shop_images/Vinyl-Persimmon-518791.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_p9cWPM": {
+          "type": "color",
+          "settings": {
+            "color_name": "Blue Jay",
+            "color_sku": "518703",
+            "color_image": "shopify://shop_images/Vinyl-bluejay-518703.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_MhNQrk": {
+          "type": "color",
+          "settings": {
+            "color_name": "Marina",
+            "color_sku": "518784",
+            "color_image": "shopify://shop_images/Vinyl-Marina-518784.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_pAkYjC": {
+          "type": "color",
+          "settings": {
+            "color_name": "Wood Violet",
+            "color_sku": "518804",
+            "color_image": "shopify://shop_images/Vinyl-WoodViolet-518804.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_Cm9zqX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Deep Clay",
+            "color_sku": "518771",
+            "color_image": "shopify://shop_images/Deepclay-518771.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_MctRYd": {
+          "type": "color",
+          "settings": {
+            "color_name": "tomato",
+            "color_sku": "518800",
+            "color_image": "shopify://shop_images/Tomato-518800.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_rpLtVm": {
+          "type": "color",
+          "settings": {
+            "color_name": "Port",
+            "color_sku": "518792",
+            "color_image": "shopify://shop_images/port-518792.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_YwQBYG": {
+          "type": "color",
+          "settings": {
+            "color_name": "Midnight Blue",
+            "color_sku": "53518785",
+            "color_image": "shopify://shop_images/MidnightBlue-518792.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_yaeUWJ": {
+          "type": "color",
+          "settings": {
+            "color_name": "Blueberry",
+            "color_sku": "518763",
+            "color_image": "shopify://shop_images/Blueberry-518763.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_aPnPMY": {
+          "type": "color",
+          "settings": {
+            "color_name": "Purple Iris",
+            "color_sku": "517919",
+            "color_image": "shopify://shop_images/PurpleIris-517919.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_MtALWK": {
+          "type": "color",
+          "settings": {
+            "color_name": "Chocolate",
+            "color_sku": "518422",
+            "color_image": "shopify://shop_images/Chocolate-518422.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_ykKrdy": {
+          "type": "color",
+          "settings": {
+            "color_name": "American Beauty",
+            "color_sku": "518202",
+            "color_image": "shopify://shop_images/Americanbeauty-518202.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_Va3h4h": {
+          "type": "color",
+          "settings": {
+            "color_name": "Cordovan",
+            "color_sku": "518770",
+            "color_image": "shopify://shop_images/Cordovan-518770.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_GTAzg6": {
+          "type": "color",
+          "settings": {
+            "color_name": "Colonial Blue",
+            "color_sku": "518769",
+            "color_image": "shopify://shop_images/ColonialBlue-518769.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_mhXWyn": {
+          "type": "color",
+          "settings": {
+            "color_name": "regal blue",
+            "color_sku": "518705",
+            "color_image": "shopify://shop_images/RegalBlue518705.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_eHHpcW": {
+          "type": "color",
+          "settings": {
+            "color_name": "New Purple",
+            "color_sku": "520053",
+            "color_image": "shopify://shop_images/NewPurple-520053.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_qYT4Wz": {
+          "type": "color",
+          "settings": {
+            "color_name": "fudge",
+            "color_sku": "517922",
+            "color_image": "shopify://shop_images/Fudge-517922.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_xHjhWc": {
+          "type": "color",
+          "settings": {
+            "color_name": "Red Cent",
+            "color_sku": "518795",
+            "color_image": "shopify://shop_images/RedCent-518795.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_pgmeFB": {
+          "type": "color",
+          "settings": {
+            "color_name": "burgundy",
+            "color_sku": "518765",
+            "color_image": "shopify://shop_images/Burgundy-518765.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_Bazixg": {
+          "type": "color",
+          "settings": {
+            "color_name": "Navy",
+            "color_sku": "517920",
+            "color_image": "shopify://shop_images/Navy-517920.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_gF3Gbg": {
+          "type": "color",
+          "settings": {
+            "color_name": "Royal Blue",
+            "color_sku": "518796",
+            "color_image": "shopify://shop_images/RoyalBlue-518796.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_YTwVRm": {
+          "type": "color",
+          "settings": {
+            "color_name": "Coal",
+            "color_sku": "518647",
+            "color_image": "shopify://shop_images/Coal-518647.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_jYL9VC": {
+          "type": "color",
+          "settings": {
+            "color_name": "otter",
+            "color_sku": "518789",
+            "color_image": "shopify://shop_images/Otter-518789.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_LMAca7": {
+          "type": "color",
+          "settings": {
+            "color_name": "New burgundy",
+            "color_sku": "518787",
+            "color_image": "shopify://shop_images/New-Burgundy-518787.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_cd8iLr": {
+          "type": "color",
+          "settings": {
+            "color_name": "Black Plum",
+            "color_sku": "517421",
+            "color_image": "shopify://shop_images/Black-Plum-517421.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_hJygpk": {
+          "type": "color",
+          "settings": {
+            "color_name": "SNOW",
+            "color_sku": "517918",
+            "color_image": "shopify://shop_images/Snow-517918.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_fkCEp7": {
+          "type": "color",
+          "settings": {
+            "color_name": "White",
+            "color_sku": "518802",
+            "color_image": "shopify://shop_images/white-518802.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_NYJkyH": {
+          "type": "color",
+          "settings": {
+            "color_name": "Wheat",
+            "color_sku": "532614",
+            "color_image": "shopify://shop_images/Wheat-532614.webp",
+            "color_hex": ""
+          }
+        },
+        "color_DkCj4h": {
+          "type": "color",
+          "settings": {
+            "color_name": "Leap Frog",
+            "color_sku": "518780",
+            "color_image": "shopify://shop_images/Leapfrog-518780.webp",
+            "color_hex": ""
+          }
+        },
+        "color_qG3eCX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Sea Foam",
+            "color_sku": "518418",
+            "color_image": "shopify://shop_images/SeaFoam-518418.webp",
+            "color_hex": ""
+          }
+        },
+        "color_FQ6dhK": {
+          "type": "color",
+          "settings": {
+            "color_name": "Reflection",
+            "color_sku": "532612",
+            "color_image": "shopify://shop_images/Reflection-532612.webp",
+            "color_hex": ""
+          }
+        },
+        "color_YVNt8V": {
+          "type": "color",
+          "settings": {
+            "color_name": "Light Grey",
+            "color_sku": "518781",
+            "color_image": "shopify://shop_images/LightGray-518781.webp",
+            "color_hex": ""
+          }
+        },
+        "color_d4gnYQ": {
+          "type": "color",
+          "settings": {
+            "color_name": "natural",
+            "color_sku": "517908",
+            "color_image": "shopify://shop_images/Natural-517908.webp",
+            "color_hex": ""
+          }
+        },
+        "color_F9nz6y": {
+          "type": "color",
+          "settings": {
+            "color_name": "beige",
+            "color_sku": "518424",
+            "color_image": "shopify://shop_images/Beige-518424.webp",
+            "color_hex": ""
+          }
+        },
+        "color_3ti8WL": {
+          "type": "color",
+          "settings": {
+            "color_name": "Grass",
+            "color_sku": "532618",
+            "color_image": "shopify://shop_images/Grass-532618.webp",
+            "color_hex": ""
+          }
+        },
+        "color_d9Pn8A": {
+          "type": "color",
+          "settings": {
+            "color_name": "jade",
+            "color_sku": "518421",
+            "color_image": "shopify://shop_images/Jade-518421.webp",
+            "color_hex": ""
+          }
+        },
+        "color_QHcxCQ": {
+          "type": "color",
+          "settings": {
+            "color_name": "Light Teal",
+            "color_sku": "518420",
+            "color_image": "shopify://shop_images/Lightteal-518420.webp",
+            "color_hex": ""
+          }
+        },
+        "color_Lc8mzp": {
+          "type": "color",
+          "settings": {
+            "color_name": "grey",
+            "color_sku": "517423",
+            "color_image": "shopify://shop_images/Gray-517423.webp",
+            "color_hex": ""
+          }
+        }
+      },
+      "block_order": [
+        "color_9Wrqnr",
+        "color_wr6EKa",
+        "color_mkit3C",
+        "color_kDtEeP",
+        "color_dyi7cx",
+        "color_Tbbkwr",
+        "color_TmC7RV",
+        "color_73PiBK",
+        "color_thC9HL",
+        "color_VXxYzF",
+        "color_cgVH9Q",
+        "color_3gwYFJ",
+        "color_TELeqe",
+        "color_p9cWPM",
+        "color_MhNQrk",
+        "color_pAkYjC",
+        "color_Cm9zqX",
+        "color_MctRYd",
+        "color_rpLtVm",
+        "color_YwQBYG",
+        "color_yaeUWJ",
+        "color_aPnPMY",
+        "color_MtALWK",
+        "color_ykKrdy",
+        "color_Va3h4h",
+        "color_GTAzg6",
+        "color_mhXWyn",
+        "color_eHHpcW",
+        "color_qYT4Wz",
+        "color_xHjhWc",
+        "color_pgmeFB",
+        "color_Bazixg",
+        "color_gF3Gbg",
+        "color_YTwVRm",
+        "color_jYL9VC",
+        "color_LMAca7",
+        "color_cd8iLr",
+        "color_hJygpk",
+        "color_fkCEp7",
+        "color_NYJkyH",
+        "color_DkCj4h",
+        "color_qG3eCX",
+        "color_FQ6dhK",
+        "color_YVNt8V",
+        "color_d4gnYQ",
+        "color_F9nz6y",
+        "color_3ti8WL",
+        "color_d9Pn8A",
+        "color_QHcxCQ",
+        "color_Lc8mzp"
+      ],
+      "name": "Vinyl Colors",
+      "settings": {
+        "section_title": "Standard Vinyl Colors",
+        "section_description": "Choose from our wide selection of standard vinyl colors.",
+        "hide_modal": false,
+        "grid_item_width": 400,
+        "grid_gap": 10,
+        "image_height": 150,
+        "background_color": "#f8f9fa",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "vinyl_colors_EtnCHz": {
+      "type": "vinyl-colors",
+      "blocks": {
+        "color_qMQjRR": {
+          "type": "color",
+          "settings": {
+            "color_name": "saddle tan",
+            "color_sku": "517730",
+            "color_image": "shopify://shop_images/Saddletan-517730.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_bCaDDf": {
+          "type": "color",
+          "settings": {
+            "color_name": "coffee cream",
+            "color_sku": "518-768",
+            "color_image": "shopify://shop_images/CoffeeCream-518-768.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_7GmFHQ": {
+          "type": "color",
+          "settings": {
+            "color_name": "emerald",
+            "color_sku": "518772",
+            "color_image": "shopify://shop_images/Emerald-518772.webp",
+            "color_hex": ""
+          }
+        },
+        "color_E3UMnU": {
+          "type": "color",
+          "settings": {
+            "color_name": "sea grass",
+            "color_sku": "518-419",
+            "color_image": "shopify://shop_images/SeaGrass-518419.webp",
+            "color_hex": ""
+          }
+        },
+        "color_bx4haf": {
+          "type": "color",
+          "settings": {
+            "color_name": "aqua",
+            "color_sku": "532-616",
+            "color_image": "shopify://shop_images/Aqua-532616.webp",
+            "color_hex": ""
+          }
+        },
+        "color_DRccA6": {
+          "type": "color",
+          "settings": {
+            "color_name": "gris",
+            "color_sku": "532-615",
+            "color_image": "shopify://shop_images/Gris-532615.webp",
+            "color_hex": ""
+          }
+        },
+        "color_g8gKVC": {
+          "type": "color",
+          "settings": {
+            "color_name": "outback",
+            "color_sku": "518-790",
+            "color_image": "shopify://shop_images/Outback-518790.webp",
+            "color_hex": ""
+          }
+        },
+        "color_rb6fpp": {
+          "type": "color",
+          "settings": {
+            "color_name": "camel back",
+            "color_sku": "518-423",
+            "color_image": "shopify://shop_images/Camelback-518423.webp",
+            "color_hex": ""
+          }
+        },
+        "color_XY7JD3": {
+          "type": "color",
+          "settings": {
+            "color_name": "spruce",
+            "color_sku": "518-417",
+            "color_image": "shopify://shop_images/Spruce-518417.webp",
+            "color_hex": ""
+          }
+        },
+        "color_3HQDQc": {
+          "type": "color",
+          "settings": {
+            "color_name": "Blue nile",
+            "color_sku": "518-762",
+            "color_image": "shopify://shop_images/BlueNile-518762.webp",
+            "color_hex": ""
+          }
+        },
+        "color_gGrqrc": {
+          "type": "color",
+          "settings": {
+            "color_name": "cadet",
+            "color_sku": "518-766",
+            "color_image": "shopify://shop_images/Cadet-518766.webp",
+            "color_hex": ""
+          }
+        },
+        "color_VkbUep": {
+          "type": "color",
+          "settings": {
+            "color_name": "pumice",
+            "color_sku": "518-634",
+            "color_image": "shopify://shop_images/Pumice-518634.webp",
+            "color_hex": ""
+          }
+        },
+        "color_WtMnVX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Buck Suede",
+            "color_sku": "518-636",
+            "color_image": "shopify://shop_images/Bucksuede-518636.webp",
+            "color_hex": ""
+          }
+        },
+        "color_k9p6jb": {
+          "type": "color",
+          "settings": {
+            "color_name": "everglade",
+            "color_sku": "518-773",
+            "color_image": "shopify://shop_images/Everglade-518773.webp",
+            "color_hex": ""
+          }
+        },
+        "color_eXrKcU": {
+          "type": "color",
+          "settings": {
+            "color_name": "Hunter Green",
+            "color_sku": "518-779",
+            "color_image": "shopify://shop_images/Huntergreen-518779.webp",
+            "color_hex": ""
+          }
+        },
+        "color_h3QfdF": {
+          "type": "color",
+          "settings": {
+            "color_name": "Horizon blue",
+            "color_sku": "518-635",
+            "color_image": "shopify://shop_images/HorizonBlue-518635.webp",
+            "color_hex": ""
+          }
+        },
+        "color_LXNJad": {
+          "type": "color",
+          "settings": {
+            "color_name": "Black",
+            "color_sku": "517-420",
+            "color_image": "shopify://shop_images/Black-517420.webp",
+            "color_hex": ""
+          }
+        },
+        "color_e7V3mf": {
+          "type": "color",
+          "settings": {
+            "color_name": "tea leaf",
+            "color_sku": "518-799",
+            "color_image": "shopify://shop_images/Tealeaf-518799.webp",
+            "color_hex": ""
+          }
+        },
+        "color_9xmAMe": {
+          "type": "color",
+          "settings": {
+            "color_name": "Green Tea",
+            "color_sku": "518-777",
+            "color_image": "shopify://shop_images/Green-tea-518777.webp",
+            "color_hex": ""
+          }
+        },
+        "color_nzGyaf": {
+          "type": "color",
+          "settings": {
+            "color_name": "Harbour",
+            "color_sku": "518-778",
+            "color_image": "shopify://shop_images/Harbour-518778.webp",
+            "color_hex": ""
+          }
+        },
+        "color_qV4nmE": {
+          "type": "color",
+          "settings": {
+            "color_name": "Slate",
+            "color_sku": "517-701",
+            "color_image": "shopify://shop_images/Slate-517701.webp",
+            "color_hex": ""
+          }
+        },
+        "color_h9CQTR": {
+          "type": "color",
+          "settings": {
+            "color_name": "Rain Tree",
+            "color_sku": "518-794",
+            "color_image": "shopify://shop_images/Raintree-518794_1.webp",
+            "color_hex": ""
+          }
+        }
+      },
+      "block_order": [
+        "color_qMQjRR",
+        "color_bCaDDf",
+        "color_7GmFHQ",
+        "color_E3UMnU",
+        "color_bx4haf",
+        "color_DRccA6",
+        "color_g8gKVC",
+        "color_rb6fpp",
+        "color_XY7JD3",
+        "color_3HQDQc",
+        "color_gGrqrc",
+        "color_VkbUep",
+        "color_WtMnVX",
+        "color_k9p6jb",
+        "color_eXrKcU",
+        "color_h3QfdF",
+        "color_LXNJad",
+        "color_e7V3mf",
+        "color_9xmAMe",
+        "color_nzGyaf",
+        "color_qV4nmE",
+        "color_h9CQTR"
+      ],
+      "name": "Vinyl Colors",
+      "settings": {
+        "section_title": "",
+        "section_description": "",
+        "hide_modal": false,
+        "grid_item_width": 200,
+        "grid_gap": 10,
+        "image_height": 150,
+        "background_color": "#f8f9fa",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "ultra_leather_colors_z3LUnA": {
+      "type": "ultra-leather-colors",
+      "blocks": {
+        "color_M47Tfz": {
+          "type": "color",
+          "settings": {
+            "color_name": "pelican",
+            "color_sku": "2915676",
+            "color_image": "shopify://shop_images/Pelican-291-5676_1.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_Ufw6YP": {
+          "type": "color",
+          "settings": {
+            "color_name": "Light Oyster",
+            "color_sku": "291-3720",
+            "color_image": "shopify://shop_images/Light-oyster-291-3720.webp",
+            "color_hex": ""
+          }
+        },
+        "color_Xyaq6r": {
+          "type": "color",
+          "settings": {
+            "color_name": "Milk Weed",
+            "color_sku": "2913455",
+            "color_image": "shopify://shop_images/Milkweed-291-3455.webp",
+            "color_hex": ""
+          }
+        },
+        "color_WR63x7": {
+          "type": "color",
+          "settings": {
+            "color_name": "Almond",
+            "color_sku": "291-3599",
+            "color_image": "shopify://shop_images/Almond-291-3599.webp",
+            "color_hex": ""
+          }
+        },
+        "color_xqkVWg": {
+          "type": "color",
+          "settings": {
+            "color_name": "Ivory",
+            "color_sku": "291-3700",
+            "color_image": "shopify://shop_images/UL-Ivory-291-3700.webp",
+            "color_hex": ""
+          }
+        },
+        "color_znYfqU": {
+          "type": "color",
+          "settings": {
+            "color_name": "Sassy",
+            "color_sku": "291-5520",
+            "color_image": "shopify://shop_images/UL-Sassy-291-5520.webp",
+            "color_hex": ""
+          }
+        },
+        "color_KrFUfq": {
+          "type": "color",
+          "settings": {
+            "color_name": "DOE",
+            "color_sku": "291-3601",
+            "color_image": "shopify://shop_images/UL-Doe-291-3601.webp",
+            "color_hex": ""
+          }
+        },
+        "color_PQGwR7": {
+          "type": "color",
+          "settings": {
+            "color_name": "Buff",
+            "color_sku": "291-3609",
+            "color_image": "shopify://shop_images/UL-Buff-291-3609.webp",
+            "color_hex": ""
+          }
+        },
+        "color_DzajRq": {
+          "type": "color",
+          "settings": {
+            "color_name": "SAND",
+            "color_sku": "291-3850",
+            "color_image": "shopify://shop_images/UL-sand-291-3850.webp",
+            "color_hex": ""
+          }
+        },
+        "color_W7xVxg": {
+          "type": "color",
+          "settings": {
+            "color_name": "champagne",
+            "color_sku": "291-3719",
+            "color_image": "shopify://shop_images/UL-Champagne-291-3719.webp",
+            "color_hex": ""
+          }
+        },
+        "color_Wb6dB9": {
+          "type": "color",
+          "settings": {
+            "color_name": "apricot",
+            "color_sku": "291-8243",
+            "color_image": "shopify://shop_images/UL-Apricot-291-8243.webp",
+            "color_hex": ""
+          }
+        },
+        "color_BaQKcp": {
+          "type": "color",
+          "settings": {
+            "color_name": "Artic",
+            "color_sku": "291-5684",
+            "color_image": "shopify://shop_images/UL-Artic-291-5684.webp",
+            "color_hex": ""
+          }
+        },
+        "color_DQULzM": {
+          "type": "color",
+          "settings": {
+            "color_name": "cashmere",
+            "color_sku": "291-3926",
+            "color_image": "shopify://shop_images/UL-Cashmere-291-3926.webp",
+            "color_hex": ""
+          }
+        },
+        "color_g4nhtC": {
+          "type": "color",
+          "settings": {
+            "color_name": "chamois",
+            "color_sku": "291-3851",
+            "color_image": "shopify://shop_images/UL-chamois-291-3584.webp",
+            "color_hex": ""
+          }
+        },
+        "color_bA4kF6": {
+          "type": "color",
+          "settings": {
+            "color_name": "pecan",
+            "color_sku": "291-3778",
+            "color_image": "shopify://shop_images/UL-Pecan-291-3778.webp",
+            "color_hex": ""
+          }
+        },
+        "color_XgdgzV": {
+          "type": "color",
+          "settings": {
+            "color_name": "salmon",
+            "color_sku": "291-6588",
+            "color_image": "shopify://shop_images/UL-Salmon-291-6588.webp",
+            "color_hex": ""
+          }
+        },
+        "color_7FBx6j": {
+          "type": "color",
+          "settings": {
+            "color_name": "Tan",
+            "color_sku": "291-3729",
+            "color_image": "shopify://shop_images/UL-Tan-291-3729.webp",
+            "color_hex": ""
+          }
+        },
+        "color_rrJxhT": {
+          "type": "color",
+          "settings": {
+            "color_name": "pine cone",
+            "color_sku": "291-3183",
+            "color_image": "shopify://shop_images/UL-Pine-Cone-291-3183.webp",
+            "color_hex": ""
+          }
+        },
+        "color_e9dbX7": {
+          "type": "color",
+          "settings": {
+            "color_name": "papyrus",
+            "color_sku": "291-1256",
+            "color_image": "shopify://shop_images/UL-Papyrus-291-1256.webp",
+            "color_hex": ""
+          }
+        },
+        "color_DkRkMJ": {
+          "type": "color",
+          "settings": {
+            "color_name": "adobe",
+            "color_sku": "291-8219",
+            "color_image": "shopify://shop_images/UL-Adobe-291-8219.webp",
+            "color_hex": ""
+          }
+        },
+        "color_fVkQFN": {
+          "type": "color",
+          "settings": {
+            "color_name": "autumn leaf",
+            "color_sku": "291-8233",
+            "color_image": "shopify://shop_images/UL-Autumn-Leaf-291-8233.webp",
+            "color_hex": ""
+          }
+        },
+        "color_Tbcg93": {
+          "type": "color",
+          "settings": {
+            "color_name": "white",
+            "color_sku": "291-0001",
+            "color_image": "shopify://shop_images/UL-White-291-0001.webp",
+            "color_hex": ""
+          }
+        },
+        "color_dgM6ET": {
+          "type": "color",
+          "settings": {
+            "color_name": "Ermine",
+            "color_sku": "291-5805",
+            "color_image": "shopify://shop_images/UL-Ermine-383-5805.webp",
+            "color_hex": ""
+          }
+        },
+        "color_r9GPkF": {
+          "type": "color",
+          "settings": {
+            "color_name": "ice",
+            "color_sku": "291-5714",
+            "color_image": "shopify://shop_images/UL-Ice-291-5714.webp",
+            "color_hex": ""
+          }
+        },
+        "color_YzVbeQ": {
+          "type": "color",
+          "settings": {
+            "color_name": "silver pearl",
+            "color_sku": "291-5668",
+            "color_image": "shopify://shop_images/UL-Silver-Pearl-291-5668.webp",
+            "color_hex": ""
+          }
+        },
+        "color_aHEHDm": {
+          "type": "color",
+          "settings": {
+            "color_name": "Dove Grey",
+            "color_sku": "291-5666",
+            "color_image": "shopify://shop_images/UL-Dove-Grey-291-5666.webp",
+            "color_hex": ""
+          }
+        },
+        "color_gcThrY": {
+          "type": "color",
+          "settings": {
+            "color_name": "stone",
+            "color_sku": "291-3602",
+            "color_image": "shopify://shop_images/UL-Stone-291-3602.webp",
+            "color_hex": ""
+          }
+        },
+        "color_3w8eRM": {
+          "type": "color",
+          "settings": {
+            "color_name": "cave",
+            "color_sku": "291-3523",
+            "color_image": "shopify://shop_images/UL-Cave-291-3523.webp",
+            "color_hex": ""
+          }
+        },
+        "color_N3Ji4f": {
+          "type": "color",
+          "settings": {
+            "color_name": "Taupe",
+            "color_sku": "291-3779",
+            "color_image": "shopify://shop_images/UL-Taupe-291-3779.webp",
+            "color_hex": ""
+          }
+        },
+        "color_pMgMbn": {
+          "type": "color",
+          "settings": {
+            "color_name": "curry",
+            "color_sku": "291-3612",
+            "color_image": "shopify://shop_images/UL-Curry-291-3612.webp",
+            "color_hex": ""
+          }
+        },
+        "color_fmVdTk": {
+          "type": "color",
+          "settings": {
+            "color_name": "poppy",
+            "color_sku": "291-1347",
+            "color_image": "shopify://shop_images/UL-Poppy-291-1347.webp",
+            "color_hex": ""
+          }
+        },
+        "color_a4WJWm": {
+          "type": "color",
+          "settings": {
+            "color_name": "elephant",
+            "color_sku": "291-5040",
+            "color_image": "shopify://shop_images/UL-Elephant-291-5040.webp",
+            "color_hex": ""
+          }
+        },
+        "color_GR9DCc": {
+          "type": "color",
+          "settings": {
+            "color_name": "granite",
+            "color_sku": "291-5708",
+            "color_image": "shopify://shop_images/UL-Granite-291-5708.webp",
+            "color_hex": ""
+          }
+        },
+        "color_t9bdqG": {
+          "type": "color",
+          "settings": {
+            "color_name": "charcoal",
+            "color_sku": "291-5763",
+            "color_image": "shopify://shop_images/UL-Charcoal-291-5763.webp",
+            "color_hex": ""
+          }
+        },
+        "color_Nm9CPc": {
+          "type": "color",
+          "settings": {
+            "color_name": "schooner",
+            "color_sku": "schooner",
+            "color_image": "shopify://shop_images/UL-Schooner-291-5806.webp",
+            "color_hex": ""
+          }
+        },
+        "color_pcCNrL": {
+          "type": "color",
+          "settings": {
+            "color_name": "raven wing",
+            "color_sku": "291-5607",
+            "color_image": "shopify://shop_images/UL-Raven-Wing-291-5607.webp",
+            "color_hex": ""
+          }
+        },
+        "color_JwQ3TB": {
+          "type": "color",
+          "settings": {
+            "color_name": "walnut",
+            "color_sku": "291-3777",
+            "color_image": "shopify://shop_images/UL-Walnut-291-3777.webp",
+            "color_hex": ""
+          }
+        },
+        "color_3CHYXg": {
+          "type": "color",
+          "settings": {
+            "color_name": "fudge",
+            "color_sku": "291-3666",
+            "color_image": "shopify://shop_images/UL-Fudge-291-3666.webp",
+            "color_hex": ""
+          }
+        },
+        "color_8JMkCV": {
+          "type": "color",
+          "settings": {
+            "color_name": "hot chocolate",
+            "color_sku": "291-3205",
+            "color_image": "shopify://shop_images/UL-Hot-Chocolate-291-3205.webp",
+            "color_hex": ""
+          }
+        },
+        "color_KM6k8q": {
+          "type": "color",
+          "settings": {
+            "color_name": "hide",
+            "color_sku": "291-3610",
+            "color_image": "shopify://shop_images/UL-Hide-291-3610.webp",
+            "color_hex": ""
+          }
+        },
+        "color_PR9bRF": {
+          "type": "color",
+          "settings": {
+            "color_name": "reed",
+            "color_sku": "291-1176",
+            "color_image": "shopify://shop_images/UL-Red-291-1176.webp",
+            "color_hex": ""
+          }
+        },
+        "color_rLJFeU": {
+          "type": "color",
+          "settings": {
+            "color_name": "desert rose",
+            "color_sku": "291-7213",
+            "color_image": "shopify://shop_images/UL-Desert-Rose-291-7213.webp",
+            "color_hex": ""
+          }
+        },
+        "color_zNfgdY": {
+          "type": "color",
+          "settings": {
+            "color_name": "dusk",
+            "color_sku": "291-9380",
+            "color_image": "shopify://shop_images/UL-Dusk-291-9380.webp",
+            "color_hex": ""
+          }
+        },
+        "color_akef9K": {
+          "type": "color",
+          "settings": {
+            "color_name": "riveria",
+            "color_sku": "291-2552",
+            "color_image": "shopify://shop_images/UL-Riviera-291-2552_24a4bfb4-f266-4c37-a46d-244d5761e51f.webp",
+            "color_hex": ""
+          }
+        },
+        "color_fXH9cE": {
+          "type": "color",
+          "settings": {
+            "color_name": "lagoon",
+            "color_sku": "291-2527",
+            "color_image": "shopify://shop_images/UL-Lagoon-291-2527.webp",
+            "color_hex": ""
+          }
+        },
+        "color_RwNPPc": {
+          "type": "color",
+          "settings": {
+            "color_name": "citrus",
+            "color_sku": "291-5200",
+            "color_image": "shopify://shop_images/UL-Citrus-291-5200.webp",
+            "color_hex": ""
+          }
+        },
+        "color_RMHdb8": {
+          "type": "color",
+          "settings": {
+            "color_name": "brick",
+            "color_sku": "291-1311",
+            "color_image": "shopify://shop_images/UL-Brick-291-1311.webp",
+            "color_hex": ""
+          }
+        },
+        "color_KpFnHr": {
+          "type": "color",
+          "settings": {
+            "color_name": "plum",
+            "color_sku": "291-9385",
+            "color_image": "shopify://shop_images/UL-Plum-291-9385.webp",
+            "color_hex": ""
+          }
+        },
+        "color_ckyCWb": {
+          "type": "color",
+          "settings": {
+            "color_name": "bayou",
+            "color_sku": "291-2685",
+            "color_image": "shopify://shop_images/UL-Bayou-291-2685.webp",
+            "color_hex": ""
+          }
+        },
+        "color_gTzxVG": {
+          "type": "color",
+          "settings": {
+            "color_name": "cyan",
+            "color_sku": "291-2553",
+            "color_image": "shopify://shop_images/UL-Cyan-291-2553.webp",
+            "color_hex": ""
+          }
+        }
+      },
+      "block_order": [
+        "color_M47Tfz",
+        "color_Ufw6YP",
+        "color_Xyaq6r",
+        "color_WR63x7",
+        "color_xqkVWg",
+        "color_znYfqU",
+        "color_KrFUfq",
+        "color_PQGwR7",
+        "color_DzajRq",
+        "color_W7xVxg",
+        "color_Wb6dB9",
+        "color_BaQKcp",
+        "color_DQULzM",
+        "color_g4nhtC",
+        "color_bA4kF6",
+        "color_XgdgzV",
+        "color_7FBx6j",
+        "color_rrJxhT",
+        "color_e9dbX7",
+        "color_DkRkMJ",
+        "color_fVkQFN",
+        "color_Tbcg93",
+        "color_dgM6ET",
+        "color_r9GPkF",
+        "color_YzVbeQ",
+        "color_aHEHDm",
+        "color_gcThrY",
+        "color_3w8eRM",
+        "color_N3Ji4f",
+        "color_pMgMbn",
+        "color_fmVdTk",
+        "color_a4WJWm",
+        "color_GR9DCc",
+        "color_t9bdqG",
+        "color_Nm9CPc",
+        "color_pcCNrL",
+        "color_JwQ3TB",
+        "color_3CHYXg",
+        "color_8JMkCV",
+        "color_KM6k8q",
+        "color_PR9bRF",
+        "color_rLJFeU",
+        "color_zNfgdY",
+        "color_akef9K",
+        "color_fXH9cE",
+        "color_RwNPPc",
+        "color_RMHdb8",
+        "color_KpFnHr",
+        "color_ckyCWb",
+        "color_gTzxVG"
+      ],
+      "name": "Ultra Leather Colors",
+      "settings": {
+        "section_title": "Ultra Leather Colors",
+        "section_description": "Choose from our wide selection of Ultra Leather Colors.",
+        "hide_modal": true,
+        "grid_item_width": 200,
+        "grid_gap": 10,
+        "image_height": 150,
+        "background_color": "#a42325",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "ultra_leather_colors_eE44DX": {
+      "type": "ultra-leather-colors",
+      "blocks": {
+        "color_qQw36D": {
+          "type": "color",
+          "settings": {
+            "color_name": "Parrot",
+            "color_sku": "291-4460",
+            "color_image": "shopify://shop_images/UL-Parrot-291-4460.webp",
+            "color_hex": "#f5f5dc"
+          }
+        },
+        "color_z7m3jV": {
+          "type": "color",
+          "settings": {
+            "color_name": "boysenberry",
+            "color_sku": "291-7214",
+            "color_image": "shopify://shop_images/UL-Boysenberry-291-7214.webp",
+            "color_hex": ""
+          }
+        },
+        "color_3kNBEK": {
+          "type": "color",
+          "settings": {
+            "color_name": "Garnet",
+            "color_sku": "291-3469",
+            "color_image": "shopify://shop_images/UL-Garnet-291-3469.webp",
+            "color_hex": ""
+          }
+        },
+        "color_wTTkhD": {
+          "type": "color",
+          "settings": {
+            "color_name": "St John",
+            "color_sku": "291-2507",
+            "color_image": "shopify://shop_images/UL-St.-John-291-2507.webp",
+            "color_hex": ""
+          }
+        },
+        "color_yKWTiQ": {
+          "type": "color",
+          "settings": {
+            "color_name": "Sonora",
+            "color_sku": "291-4454",
+            "color_image": "shopify://shop_images/UL-Sonora-291-4454.webp",
+            "color_hex": ""
+          }
+        },
+        "color_izkHp9": {
+          "type": "color",
+          "settings": {
+            "color_name": "sorbet",
+            "color_sku": "291-6580",
+            "color_image": "shopify://shop_images/UL-Sorbet-291-6580.webp",
+            "color_hex": ""
+          }
+        },
+        "color_ediNWf": {
+          "type": "color",
+          "settings": {
+            "color_name": "baltic",
+            "color_sku": "291-2551",
+            "color_image": "shopify://shop_images/UL-Baltic-291-2551.webp",
+            "color_hex": ""
+          }
+        },
+        "color_TXztGp": {
+          "type": "color",
+          "settings": {
+            "color_name": "Poseidon",
+            "color_sku": "291-2509",
+            "color_image": "shopify://shop_images/UL-Poseidon-291-2509.webp",
+            "color_hex": ""
+          }
+        },
+        "color_FLVVkc": {
+          "type": "color",
+          "settings": {
+            "color_name": "Herbal Mist",
+            "color_sku": "291-4314",
+            "color_image": "shopify://shop_images/UL-Herbal-Mist-291-4314.webp",
+            "color_hex": ""
+          }
+        },
+        "color_aRkkhp": {
+          "type": "color",
+          "settings": {
+            "color_name": "Eucalyptus",
+            "color_sku": "291-4430",
+            "color_image": "shopify://shop_images/UL-Eucalyptus-291-4430.webp",
+            "color_hex": ""
+          }
+        },
+        "color_JT8AkR": {
+          "type": "color",
+          "settings": {
+            "color_name": "TORO",
+            "color_sku": "291-1334",
+            "color_image": "shopify://shop_images/UL-Toro-291-1334.webp",
+            "color_hex": ""
+          }
+        },
+        "color_FAY3Ej": {
+          "type": "color",
+          "settings": {
+            "color_name": "Nile",
+            "color_sku": "291-2555",
+            "color_image": "shopify://shop_images/UL-Nile-291-2555.webp",
+            "color_hex": ""
+          }
+        },
+        "color_pHftNb": {
+          "type": "color",
+          "settings": {
+            "color_name": "diplomat blue",
+            "color_sku": "291-2478",
+            "color_image": "shopify://shop_images/UL-Diplomat-Blue-291-2478.webp",
+            "color_hex": ""
+          }
+        },
+        "color_kghG3T": {
+          "type": "color",
+          "settings": {
+            "color_name": "shetland",
+            "color_sku": "291-4351",
+            "color_image": "shopify://shop_images/UL-Shetland-291-4351.webp",
+            "color_hex": ""
+          }
+        },
+        "color_3D43kB": {
+          "type": "color",
+          "settings": {
+            "color_name": "sweet grass",
+            "color_sku": "291-4313",
+            "color_image": "shopify://shop_images/UL-Sweetgrass-291-4313.webp",
+            "color_hex": ""
+          }
+        },
+        "color_67CrRG": {
+          "type": "color",
+          "settings": {
+            "color_name": "chianti",
+            "color_sku": "291-1312",
+            "color_image": "shopify://shop_images/UL-Chianti-291-1312.webp",
+            "color_hex": ""
+          }
+        },
+        "color_jkahny": {
+          "type": "color",
+          "settings": {
+            "color_name": "Admiral",
+            "color_sku": "291-2556",
+            "color_image": "shopify://shop_images/UL-Admiral-291-2556.webp",
+            "color_hex": ""
+          }
+        }
+      },
+      "block_order": [
+        "color_qQw36D",
+        "color_z7m3jV",
+        "color_3kNBEK",
+        "color_wTTkhD",
+        "color_yKWTiQ",
+        "color_izkHp9",
+        "color_ediNWf",
+        "color_TXztGp",
+        "color_FLVVkc",
+        "color_aRkkhp",
+        "color_JT8AkR",
+        "color_FAY3Ej",
+        "color_pHftNb",
+        "color_kghG3T",
+        "color_3D43kB",
+        "color_67CrRG",
+        "color_jkahny"
+      ],
+      "name": "Ultra Leather Colors",
+      "settings": {
+        "section_title": "",
+        "section_description": "",
+        "hide_modal": true,
+        "grid_item_width": 200,
+        "grid_gap": 10,
+        "image_height": 150,
+        "background_color": "#a42325",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "silvertex_colors_tNjh8h": {
+      "type": "silvertex-colors",
+      "blocks": {
+        "color_EqPErz": {
+          "type": "color",
+          "settings": {
+            "color_name": "Marine Blue",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Marine-Blue.webp",
+            "color_hex": "#e5e5e5"
+          }
+        },
+        "color_YrJH6a": {
+          "type": "color",
+          "settings": {
+            "color_name": "ICE",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Ice.webp",
+            "color_hex": ""
+          }
+        },
+        "color_rwzWrk": {
+          "type": "color",
+          "settings": {
+            "color_name": "Cream",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Cream.webp",
+            "color_hex": ""
+          }
+        },
+        "color_UnXqKK": {
+          "type": "color",
+          "settings": {
+            "color_name": "lagoon",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Lagoon.webp",
+            "color_hex": ""
+          }
+        },
+        "color_EXPhyC": {
+          "type": "color",
+          "settings": {
+            "color_name": "Turquoise",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Turquoise.webp",
+            "color_hex": ""
+          }
+        },
+        "color_EQGwJF": {
+          "type": "color",
+          "settings": {
+            "color_name": "plata",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Plata.webp",
+            "color_hex": ""
+          }
+        },
+        "color_tT6wWq": {
+          "type": "color",
+          "settings": {
+            "color_name": "storm",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Storm.webp",
+            "color_hex": ""
+          }
+        },
+        "color_FHeyHx": {
+          "type": "color",
+          "settings": {
+            "color_name": "sapphire",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Sapphire.webp",
+            "color_hex": ""
+          }
+        },
+        "color_TwCTKa": {
+          "type": "color",
+          "settings": {
+            "color_name": "jet",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Jet.webp",
+            "color_hex": ""
+          }
+        },
+        "color_Bc67E6": {
+          "type": "color",
+          "settings": {
+            "color_name": "sterling",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Sterling.webp",
+            "color_hex": ""
+          }
+        },
+        "color_9zNH4f": {
+          "type": "color",
+          "settings": {
+            "color_name": "Neutra",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Neutra.webp",
+            "color_hex": ""
+          }
+        },
+        "color_9ahRGy": {
+          "type": "color",
+          "settings": {
+            "color_name": "Meteor",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Meteor.webp",
+            "color_hex": ""
+          }
+        },
+        "color_qdTB8r": {
+          "type": "color",
+          "settings": {
+            "color_name": "Carbon",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Carbon.webp",
+            "color_hex": ""
+          }
+        },
+        "color_4wqFjW": {
+          "type": "color",
+          "settings": {
+            "color_name": "Creme de menthe",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Creme-De-Menthe.webp",
+            "color_hex": ""
+          }
+        },
+        "color_pMerpm": {
+          "type": "color",
+          "settings": {
+            "color_name": "Acid",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Acid.webp",
+            "color_hex": ""
+          }
+        },
+        "color_GFUAcC": {
+          "type": "color",
+          "settings": {
+            "color_name": "basil",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Basil.webp",
+            "color_hex": ""
+          }
+        },
+        "color_WbAGmT": {
+          "type": "color",
+          "settings": {
+            "color_name": "Bottle",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Bottle.webp",
+            "color_hex": ""
+          }
+        },
+        "color_WqW7ei": {
+          "type": "color",
+          "settings": {
+            "color_name": "Limoncello",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Limoncello.webp",
+            "color_hex": ""
+          }
+        },
+        "color_tAi6H4": {
+          "type": "color",
+          "settings": {
+            "color_name": "Zest",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Zest.webp",
+            "color_hex": ""
+          }
+        },
+        "color_hyKFMc": {
+          "type": "color",
+          "settings": {
+            "color_name": "Celery",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Celery.webp",
+            "color_hex": ""
+          }
+        },
+        "color_i4nXyF": {
+          "type": "color",
+          "settings": {
+            "color_name": "sage",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Sage.webp",
+            "color_hex": ""
+          }
+        },
+        "color_F7P7Vq": {
+          "type": "color",
+          "settings": {
+            "color_name": "Bazaar",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Bazaar.webp",
+            "color_hex": ""
+          }
+        },
+        "color_XFJnUR": {
+          "type": "color",
+          "settings": {
+            "color_name": "Champagne",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Champagne.webp",
+            "color_hex": ""
+          }
+        },
+        "color_9XiMGb": {
+          "type": "color",
+          "settings": {
+            "color_name": "Marsh",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Marsh.webp",
+            "color_hex": ""
+          }
+        },
+        "color_hxLGJE": {
+          "type": "color",
+          "settings": {
+            "color_name": "Peat",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Peat.webp",
+            "color_hex": ""
+          }
+        },
+        "color_JQNd43": {
+          "type": "color",
+          "settings": {
+            "color_name": "Mandarin",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Mandarin.webp",
+            "color_hex": ""
+          }
+        },
+        "color_pUFL7Q": {
+          "type": "color",
+          "settings": {
+            "color_name": "Chestnut",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Chestnut.webp",
+            "color_hex": ""
+          }
+        },
+        "color_MrdN8j": {
+          "type": "color",
+          "settings": {
+            "color_name": "Bronze",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Bronze.webp",
+            "color_hex": ""
+          }
+        },
+        "color_Cd9XEY": {
+          "type": "color",
+          "settings": {
+            "color_name": "Taupe",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Taupe.webp",
+            "color_hex": ""
+          }
+        },
+        "color_mtN4pq": {
+          "type": "color",
+          "settings": {
+            "color_name": "Imperial",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Imperial.webp",
+            "color_hex": ""
+          }
+        },
+        "color_GUhPM6": {
+          "type": "color",
+          "settings": {
+            "color_name": "Umber",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Umber.webp",
+            "color_hex": ""
+          }
+        },
+        "color_yJcNBp": {
+          "type": "color",
+          "settings": {
+            "color_name": "Luggage",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Luggage.webp",
+            "color_hex": ""
+          }
+        },
+        "color_wTCyKF": {
+          "type": "color",
+          "settings": {
+            "color_name": "Borscht",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Borscht.webp",
+            "color_hex": ""
+          }
+        },
+        "color_7RcfYG": {
+          "type": "color",
+          "settings": {
+            "color_name": "Rasberry",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Raspberry.webp",
+            "color_hex": ""
+          }
+        },
+        "color_7drarj": {
+          "type": "color",
+          "settings": {
+            "color_name": "BlackBerry",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Blackberry.webp",
+            "color_hex": ""
+          }
+        },
+        "color_P7Y4GV": {
+          "type": "color",
+          "settings": {
+            "color_name": "Mocha",
+            "color_sku": "",
+            "color_image": "shopify://shop_images/silvertex-usa__Mocha.webp",
+            "color_hex": ""
+          }
+        }
+      },
+      "block_order": [
+        "color_EqPErz",
+        "color_YrJH6a",
+        "color_rwzWrk",
+        "color_UnXqKK",
+        "color_EXPhyC",
+        "color_EQGwJF",
+        "color_tT6wWq",
+        "color_FHeyHx",
+        "color_TwCTKa",
+        "color_Bc67E6",
+        "color_9zNH4f",
+        "color_9ahRGy",
+        "color_qdTB8r",
+        "color_4wqFjW",
+        "color_pMerpm",
+        "color_GFUAcC",
+        "color_WbAGmT",
+        "color_WqW7ei",
+        "color_tAi6H4",
+        "color_hyKFMc",
+        "color_i4nXyF",
+        "color_F7P7Vq",
+        "color_XFJnUR",
+        "color_9XiMGb",
+        "color_hxLGJE",
+        "color_JQNd43",
+        "color_pUFL7Q",
+        "color_MrdN8j",
+        "color_Cd9XEY",
+        "color_mtN4pq",
+        "color_GUhPM6",
+        "color_yJcNBp",
+        "color_wTCyKF",
+        "color_7RcfYG",
+        "color_7drarj",
+        "color_P7Y4GV"
+      ],
+      "name": "Silvertex Colors",
+      "settings": {
+        "section_title": "Silvertex Colors",
+        "section_description": "Choose from our wide selection of Silvertex colors.",
+        "hide_modal": true,
+        "grid_item_width": 100,
+        "grid_gap": 10,
+        "image_height": 150,
+        "background_color": "#f8f9fa",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "stakleen_colors_jG3rmq": {
+      "type": "stakleen-colors",
+      "blocks": {
+        "color_rEUeKc": {
+          "type": "color",
+          "settings": {
+            "color_name": "Natural Light",
+            "color_sku": "SND12",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND12.jpg",
+            "color_hex": "#1a237e"
+          }
+        },
+        "color_7MtVRU": {
+          "type": "color",
+          "settings": {
+            "color_name": "Pale Aqua",
+            "color_sku": "ND15",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND15.webp",
+            "color_hex": ""
+          }
+        },
+        "color_tymHfj": {
+          "type": "color",
+          "settings": {
+            "color_name": "beeswax",
+            "color_sku": "nd16",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND16.webp",
+            "color_hex": ""
+          }
+        },
+        "color_RNJiAX": {
+          "type": "color",
+          "settings": {
+            "color_name": "Ball Point",
+            "color_sku": "ND25",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND25.webp",
+            "color_hex": ""
+          }
+        },
+        "color_3Azm3C": {
+          "type": "color",
+          "settings": {
+            "color_name": "Pitch",
+            "color_sku": "ND35",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND35.webp",
+            "color_hex": ""
+          }
+        },
+        "color_6QgW73": {
+          "type": "color",
+          "settings": {
+            "color_name": "Clay",
+            "color_sku": "ND27",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND27.webp",
+            "color_hex": ""
+          }
+        },
+        "color_QLEXC3": {
+          "type": "color",
+          "settings": {
+            "color_name": "Magic",
+            "color_sku": "ND30",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND30.webp",
+            "color_hex": ""
+          }
+        },
+        "color_D9cy3M": {
+          "type": "color",
+          "settings": {
+            "color_name": "MICA",
+            "color_sku": "ND31",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND31.webp",
+            "color_hex": ""
+          }
+        },
+        "color_djeqYG": {
+          "type": "color",
+          "settings": {
+            "color_name": "Arabica",
+            "color_sku": "ND33",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND33.webp",
+            "color_hex": ""
+          }
+        },
+        "color_pPU8BG": {
+          "type": "color",
+          "settings": {
+            "color_name": "Yuma",
+            "color_sku": "nd26",
+            "color_image": "shopify://shop_images/Natural-Light-Sundance-with-Sta-Kleen_-SND26.webp",
+            "color_hex": ""
+          }
+        }
+      },
+      "block_order": [
+        "color_rEUeKc",
+        "color_7MtVRU",
+        "color_tymHfj",
+        "color_RNJiAX",
+        "color_3Azm3C",
+        "color_6QgW73",
+        "color_QLEXC3",
+        "color_D9cy3M",
+        "color_djeqYG",
+        "color_pPU8BG"
+      ],
+      "name": "Sta-Kleen Colors",
+      "settings": {
+        "section_title": "Sta-Kleen Colors",
+        "section_description": "Choose from our wide selection of Sta-Kleen colors.",
+        "hide_modal": true,
+        "grid_item_width": 200,
+        "grid_gap": 10,
+        "image_height": 150,
+        "background_color": "#f8f9fa",
+        "title_color": "#333333",
+        "text_color": "#666666",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "marquee_zPeRcr": {
+      "type": "marquee",
+      "blocks": {
+        "text_PGQwVh": {
+          "type": "text",
+          "settings": {
+            "text": "<p>STOP THE PAIN WITH ERGONOMIC COMFORT BUILT FOR YOUR BODY.</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h3",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_PGQwVh"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "color_scheme": "",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
       }
     }
   },
   "order": [
     "main",
-    "product_recommendations_iA6pyd"
+    "17518352607fb417f4",
+    "material_navigation_nFftqe",
+    "vinyl_colors_V8g39g",
+    "vinyl_colors_UDWWkH",
+    "vinyl_colors_EtnCHz",
+    "ultra_leather_colors_z3LUnA",
+    "ultra_leather_colors_eE44DX",
+    "silvertex_colors_tNjh8h",
+    "stakleen_colors_jG3rmq",
+    "marquee_zPeRcr"
   ]
 }

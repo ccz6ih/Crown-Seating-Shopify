@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "collection_list_Y66Rtq": {
       "type": "main-collection-list",
@@ -15,6 +16,7 @@
           "type": "group",
           "name": "t:names.header",
           "settings": {
+            "link": "",
             "open_in_new_tab": false,
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -53,7 +55,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h1>Shop by collection</h1>",
+                "text": "<h3>Shop by collection</h3>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -85,10 +87,10 @@
           "name": "t:names.collection_card",
           "static": true,
           "settings": {
-            "placement": "on_image",
+            "placement": "below_image",
             "horizontal_alignment": "center",
             "vertical_alignment": "center",
-            "collection_card_gap": 1,
+            "collection_card_gap": 13,
             "inherit_color_scheme": false,
             "color_scheme": "scheme-6",
             "border": "none",
@@ -102,16 +104,16 @@
               "name": "t:names.collection_title",
               "settings": {
                 "width": "fit-content",
-                "max_width": "normal",
+                "max_width": "none",
                 "alignment": "left",
-                "type_preset": "h4",
+                "type_preset": "h2",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "color": "var(--color-foreground)",
+                "color": "var(--color-foreground-heading)",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -127,12 +129,12 @@
               "name": "t:names.collection_card_image",
               "static": true,
               "settings": {
-                "image_ratio": "landscape",
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
+                "image_ratio": "square",
+                "toggle_overlay": true,
+                "overlay_color": "#f4f4f40f",
                 "overlay_style": "solid",
                 "gradient_direction": "to top",
-                "border": "none",
+                "border": "solid",
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 0
@@ -148,21 +150,21 @@
       "block_order": [
         "group_iWXpre"
       ],
-      "name": "Collection list",
+      "name": "t:names.collections_grid",
       "settings": {
         "layout_type": "grid",
         "carousel_on_mobile": true,
         "columns": 3,
         "mobile_columns": "2",
-        "columns_gap": 1,
+        "columns_gap": 15,
         "bento_gap": 8,
-        "rows_gap": 1,
+        "rows_gap": 10,
         "max_collections": 4,
         "icons_style": "arrow",
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 28,
-        "color_scheme": "",
+        "color_scheme": "scheme-1",
         "padding-block-start": 48,
         "padding-block-end": 48
       }

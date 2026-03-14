@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "section": {
       "type": "section",
@@ -15,6 +16,8 @@
           "type": "group",
           "name": "t:names.group",
           "settings": {
+            "link": "",
+            "open_in_new_tab": false,
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -42,7 +45,6 @@
             "overlay_color": "#00000026",
             "overlay_style": "solid",
             "gradient_direction": "to top",
-            "open_in_new_tab": false,
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
@@ -52,11 +54,11 @@
             "text_ANq86U": {
               "type": "text",
               "settings": {
-                "text": "<h1>{{ closest.page.title }}</h1>",
+                "text": "<h2>{{ closest.page.title }}</h2>",
                 "width": "100%",
                 "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "h2",
+                "alignment": "center",
+                "type_preset": "rte",
                 "font": "var(--font-primary--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
@@ -77,10 +79,10 @@
             "text_jrgQcg": {
               "type": "text",
               "settings": {
-                "text": "<p>{{ closest.page.content }}</p>",
+                "text": "<p>Please submit the following form and a member of our staff will contact you within 24 hours.<br/><br/></p>",
                 "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
+                "max_width": "none",
+                "alignment": "center",
                 "type_preset": "rte",
                 "font": "var(--font-primary--family)",
                 "font_size": "1rem",
@@ -104,42 +106,10 @@
             "text_ANq86U",
             "text_jrgQcg"
           ]
-        },
-        "contact_form_jWxXkm": {
-          "type": "contact-form",
-          "settings": {
-            "width": "custom",
-            "custom_width": 100,
-            "width_mobile": "custom",
-            "custom_width_mobile": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "scheme-1",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "submit-button": {
-              "type": "contact-form-submit-button",
-              "static": true,
-              "settings": {
-                "label": "Send",
-                "style_class": "button",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": []
         }
       },
       "block_order": [
-        "group_PnXWxT",
-        "contact_form_jWxXkm"
+        "group_PnXWxT"
       ],
       "settings": {
         "content_direction": "column",
@@ -147,7 +117,7 @@
         "horizontal_alignment": "flex-start",
         "vertical_alignment": "center",
         "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
+        "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 30,
         "section_width": "page-width",
@@ -168,9 +138,21 @@
         "padding-block-start": 40,
         "padding-block-end": 70
       }
+    },
+    "custom_liquid_Hg9G76": {
+      "type": "custom-liquid",
+      "name": "t:names.custom_liquid",
+      "settings": {
+        "custom_liquid": "<script src=\"https://js.hsforms.net/forms/embed/39508280.js\" defer></script>\n<div class=\"hs-form-frame\" data-region=\"na1\" data-form-id=\"c369e787-a1d9-4ffa-8b9e-bae1456511de\" data-portal-id=\"39508280\"></div>",
+        "color_scheme": "",
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
-    "section"
+    "section",
+    "custom_liquid_Hg9G76"
   ]
 }

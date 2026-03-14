@@ -278,12 +278,6 @@
                         "type_preset": "paragraph",
                         "width": "fit-content",
                         "alignment": "right",
-                        "font": "var(--font-body--family)",
-                        "font_size": "1rem",
-                        "line_height": "normal",
-                        "letter_spacing": "normal",
-                        "case": "none",
-                        "color": "var(--color-foreground)",
                         "padding-block-start": 0,
                         "padding-block-end": 0,
                         "padding-inline-start": 0,
@@ -379,7 +373,7 @@
           ]
         }
       },
-      "name": "Featured collection",
+      "name": "t:names.products_grid",
       "settings": {
         "collection": "all",
         "layout_type": "grid",
@@ -387,7 +381,6 @@
         "max_products": 3,
         "columns": 3,
         "mobile_columns": "1",
-        "mobile_card_size": "60cqw",
         "columns_gap": 1,
         "rows_gap": 1,
         "icons_style": "arrow",
