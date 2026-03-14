@@ -622,6 +622,8 @@
         var mediaType = this.dataset.mediaType;
         if (mediaType === 'video' && this.dataset.videoHtml) {
           mainMedia.innerHTML = this.dataset.videoHtml;
+          var vid = mainMedia.querySelector('video');
+          if (vid) vid.play();
         } else {
           var imgEl = this.querySelector('img');
           if (imgEl) {
@@ -639,6 +641,9 @@
         var videoHtml = this.dataset.videoHtml;
         if (videoHtml) {
           mainMedia.innerHTML = videoHtml;
+          // Auto-play the video
+          var vid = mainMedia.querySelector('video');
+          if (vid) vid.play();
           // Highlight the video thumbnail
           var vidIdx = this.dataset.videoThumbIndex;
           thumbnails.forEach(function(t) {
