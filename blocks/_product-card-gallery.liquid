@@ -53,7 +53,7 @@
       endif
     %}
 
-    <div class="product-card-video-wrap" data-product-url="{{ product.url }}">
+    <div class="product-card-video-wrap" data-product-video-card>
       {% if poster_url != null %}
         <img
           src="{{ poster_url }}"
@@ -61,19 +61,32 @@
           class="product-card-video__poster"
           loading="lazy"
         >
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
       {% endif %}
-      <button
-        type="button"
-        class="product-card-video__play-btn"
-        aria-label="Play video for {{ product.title | escape }}"
-        data-video-sources="{{ product_video.sources | map: 'url' | join: ',' }}"
-        data-video-type="{{ product_video.sources[0].mime_type }}"
-      >
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="23" fill="rgba(0,0,0,0.5)" stroke="white" stroke-width="2"/>
-          <polygon points="19,14 36,24 19,34" fill="white"/>
-        </svg>
-      </button>
+      <div class="product-card-video__actions">
+        <a
+          href="{{ product.url }}"
+          class="product-card-video__btn product-card-video__btn--learn"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Learn More
+        </a>
+        <button
+          type="button"
+          class="product-card-video__btn product-card-video__btn--play"
+          aria-label="Play video for {{ product.title | escape }}"
+          data-video-id="{{ product_video.id }}"
+          {% for source in product_video.sources %}
+            data-video-src-{{ forloop.index0 }}="{{ source.url }}"
+            data-video-type-{{ forloop.index0 }}="{{ source.mime_type }}"
+          {% endfor %}
+          data-video-source-count="{{ product_video.sources.size }}"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+          Play Video
+        </button>
+      </div>
     </div>
   {% else %}
     {% if product != blank and product.featured_image %}
@@ -106,7 +119,7 @@
 
 <script>
   document.addEventListener('click', function(e) {
-    var playBtn = e.target.closest('.product-card-video__play-btn');
+    var playBtn = e.target.closest('.product-card-video__btn--play');
     if (!playBtn) return;
 
     e.preventDefault();
@@ -115,11 +128,9 @@
     var wrap = playBtn.closest('.product-card-video-wrap');
     if (!wrap) return;
 
-    var sources = playBtn.dataset.videoSources;
-    var mimeType = playBtn.dataset.videoType || 'video/mp4';
-    if (!sources) return;
+    var sourceCount = parseInt(playBtn.dataset.videoSourceCount, 10) || 0;
+    if (sourceCount === 0) return;
 
-    var sourceUrl = sources.split(',')[0];
     var video = document.createElement('video');
     video.className = 'product-card-video';
     video.controls = true;
@@ -127,12 +138,18 @@
     video.autoplay = true;
     video.style.cssText = 'width:100%;height:100%;object-fit:cover;';
 
-    var source = document.createElement('source');
-    source.src = sourceUrl;
-    source.type = mimeType;
-    video.appendChild(source);
+    for (var i = 0; i < sourceCount; i++) {
+      var src = playBtn.dataset['videoSrc' + i];
+      var type = playBtn.dataset['videoType' + i] || 'video/mp4';
+      if (src) {
+        var source = document.createElement('source');
+        source.src = src;
+        source.type = type;
+        video.appendChild(source);
+      }
+    }
 
-    // Stop clicks on the playing video from navigating
+    // Stop clicks on the playing video from navigating to product page
     video.addEventListener('click', function(ev) {
       ev.stopPropagation();
     });
@@ -156,22 +173,54 @@
     display: block;
   }
 
-  .product-card-video__play-btn {
+  .product-card-video__actions {
     position: absolute;
-    inset: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: 0;
+    opacity: 0;
+    transition: opacity 0.25s;
+    z-index: 2;
+  }
+
+  .product-card-video-wrap:hover .product-card-video__actions {
+    opacity: 1;
+  }
+
+  .product-card-video__btn {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
+    gap: 6px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-decoration: none;
     border: none;
     cursor: pointer;
-    z-index: 2;
-    opacity: 0.85;
-    transition: opacity 0.2s;
+    transition: background 0.15s;
   }
 
-  .product-card-video__play-btn:hover {
-    opacity: 1;
+  .product-card-video__btn--learn {
+    background: rgba(255, 255, 255, 0.92);
+    color: #1a1a2e;
+  }
+
+  .product-card-video__btn--learn:hover {
+    background: white;
+  }
+
+  .product-card-video__btn--play {
+    background: rgba(26, 26, 46, 0.88);
+    color: white;
+  }
+
+  .product-card-video__btn--play:hover {
+    background: rgba(26, 26, 46, 1);
   }
 
   .product-card-video-wrap .product-card-video {
