@@ -141,8 +141,14 @@
       {% if product.description != blank %}
         <details class="crown-cfg__desc-wrap" {% if section.settings.description_open %}open{% endif %}>
           <summary class="crown-cfg__desc-toggle">
-            <span>Product Details</span>
-            <svg class="crown-cfg__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="crown-cfg__desc-preview">
+              <span class="crown-cfg__desc-label">Product Details</span>
+              <div class="crown-cfg__desc-teaser rte">{{ product.description | strip_html | truncate: 150 }}</div>
+            </div>
+            <span class="crown-cfg__desc-expand">
+              <span class="crown-cfg__desc-expand-text">Read more</span>
+              <svg class="crown-cfg__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
           </summary>
           <div class="crown-cfg__desc rte">
             {{ product.description }}
@@ -870,18 +876,62 @@
   .crown-cfg__desc-toggle {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 1rem;
     cursor: pointer;
-    padding: 0.65rem 0;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--c-dark);
+    padding: 0.75rem 0;
     list-style: none;
   }
 
   .crown-cfg__desc-toggle::-webkit-details-marker { display: none; }
 
-  .crown-cfg__chevron { transition: transform 0.2s; color: var(--c-text-muted); }
+  .crown-cfg__desc-preview {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .crown-cfg__desc-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--c-dark);
+    margin-bottom: 0.3rem;
+  }
+
+  .crown-cfg__desc-teaser {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--c-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  details[open] .crown-cfg__desc-teaser {
+    display: none;
+  }
+
+  .crown-cfg__desc-expand {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+
+  .crown-cfg__desc-expand-text {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--c-blue);
+    white-space: nowrap;
+  }
+
+  details[open] .crown-cfg__desc-expand-text {
+    display: none;
+  }
+
+  .crown-cfg__chevron { transition: transform 0.2s; color: var(--c-blue); }
   details[open] .crown-cfg__chevron { transform: rotate(180deg); }
 
   .crown-cfg__desc {
