@@ -325,8 +325,8 @@
   </div>
 </div>
 
-{% javascript %}
-  (function() {
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
     const section = document.querySelector('.crown-configurator');
     if (!section) return;
 
@@ -362,23 +362,23 @@
 
     // Material selection
     const materialCards = section.querySelectorAll('.crown-configurator__material-card');
-    materialCards.forEach(card => {
+    materialCards.forEach(function(card) {
       card.addEventListener('click', function() {
-        materialCards.forEach(c => c.classList.remove('active'));
+        materialCards.forEach(function(c) { c.classList.remove('active'); });
         this.classList.add('active');
 
         selectedMaterial = this.dataset.material;
         materialPrice = parseInt(this.dataset.materialPrice, 10) || 0;
 
         // Update hidden inputs
-        const materialInput = document.getElementById('material-input');
-        const materialPriceInput = document.getElementById('material-price-input');
+        var materialInput = document.getElementById('material-input');
+        var materialPriceInput = document.getElementById('material-price-input');
         if (materialInput) materialInput.value = this.querySelector('.crown-configurator__material-name').textContent.trim();
         if (materialPriceInput) materialPriceInput.value = materialPrice;
 
         // Show/hide color panels
-        const panels = section.querySelectorAll('.crown-configurator__color-panel');
-        panels.forEach(panel => {
+        var panels = section.querySelectorAll('.crown-configurator__color-panel');
+        panels.forEach(function(panel) {
           if (panel.dataset.colorPanel === selectedMaterial) {
             panel.style.display = '';
             panel.style.animation = 'crownFadeIn 0.3s ease';
@@ -391,8 +391,8 @@
         selectedColor = null;
         document.getElementById('color-input').value = '';
         document.getElementById('color-sku-input').value = '';
-        section.querySelectorAll('.crown-configurator__swatch').forEach(s => s.classList.remove('active'));
-        section.querySelectorAll('[id^="selected-color-"]').forEach(el => el.textContent = 'Choose a color');
+        section.querySelectorAll('.crown-configurator__swatch').forEach(function(s) { s.classList.remove('active'); });
+        section.querySelectorAll('[id^="selected-color-"]').forEach(function(el) { el.textContent = 'Choose a color'; });
 
         updatePriceDisplay();
         validateForm();
@@ -400,18 +400,18 @@
     });
 
     // Color swatch selection
-    section.querySelectorAll('.crown-configurator__swatch').forEach(swatch => {
+    section.querySelectorAll('.crown-configurator__swatch').forEach(function(swatch) {
       swatch.addEventListener('click', function() {
-        const group = this.dataset.materialGroup;
+        var group = this.dataset.materialGroup;
         // Deselect others in same group
-        section.querySelectorAll('.crown-configurator__swatch[data-material-group="' + group + '"]').forEach(s => s.classList.remove('active'));
+        section.querySelectorAll('.crown-configurator__swatch[data-material-group="' + group + '"]').forEach(function(s) { s.classList.remove('active'); });
         this.classList.add('active');
 
         selectedColor = this.dataset.colorName;
         document.getElementById('color-input').value = selectedColor;
         document.getElementById('color-sku-input').value = this.dataset.colorSku || '';
 
-        const selectedLabel = document.getElementById('selected-color-' + group);
+        var selectedLabel = document.getElementById('selected-color-' + group);
         if (selectedLabel) selectedLabel.textContent = selectedColor;
 
         validateForm();
@@ -419,19 +419,19 @@
     });
 
     // Arm selection
-    const armCards = section.querySelectorAll('.crown-configurator__arm-card');
-    armCards.forEach(card => {
+    var armCards = section.querySelectorAll('.crown-configurator__arm-card');
+    armCards.forEach(function(card) {
       card.addEventListener('click', function() {
-        armCards.forEach(c => c.classList.remove('active'));
+        armCards.forEach(function(c) { c.classList.remove('active'); });
         this.classList.add('active');
 
         armPrice = parseInt(this.dataset.armPrice, 10) || 0;
-        const armName = this.querySelector('.crown-configurator__arm-name').textContent.trim();
+        var armName = this.querySelector('.crown-configurator__arm-name').textContent.trim();
 
         document.getElementById('arm-config-input').value = armName;
         document.getElementById('arm-price-input').value = armPrice;
 
-        const badge = document.getElementById('arm-price-badge');
+        var badge = document.getElementById('arm-price-badge');
         if (badge) {
           badge.textContent = armPrice > 0 ? '+' + formatMoney(armPrice) : 'Optional';
         }
@@ -441,12 +441,12 @@
     });
 
     // Quantity controls
-    const qtyBtns = section.querySelectorAll('.crown-configurator__qty-btn');
-    const qtyInput = document.getElementById('crown-quantity');
-    qtyBtns.forEach(btn => {
+    var qtyBtns = section.querySelectorAll('.crown-configurator__qty-btn');
+    var qtyInput = document.getElementById('crown-quantity');
+    qtyBtns.forEach(function(btn) {
       btn.addEventListener('click', function() {
         if (!qtyInput) return;
-        let val = parseInt(qtyInput.value, 10) || 1;
+        var val = parseInt(qtyInput.value, 10) || 1;
         if (this.dataset.action === 'increase') val++;
         else if (this.dataset.action === 'decrease' && val > 1) val--;
         qtyInput.value = val;
@@ -454,52 +454,57 @@
     });
 
     // Thumbnail gallery
-    const thumbnails = section.querySelectorAll('.crown-configurator__thumbnail');
-    const mainMedia = document.getElementById('crown-main-media');
-    const mediaItems = {{ product.media | json }};
+    var thumbnails = section.querySelectorAll('.crown-configurator__thumbnail');
+    var mainMedia = document.getElementById('crown-main-media');
 
-    thumbnails.forEach(thumb => {
+    thumbnails.forEach(function(thumb) {
       thumb.addEventListener('click', function() {
-        thumbnails.forEach(t => t.classList.remove('active'));
+        thumbnails.forEach(function(t) { t.classList.remove('active'); });
         this.classList.add('active');
 
-        const idx = parseInt(this.dataset.mediaIndex, 10);
-        const media = mediaItems[idx];
-        if (!media || !mainMedia) return;
+        var idx = parseInt(this.dataset.mediaIndex, 10);
+        var imgEl = this.querySelector('img');
+        if (!imgEl || !mainMedia) return;
 
-        if (media.media_type === 'video') {
-          mainMedia.innerHTML = '<video controls playsinline class="crown-configurator__video"><source src="' + media.sources[0].url + '" type="' + media.sources[0].mime_type + '"></video>';
+        var mediaType = this.dataset.mediaType;
+        if (mediaType === 'video') {
+          // For videos, we reload the page to the media - simplest reliable approach
+          var src = imgEl.src;
+          mainMedia.innerHTML = '<img src="' + src + '" alt="" class="crown-configurator__main-image" style="opacity:0.6"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--crown-gold);">&#9654;</div>';
         } else {
-          const src = media.src ? media.src.replace(/\?.*/, '') + '?width=1200' : media.preview_image.src.replace(/\?.*/, '') + '?width=1200';
-          mainMedia.innerHTML = '<img src="' + src + '" alt="' + (media.alt || '') + '" class="crown-configurator__main-image">';
+          var src = imgEl.src.replace(/width=\d+/, 'width=1200').replace(/(\?\S*)/, '?width=1200');
+          mainMedia.innerHTML = '<img src="' + src + '" alt="" class="crown-configurator__main-image">';
         }
       });
     });
 
     // Form validation
     function validateForm() {
-      const addBtn = document.getElementById('crown-add-to-cart');
+      var addBtn = document.getElementById('crown-add-to-cart');
       if (!addBtn) return;
 
-      const hasMaterial = document.getElementById('material-input').value !== '';
-      const hasColor = document.getElementById('color-input').value !== '';
+      var cartText = addBtn.querySelector('.crown-configurator__cart-text');
+      if (!cartText) return;
+
+      var hasMaterial = document.getElementById('material-input').value !== '';
+      var hasColor = document.getElementById('color-input').value !== '';
 
       if (hasMaterial && hasColor) {
         addBtn.disabled = false;
-        addBtn.querySelector('.crown-configurator__cart-text').textContent = 'Add to Cart';
+        cartText.textContent = 'Add to Cart';
       } else if (!hasMaterial) {
         addBtn.disabled = true;
-        addBtn.querySelector('.crown-configurator__cart-text').textContent = 'Select Upholstery Material';
+        cartText.textContent = 'Select Upholstery Material';
       } else if (!hasColor) {
         addBtn.disabled = true;
-        addBtn.querySelector('.crown-configurator__cart-text').textContent = 'Select a Color';
+        cartText.textContent = 'Select a Color';
       }
     }
 
     // Initial state
     validateForm();
-  })();
-{% endjavascript %}
+  });
+</script>
 
 {% stylesheet %}
   @keyframes crownFadeIn {
