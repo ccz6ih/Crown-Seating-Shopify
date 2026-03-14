@@ -38,7 +38,7 @@ export class ProductCardLink extends Component {
 
     // If the event was on an interactive element, don't do anything, this is not a navigation
     if (event.target instanceof Element) {
-      const interactiveElement = event.target.closest('button, input, label, select, [tabindex="1"]');
+      const interactiveElement = event.target.closest('button, input, label, select, video, [tabindex="1"]');
       if (interactiveElement) return;
     }
 
@@ -480,7 +480,7 @@ export class ProductCard extends ProductCardLink {
     // Don't navigate if this product card is marked as no-navigation (e.g., in theme editor)
     if (this.hasAttribute('data-no-navigation')) return;
 
-    const interactiveElement = event.target.closest('button, input, label, select, [tabindex="1"]');
+    const interactiveElement = event.target.closest('button, input, label, select, video, [tabindex="1"]');
 
     // If the click was on an interactive element, do nothing.
     if (interactiveElement) {

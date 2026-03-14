@@ -49,32 +49,41 @@
       endif
     %}
 
-    {% if poster_url != null %}
-      {{
-        product_video
-        | video_tag:
-          autoplay: false,
-          muted: false,
-          loop: false,
-          playsinline: true,
-          controls: true,
-          poster: poster_url,
-          class: 'product-card-video',
-          style: 'width: 100%; height: 100%; object-fit: cover;'
-      }}
-    {% else %}
-      {{
-        product_video
-        | video_tag:
-          autoplay: false,
-          muted: false,
-          loop: false,
-          playsinline: true,
-          controls: true,
-          class: 'product-card-video',
-          style: 'width: 100%; height: 100%; object-fit: cover;'
-      }}
-    {% endif %}
+    <div class="product-card-video-wrap" style="position: relative; width: 100%; height: 100%;">
+      {% if poster_url != null %}
+        {{
+          product_video
+          | video_tag:
+            autoplay: false,
+            muted: false,
+            loop: false,
+            playsinline: true,
+            controls: true,
+            poster: poster_url,
+            class: 'product-card-video',
+            style: 'width: 100%; height: 100%; object-fit: cover;'
+        }}
+      {% else %}
+        {{
+          product_video
+          | video_tag:
+            autoplay: false,
+            muted: false,
+            loop: false,
+            playsinline: true,
+            controls: true,
+            class: 'product-card-video',
+            style: 'width: 100%; height: 100%; object-fit: cover;'
+        }}
+      {% endif %}
+      <a
+        href="{{ product.url }}"
+        class="product-card-video__link"
+        aria-label="View {{ product.title | escape }}"
+      >
+        View Product
+      </a>
+    </div>
   {% else %}
     {% if product != blank and product.featured_image %}
       <img
@@ -103,6 +112,33 @@
     </div>
   {% endif %}
 </div>
+
+{% stylesheet %}
+  .product-card-video__link {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .product-card-video-wrap:hover .product-card-video__link {
+    opacity: 1;
+  }
+
+  .product-card-video__link:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
