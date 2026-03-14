@@ -19,14 +19,17 @@
 <script
   src="{{ 'collection-links.js' | asset_url }}"
   type="module"
-  fetchpriority="low"
 ></script>
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style"
+  class="
+    section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style
+    {% if section.settings.collection_list == blank and request.design_mode == false %}
+      in-onboarding-state
+    {% endif %}
+  "
   style="{% render 'spacing-style', settings: section.settings %}"
-  data-testid="collection-links-{{ section.id }}"
 >
   <collection-links-component
     layout="{{ section.settings.layout }}"
@@ -82,7 +85,7 @@
             {% # theme-check-enable UniqueStaticBlockId %}
           {% endcapture %}
 
-          {% render 'slideshow-slide', children: slide, index: forloop.index0 %}
+          {% render 'slideshow-slide', children: slide, index: forloop.index0, selected: selected %}
         {% endfor %}
       {% endcapture %}
 
@@ -138,18 +141,16 @@
       grid-template-columns: 1fr var(--template-column-ratio);
       grid-template-areas: 'text image';
 
-      @media screen and (min-width: 750px) {
-        &[reverse] {
-          grid-template-areas: 'image text';
-          grid-template-columns: var(--template-column-ratio) 1fr;
-        }
+      &[reverse] {
+        grid-template-areas: 'image text';
+        grid-template-columns: var(--template-column-ratio) 1fr;
       }
 
       .collection-links__container {
         align-items: var(--alignment);
       }
 
-      @media screen and (max-width: 749px) {
+      @media (max-width: 749px) {
         grid-template-columns: 1fr;
         grid-template-areas: 'text' 'image';
         grid-gap: var(--gap-2xl);
@@ -184,7 +185,7 @@
     overflow: hidden;
     grid-area: image;
 
-    @media screen and (max-width: 749px) {
+    @media (max-width: 749px) {
       image-block {
         max-width: 100%;
       }

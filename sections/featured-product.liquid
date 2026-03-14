@@ -4,10 +4,6 @@
   {{ section.settings.product | structured_data }}
 </script>
 
-{%- liquid
-  assign product = section.settings.product
-  assign gallery_aspect_ratio = product.featured_media.preview_image.aspect_ratio | default: 1
--%}
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
   class="
@@ -15,9 +11,10 @@
     section
     section--full-width
     color-{{ section.settings.color_scheme }}
+    {% if request.design_mode == false and section.settings.product == blank %}
+      in-onboarding-state
+    {% endif %}
   "
-  style="--gallery-aspect-ratio: {{ gallery_aspect_ratio }};"
-  data-testid="featured-product-{{ section.id }}"
 >
   <div
     class="section-content-wrapper spacing-style size-style border-style"
@@ -53,15 +50,16 @@
     display: grid;
     overflow: hidden;
 
-    @media screen and (min-width: 750px) {
+    @media (min-width: 750px) {
       grid-template-columns: 1fr 1fr;
     }
   }
 
-  .featured-product-section {
+  /* Here I should maybe set the width to auto when the ratio is set to adapt */
+  .featured-product-section .product-media-container.constrain-height {
+    /* arbitrary offset value based on average theme spacing and header height */
     --viewport-offset: 400px;
     --constrained-min-height: var(--visual-preview--height, 80dvh);
-    --constrained-height: max(var(--constrained-min-height), calc(100vh - var(--viewport-offset)));
 
     @media screen and (min-width: 750px) {
       --viewport-offset: 300px;
@@ -81,15 +79,6 @@
   @media screen and (max-width: 749px) {
     .featured-product-section .media-block {
       order: -1;
-    }
-  }
-
-  @media screen and (min-width: 750px) {
-    .featured-product-section .product-card__content {
-      --hugged-width: calc(var(--constrained-height) * var(--gallery-aspect-ratio, var(--media-preview-ratio)));
-      width: min(100%, var(--hugged-width));
-      margin-left: auto;
-      margin-right: auto;
     }
   }
 {% endstylesheet %}

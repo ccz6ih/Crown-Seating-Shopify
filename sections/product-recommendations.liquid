@@ -2,7 +2,6 @@
 <script
   src="{{ 'product-recommendations.js' | asset_url }}"
   type="module"
-  fetchpriority="low"
 ></script>
 
 {% liquid
@@ -60,11 +59,13 @@
       {% liquid
         if section.settings.product == blank
           assign products = null
-          # Onboarding mode: Show placeholder products
-          for i in (1..section.settings.max_products)
-            assign products = products | append: ', '
-            assign products = products | split: ','
-          endfor
+          if request.design_mode or request.visual_preview_mode
+            # Onboarding mode: Show placeholder products
+            for i in (1..section.settings.max_products)
+              assign products = products | append: ', '
+              assign products = products | split: ','
+            endfor
+          endif
         elsif recommendations.performed and recommendations.products_count == 0
           # No recommendations found, pull from catalog
           if section.settings.recommendation_type == 'related'
@@ -167,6 +168,25 @@
     {%- endif -%}
   </div>
 </product-recommendations>
+
+{% stylesheet %}
+  .product-recommendations__skeleton-item {
+    aspect-ratio: 3 / 4;
+    background-color: var(--color-foreground);
+    opacity: var(--skeleton-opacity);
+    border-radius: 4px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-recommendations__skeleton-item:nth-child(2n + 1) {
+      display: none;
+    }
+  }
+
+  product-recommendations:has([data-has-recommendations='false']) {
+    display: none;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -445,7 +465,7 @@
         "columns": 4,
         "mobile_columns": "2",
         "columns_gap": 12,
-        "rows_gap": 24,
+        "rows_gap": 36,
         "icons_style": "arrow",
         "icons_shape": "none",
         "section_width": "page-width",
@@ -459,80 +479,46 @@
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "t:html_defaults.related_product"
+            "text": "<h3>Related products</h3>"
           }
         },
         "static-product-card": {
           "type": "_product-card",
           "name": "t:names.product_card",
           "static": true,
-          "settings": {
-            "product_card_gap": 4
-          },
+          "settings": {},
           "blocks": {
-            "product-card-gallery": {
+            "card-gallery": {
               "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "adapt",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              }
+              "name": "t:names.product_card_media"
             },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
+            "group": {
+              "type": "_product-card-group",
               "settings": {
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 4,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              }
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "show_sale_price_first": true,
-                "show_installments": false,
-                "show_tax_info": false,
-                "type_preset": "h6",
-                "width": "100%",
-                "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "color": "var(--color-foreground)",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              }
+                "content_direction": "column",
+                "gap": 4
+              },
+              "blocks": {
+                "text": {
+                  "type": "product-title",
+                  "settings": {
+                    "type_preset": "h5"
+                  }
+                },
+                "price": {
+                  "type": "price",
+                  "settings": {
+                    "show_tax_info": false
+                  }
+                },
+                "swatches": {
+                  "type": "swatches"
+                }
+              },
+              "block_order": ["text", "price", "swatches"]
             }
           },
-          "block_order": ["product-card-gallery", "product_title", "price"]
+          "block_order": ["card-gallery", "group"]
         }
       },
       "block_order": ["header"]

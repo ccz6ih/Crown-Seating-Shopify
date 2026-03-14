@@ -50,14 +50,12 @@
   .section--page-width {
     &.media-with-content {
       grid-template-areas: 'margin-left media margin-right' 'margin-left content margin-right';
-
       @media screen and (min-width: 750px) {
+        grid-template-areas: 'margin-left media content margin-right';
         /* Wide proportion is media 3.5 parts, content 2.5 parts. Which equals 7|5. So divide the central column by 7+5 and multiply accordingly */
         --media-with-content-grid-columns: var(--full-page-grid-margin)
           calc((var(--full-page-grid-central-column-width) / 12) * 7)
           calc((var(--full-page-grid-central-column-width) / 12) * 5) var(--full-page-grid-margin);
-
-        grid-template-areas: 'margin-left media content margin-right';
       }
     }
 
@@ -66,7 +64,6 @@
         --media-with-content-grid-columns: var(--full-page-grid-margin)
           calc((var(--full-page-grid-central-column-width) / 12) * 5)
           calc((var(--full-page-grid-central-column-width) / 12) * 7) var(--full-page-grid-margin);
-
         grid-template-areas: 'margin-left content media margin-right';
       }
     }
@@ -99,7 +96,6 @@
     &.media-with-content--media-right {
       @media screen and (min-width: 750px) {
         --media-with-content-grid-columns: 2.5fr 3.5fr;
-
         grid-template-areas: 'content media';
       }
     }
@@ -152,10 +148,9 @@
     grid-template-areas: 'media media media' 'content content content';
 
     @media screen and (min-width: 750px) {
-      --media-with-content-grid-columns: 3.5fr 2.5fr;
-
       /* Default desktop layout is wide media, on the left, in full page section */
       grid-template-areas: 'media content';
+      --media-with-content-grid-columns: 3.5fr 2.5fr;
     }
 
     .media-block {
@@ -192,7 +187,6 @@
 
   .media-with-content[data-shopify-visual-preview] {
     --hero-min-height: 500px;
-
     min-height: 500px;
   }
 {% endstylesheet %}
@@ -348,7 +342,7 @@
               "type": "text",
               "name": "t:names.caption",
               "settings": {
-                "text": "t:html_defaults.bestseller",
+                "text": "<p>Bestseller</p>",
                 "type_preset": "h6"
               }
             },
@@ -362,14 +356,14 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "t:html_defaults.signature_products",
+                    "text": "<h2>Our signature product</h2>",
                     "type_preset": "h3"
                   }
                 },
                 "text": {
                   "type": "text",
                   "settings": {
-                    "text": "t:html_defaults.made_with_care_extended",
+                    "text": "<p>Made with care and unconditionally loved by our customers, this signature bestseller exceeds all expectations.</p>",
                     "max_width": "narrow",
                     "type_preset": "rte"
                   }
@@ -380,7 +374,7 @@
             "button": {
               "type": "button",
               "settings": {
-                "label": "t:text_defaults.shop_now_button_label",
+                "label": "Shop now",
                 "link": "shopify://collections/all",
                 "style_class": "link"
               }
@@ -416,7 +410,7 @@
               "type": "jumbo-text",
               "name": "t:names.jumbo_text",
               "settings": {
-                "text": "t:text_defaults.up_the_ante",
+                "text": "Up\nThe\nAnte",
                 "font": "heading",
                 "alignment": "right",
                 "line_height": "0.8",

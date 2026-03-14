@@ -13,6 +13,31 @@
   elsif section.settings.layout_type == 'grid'
     assign max_items = section.settings.columns
   endif
+
+  case section.settings.layout_type
+    when 'grid'
+      assign classes = 'resource-list--grid'
+      capture styles
+        echo '--resource-list-column-gap-desktop: ' | append: section.settings.columns_gap | append: 'px;'
+        echo '--resource-list-row-gap-desktop: ' | append: section.settings.rows_gap | append: 'px;'
+        echo '--resource-list-columns: repeat(' | append: section.settings.columns | append: ', 1fr);'
+        echo '--resource-list-columns-mobile: repeat(' | append: section.settings.mobile_columns | append: ', 1fr);'
+        echo '--column-count-mobile: ' | append: section.settings.mobile_columns | append: ';'
+      endcapture
+    when 'bento'
+      assign classes = 'resource-list--bento'
+      capture styles
+        echo '--resource-list-column-gap-desktop: ' | append: section.settings.bento_gap | append: 'px;'
+        echo '--bento-gap: var(--resource-list-column-gap);'
+      endcapture
+    when 'carousel'
+      assign classes = 'resource-list__carousel'
+      capture styles
+        echo '--resource-list-column-gap-desktop: ' | append: section.settings.columns_gap | append: 'px;'
+        echo '--column-count: ' | append: section.settings.columns | append: ';'
+        echo '--column-count-mobile: 1;'
+      endcapture
+  endcase
 %}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
@@ -25,12 +50,15 @@
     section-resource-list
     spacing-style
     gap-style
+    {% if section.settings.collection_list == blank and request.design_mode == false %}
+      in-onboarding-state
+    {% endif %}
   "
   style="
     {% render 'spacing-style', settings: section.settings %}
     {% render 'gap-style', value: section.settings.gap %}
+    {{ styles }}
   "
-  data-testid="collection-list"
 >
   <div class="section-resource-list__content">
     {%- content_for 'blocks' -%}
@@ -60,15 +88,69 @@
     assign list_items_array = list_items | strip | split: '<!--@list/split-->'
   %}
 
-  {% render 'resource-list',
-    list_items: list_items,
-    list_items_array: list_items_array,
-    settings: section.settings,
-    carousel_ref: 'collectionList',
-    slide_count: max_items,
-    content_type: 'collections',
-    test_id: 'collections-list-grid'
-  %}
+  <div
+    class="
+      resource-list
+      {% if section.settings.layout_type == 'carousel' %}
+        force-full-width
+      {% endif %}
+      {% if section.settings.carousel_on_mobile and section.settings.layout_type != 'carousel' %}
+        hidden--mobile
+      {% endif %}
+      {{ classes }}
+    "
+    style="{{ styles }}"
+    {% if section.settings.layout_type == 'grid' %}
+      data-testid="collections-list-grid"
+    {% endif %}
+  >
+    {% case section.settings.layout_type %}
+      {% when 'grid' %}
+        {{ list_items }}
+      {% when 'bento' %}
+        {% render 'bento-grid', items: list_items_array %}
+      {% when 'carousel' %}
+        {% render 'resource-list-carousel',
+          ref: 'collectionListCarousel',
+          slides: list_items_array,
+          slide_count: max_items,
+          settings: section.settings,
+          slide_width_max: '450px'
+        %}
+      {% when 'editorial' %}
+        {% render 'editorial-collection-grid', items: list_items_array %}
+    {% endcase %}
+  </div>
+
+  {% if section.settings.layout_type != 'carousel' and section.settings.carousel_on_mobile %}
+    {% liquid
+      assign mobile_carousel_gap = section.settings.columns_gap
+      if section.settings.layout_type == 'bento'
+        assign mobile_carousel_gap = section.settings.bento_gap
+      endif
+    %}
+    <div
+      class="
+        resource-list
+        hidden--desktop
+        resource-list__carousel
+        force-full-width
+      "
+      style="
+        --resource-list-column-gap-desktop: {{ mobile_carousel_gap }}px;
+        --column-count: {{ section.settings.columns }};
+        --column-count-mobile: 1;
+      "
+    >
+      {% render 'resource-list-carousel',
+        ref: 'collectionListCarouselMobile',
+        slides: list_items_array,
+        slide_count: max_items,
+        settings: section.settings,
+        slide_width_max: '450px'
+      %}
+    </div>
+  {% endif %}
 </div>
 
 {% schema %}
@@ -177,23 +259,6 @@
       ],
       "default": "2",
       "visible_if": "{{ section.settings.layout_type == 'grid' and section.settings.carousel_on_mobile == false }}"
-    },
-    {
-      "type": "select",
-      "id": "mobile_card_size",
-      "label": "t:settings.mobile_columns",
-      "options": [
-        {
-          "value": "60cqw",
-          "label": "t:options.one_number"
-        },
-        {
-          "value": "44cqw",
-          "label": "t:options.two_number"
-        }
-      ],
-      "default": "60cqw",
-      "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
     },
     {
       "type": "range",
@@ -403,7 +468,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -442,10 +507,7 @@
             "collection-card-image": {
               "type": "_collection-card-image",
               "name": "t:names.collection_card_image",
-              "static": true,
-              "settings": {
-                "image_ratio": "adapt"
-              }
+              "static": true
             },
             "collection-title": {
               "type": "collection-title",
@@ -515,7 +577,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -554,10 +616,7 @@
             "collection-card-image": {
               "type": "_collection-card-image",
               "name": "t:names.collection_card_image",
-              "static": true,
-              "settings": {
-                "image_ratio": "adapt"
-              }
+              "static": true
             },
             "collection-title": {
               "type": "collection-title",
@@ -643,7 +702,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -682,10 +741,7 @@
             "collection-card-image": {
               "type": "_collection-card-image",
               "name": "t:names.collection_card_image",
-              "static": true,
-              "settings": {
-                "image_ratio": "adapt"
-              }
+              "static": true
             },
             "collection-title": {
               "type": "collection-title",
@@ -776,7 +832,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -848,7 +904,7 @@
               "name": "t:names.collection_card_image",
               "static": true,
               "settings": {
-                "image_ratio": "adapt",
+                "image_ratio": "portrait",
                 "toggle_overlay": false,
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
