@@ -237,6 +237,16 @@
                 </h3>
                 <span class="crown-configurator__selected-color" id="selected-color-{{ mat_handle }}">Choose a color</span>
               </div>
+              {%- comment -%} Color preview strip - shows enlarged swatch when selected {%- endcomment -%}
+              <div class="crown-configurator__color-preview" id="color-preview-{{ mat_handle }}" style="display: none;">
+                <div class="crown-configurator__color-preview-swatch">
+                  <img src="" alt="" id="color-preview-img-{{ mat_handle }}" class="crown-configurator__color-preview-img">
+                </div>
+                <div class="crown-configurator__color-preview-info">
+                  <span class="crown-configurator__color-preview-name" id="color-preview-name-{{ mat_handle }}"></span>
+                  <span class="crown-configurator__color-preview-sku" id="color-preview-sku-{{ mat_handle }}"></span>
+                </div>
+              </div>
               <div class="crown-configurator__swatch-grid">
                 {% case mat_handle %}
                   {% when 'medical-grade-vinyl' %}
@@ -393,6 +403,8 @@
         document.getElementById('color-sku-input').value = '';
         section.querySelectorAll('.crown-configurator__swatch').forEach(function(s) { s.classList.remove('active'); });
         section.querySelectorAll('[id^="selected-color-"]').forEach(function(el) { el.textContent = 'Choose a color'; });
+        // Hide all color previews
+        section.querySelectorAll('.crown-configurator__color-preview').forEach(function(p) { p.style.display = 'none'; });
 
         updatePriceDisplay();
         validateForm();
@@ -413,6 +425,23 @@
 
         var selectedLabel = document.getElementById('selected-color-' + group);
         if (selectedLabel) selectedLabel.textContent = selectedColor;
+
+        // Update color preview panel
+        var preview = document.getElementById('color-preview-' + group);
+        var previewImg = document.getElementById('color-preview-img-' + group);
+        var previewName = document.getElementById('color-preview-name-' + group);
+        var previewSku = document.getElementById('color-preview-sku-' + group);
+        if (preview) {
+          var swatchImg = this.querySelector('.crown-configurator__swatch-img');
+          if (swatchImg && previewImg) {
+            previewImg.src = swatchImg.src;
+            previewImg.alt = this.dataset.colorName;
+          }
+          if (previewName) previewName.textContent = this.dataset.colorName;
+          if (previewSku) previewSku.textContent = this.dataset.colorSku ? 'SKU: ' + this.dataset.colorSku : '';
+          preview.style.display = '';
+          preview.style.animation = 'crownFadeIn 0.25s ease';
+        }
 
         validateForm();
       });
@@ -532,16 +561,16 @@
 
   @media (min-width: 750px) {
     .crown-configurator__layout {
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: 40% 1fr;
+      gap: 2.5rem;
       padding: 3rem 0;
     }
   }
 
   @media (min-width: 990px) {
     .crown-configurator__layout {
-      grid-template-columns: 55% 1fr;
-      gap: 4rem;
+      grid-template-columns: 38% 1fr;
+      gap: 3rem;
     }
   }
 
@@ -875,6 +904,53 @@
     color: #4caf50;
   }
 
+  /* Color Preview Panel */
+  .crown-configurator__color-preview {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--crown-bg-subtle);
+    border-radius: var(--crown-radius-lg);
+    margin-bottom: 1rem;
+    border: 1px solid var(--crown-border);
+  }
+
+  .crown-configurator__color-preview-swatch {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--crown-radius);
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--crown-gold);
+    box-shadow: 0 2px 8px rgba(201, 169, 110, 0.2);
+  }
+
+  .crown-configurator__color-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .crown-configurator__color-preview-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .crown-configurator__color-preview-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--crown-accent);
+  }
+
+  .crown-configurator__color-preview-sku {
+    font-size: 0.75rem;
+    color: #999;
+    letter-spacing: 0.05em;
+  }
+
   /* Color Swatches */
   .crown-configurator__selected-color {
     font-size: 0.85rem;
@@ -884,13 +960,19 @@
 
   .crown-configurator__swatch-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
     gap: 0.5rem;
   }
 
   @media (min-width: 750px) {
     .crown-configurator__swatch-grid {
-      grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    }
+  }
+
+  @media (min-width: 990px) {
+    .crown-configurator__swatch-grid {
+      grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
     }
   }
 
@@ -899,7 +981,7 @@
     aspect-ratio: 1;
     border-radius: var(--crown-radius);
     border: 2px solid var(--crown-border);
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     padding: 0;
     position: relative;
@@ -907,17 +989,61 @@
     transition: all 0.15s;
   }
 
+  /* Tooltip */
+  .crown-configurator__swatch::after {
+    content: attr(data-color-name);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--crown-accent);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 10;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .crown-configurator__swatch::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border: 4px solid transparent;
+    border-top-color: var(--crown-accent);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 10;
+  }
+
+  .crown-configurator__swatch:hover::after,
+  .crown-configurator__swatch:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
   .crown-configurator__swatch:hover {
     border-color: var(--crown-gold-light);
-    transform: scale(1.05);
-    z-index: 1;
+    transform: scale(1.08);
+    z-index: 5;
   }
 
   .crown-configurator__swatch.active {
     border-color: var(--crown-gold);
     box-shadow: 0 0 0 2px var(--crown-gold), 0 2px 8px rgba(201, 169, 110, 0.3);
-    transform: scale(1.08);
-    z-index: 2;
+    transform: scale(1.1);
+    z-index: 6;
   }
 
   .crown-configurator__swatch-img {
@@ -925,6 +1051,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: calc(var(--crown-radius) - 2px);
   }
 
   .crown-configurator__swatch-placeholder {
