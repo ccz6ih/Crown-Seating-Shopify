@@ -303,12 +303,16 @@
 
                 {%- comment -%} Color preview {%- endcomment -%}
                 <div class="crown-cfg__color-preview" id="color-preview-{{ mat_handle }}" style="display: none;">
-                  <div class="crown-cfg__preview-swatch">
+                  <button type="button" class="crown-cfg__preview-swatch" onclick="window.__crownLightbox(this)" aria-label="Enlarge color swatch">
                     <img src="" alt="" id="color-preview-img-{{ mat_handle }}" class="crown-cfg__preview-img">
-                  </div>
+                    <span class="crown-cfg__preview-zoom">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+                    </span>
+                  </button>
                   <div class="crown-cfg__preview-info">
                     <span class="crown-cfg__preview-name" id="color-preview-name-{{ mat_handle }}"></span>
                     <span class="crown-cfg__preview-sku" id="color-preview-sku-{{ mat_handle }}"></span>
+                    <span class="crown-cfg__preview-hint">Tap swatch to enlarge</span>
                   </div>
                 </div>
 
@@ -440,9 +444,52 @@
       {% endif %}
     </div>
   </div>
+
+  {%- comment -%} Lightbox Modal {%- endcomment -%}
+  <div class="crown-cfg__lightbox" id="crown-lightbox" style="display:none;">
+    <button type="button" class="crown-cfg__lightbox-close" onclick="document.getElementById('crown-lightbox').style.display='none'" aria-label="Close">&times;</button>
+    <div class="crown-cfg__lightbox-body">
+      <img src="" alt="" id="crown-lightbox-img" class="crown-cfg__lightbox-img">
+      <div class="crown-cfg__lightbox-info">
+        <span class="crown-cfg__lightbox-name" id="crown-lightbox-name"></span>
+        <span class="crown-cfg__lightbox-sku" id="crown-lightbox-sku"></span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
+  window.__crownLightbox = function(btn) {
+    var img = btn.querySelector('img');
+    if (!img || !img.src) return;
+    var lightbox = document.getElementById('crown-lightbox');
+    var lbImg = document.getElementById('crown-lightbox-img');
+    var lbName = document.getElementById('crown-lightbox-name');
+    var lbSku = document.getElementById('crown-lightbox-sku');
+    // Use higher resolution
+    lbImg.src = img.src.replace(/width=\d+/, 'width=1200');
+    lbImg.alt = img.alt;
+    // Get name/sku from sibling preview info
+    var preview = btn.closest('.crown-cfg__color-preview');
+    if (preview) {
+      var nameEl = preview.querySelector('.crown-cfg__preview-name');
+      var skuEl = preview.querySelector('.crown-cfg__preview-sku');
+      if (lbName) lbName.textContent = nameEl ? nameEl.textContent : '';
+      if (lbSku) lbSku.textContent = skuEl ? skuEl.textContent : '';
+    }
+    lightbox.style.display = 'flex';
+  };
+  // Close on backdrop click
+  document.getElementById('crown-lightbox')?.addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var lb = document.getElementById('crown-lightbox');
+      if (lb) lb.style.display = 'none';
+    }
+  });
   document.addEventListener('DOMContentLoaded', function() {
     var section = document.querySelector('.crown-cfg');
     if (!section) return;
@@ -1307,13 +1354,43 @@
   }
 
   .crown-cfg__preview-swatch {
-    width: 60px;
-    height: 60px;
+    width: 72px;
+    height: 72px;
     border-radius: var(--c-radius);
     overflow: hidden;
     flex-shrink: 0;
     border: 2px solid var(--c-blue);
     box-shadow: 0 2px 8px rgba(74,123,167,0.15);
+    cursor: zoom-in;
+    position: relative;
+    padding: 0;
+    background: none;
+  }
+
+  .crown-cfg__preview-zoom {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    color: var(--c-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .crown-cfg__preview-swatch:hover .crown-cfg__preview-zoom {
+    opacity: 1;
+  }
+
+  .crown-cfg__preview-hint {
+    font-size: 0.68rem;
+    color: var(--c-blue);
+    font-style: italic;
   }
 
   .crown-cfg__preview-img {
@@ -1635,6 +1712,99 @@
   }
 
   .crown-cfg__trust-item svg { color: var(--c-gold); }
+
+  /* Lightbox Modal */
+  .crown-cfg__lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: crownLightboxIn 0.2s ease;
+  }
+
+  @keyframes crownLightboxIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .crown-cfg__lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    backdrop-filter: blur(4px);
+    z-index: 1;
+  }
+
+  .crown-cfg__lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .crown-cfg__lightbox-body {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: crownLightboxSlide 0.25s ease;
+  }
+
+  @keyframes crownLightboxSlide {
+    from { transform: scale(0.9) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .crown-cfg__lightbox-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+
+  .crown-cfg__lightbox-info {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--c-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .crown-cfg__lightbox-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--c-dark);
+    font-family: var(--c-heading);
+  }
+
+  .crown-cfg__lightbox-sku {
+    font-size: 0.75rem;
+    color: var(--c-text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 749px) {
+    .crown-cfg__lightbox { padding: 1rem; }
+    .crown-cfg__lightbox-body { max-width: 100%; }
+  }
 
   @media (max-width: 749px) {
     .crown-cfg__trust { flex-direction: column; align-items: center; gap: 0.5rem; }
