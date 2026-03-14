@@ -1,0 +1,451 @@
+<!-- sections/vinyl-colors.liquid -->
+<div class="material-colors-section" id="vinyl-colors-{{ section.id }}">
+  <div class="container">
+    {% if section.settings.section_title != blank %}
+      <h2 class="material-colors__title">{{ section.settings.section_title }}</h2>
+    {% endif %}
+
+    {% if section.settings.section_description != blank %}
+      <div class="material-colors__description">
+        {{ section.settings.section_description }}
+      </div>
+    {% endif %}
+
+    <div class="material-colors-grid">
+      {% for block in section.blocks %}
+        <div
+          class="material-color-item"
+          data-name="{{ block.settings.color_name }}"
+          data-sku="{{ block.settings.color_sku }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="material-color-item__image-wrapper">
+            {% if block.settings.color_image != blank %}
+              <img
+                src="{{ block.settings.color_image | image_url: width: 300 }}"
+                alt="{{ block.settings.color_name }}"
+                loading="lazy"
+                class="material-color-item__image"
+                onclick="openMaterialModal('{{ block.settings.color_image | image_url: width: 1200 }}', '{{ block.settings.color_name }}', '{{ block.settings.color_sku }}', 'Standard Vinyl')"
+              >
+            {% else %}
+              <div
+                class="material-color-item__placeholder"
+                style="background-color: {{ block.settings.color_hex | default: '#cccccc' }};"
+                onclick="openMaterialModal('', '{{ block.settings.color_name }}', '{{ block.settings.color_sku }}', 'Standard Vinyl')"
+              ></div>
+            {% endif %}
+          </div>
+          <div class="material-color-item__info">
+            <h4 class="material-color-item__name">{{ block.settings.color_name }}</h4>
+            {% if block.settings.color_sku != blank %}
+              <p class="material-color-item__sku">{{ block.settings.color_sku }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Modal for enlarged view (only include once per page) -->
+{% unless section.settings.hide_modal %}
+  <div id="material-modal" class="material-modal">
+    <div class="material-modal__content">
+      <span class="material-modal__close">&times;</span>
+      <img id="material-modal__image" src="" alt="">
+      <div class="material-modal__info">
+        <h3 id="material-modal__name"></h3>
+        <p id="material-modal__sku"></p>
+        <p id="material-modal__type"></p>
+      </div>
+    </div>
+  </div>
+{% endunless %}
+
+<style>
+  .material-colors-section {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .material-colors-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px;
+  }
+
+  .material-colors__title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: {{ section.settings.title_color }};
+  }
+
+  .material-colors__description {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.25rem;
+    color: {{ section.settings.text_color }};
+  }
+
+  .material-colors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax({{ section.settings.grid_item_width }}px, 1fr));
+    gap: {{ section.settings.grid_gap }}px;
+    margin-bottom: 30px;
+  }
+
+  .material-color-item {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .material-color-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .material-color-item__image-wrapper {
+    position: relative;
+    width: 100%;
+    height: {{ section.settings.image_height }}px;
+    overflow: hidden;
+  }
+
+  .material-color-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .material-color-item:hover .material-color-item__image {
+    transform: scale(1.1);
+  }
+
+  .material-color-item__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #666;
+  }
+
+  .material-color-item__info {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .material-color-item__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #333;
+  }
+
+  .material-color-item__sku {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+  }
+
+  /* Modal Styles */
+  .material-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .material-modal__content {
+    position: relative;
+    margin: 50px auto;
+    max-width: 800px;
+    width: 90%;
+    text-align: center;
+  }
+
+  .material-modal__close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .material-modal__close:hover {
+    opacity: 0.7;
+  }
+
+  #material-modal__image {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 8px;
+  }
+
+  .material-modal__info {
+    color: white;
+    margin-top: 20px;
+  }
+
+  .material-modal__info h3 {
+    font-size: 1.5rem;
+    margin: 0 0 10px 0;
+  }
+
+  .material-modal__info p {
+    font-size: 1.1rem;
+    margin: 0 0 5px 0;
+    opacity: 0.8;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .material-colors-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .material-colors__title {
+      font-size: 2rem;
+    }
+
+    .material-modal__content {
+      margin: 20px auto;
+    }
+
+    .material-color-item__image-wrapper {
+      height: 180px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .material-colors-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .material-color-item__image-wrapper {
+      height: 150px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('material-modal');
+    const modalClose = document.querySelector('.material-modal__close');
+
+    // Modal close functionality
+    if (modalClose) {
+      modalClose.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+    }
+
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Escape key to close modal
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        modal.style.display = 'none';
+      }
+    });
+  });
+
+  // Function to open modal (called from onclick)
+  function openMaterialModal(imageSrc, name, sku, materialType) {
+    const modal = document.getElementById('material-modal');
+    if (!modal) return;
+
+    const modalImage = document.getElementById('material-modal__image');
+    const modalName = document.getElementById('material-modal__name');
+    const modalSku = document.getElementById('material-modal__sku');
+    const modalType = document.getElementById('material-modal__type');
+
+    if (imageSrc) {
+      modalImage.src = imageSrc;
+      modalImage.style.display = 'block';
+    } else {
+      modalImage.style.display = 'none';
+    }
+
+    modalName.textContent = name;
+    modalSku.textContent = 'SKU: ' + sku;
+    modalType.textContent = materialType;
+    modal.style.display = 'block';
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Vinyl Colors",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Standard Vinyl Colors"
+    },
+    {
+      "type": "textarea",
+      "id": "section_description",
+      "label": "Section Description",
+      "default": "Choose from our wide selection of standard vinyl colors."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_modal",
+      "label": "Hide Modal",
+      "default": false,
+      "info": "Check this for additional sections to avoid duplicate modals"
+    },
+    {
+      "type": "header",
+      "content": "Grid Settings"
+    },
+    {
+      "type": "range",
+      "id": "grid_item_width",
+      "label": "Grid Item Width",
+      "min": 200,
+      "max": 400,
+      "step": 10,
+      "default": 250,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid Gap",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "label": "Image Height",
+      "min": 150,
+      "max": 300,
+      "step": 10,
+      "default": 200,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "color",
+      "name": "Color",
+      "settings": [
+        {
+          "type": "text",
+          "id": "color_name",
+          "label": "Color Name",
+          "placeholder": "e.g. Dream"
+        },
+        {
+          "type": "text",
+          "id": "color_sku",
+          "label": "Color SKU",
+          "placeholder": "e.g. 532613"
+        },
+        {
+          "type": "image_picker",
+          "id": "color_image",
+          "label": "Color Image"
+        },
+        {
+          "type": "color",
+          "id": "color_hex",
+          "label": "Fallback Color (if no image)",
+          "info": "Used as background color if no image is uploaded"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vinyl Colors",
+      "blocks": [
+        {
+          "type": "color",
+          "settings": {
+            "color_name": "Dream",
+            "color_sku": "532613",
+            "color_hex": "#f5f5dc"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,2546 @@
+{% comment %}
+  File: sections/crown-seating-quiz.liquid
+  Enhanced Professional Crown Seating Quiz with Real Product Integration
+  Version: 4.0 - Optimized with BodyType Focus (Removed Weight)
+{% endcomment %}
+
+{{ 'crown-seating-quiz.css' | asset_url | stylesheet_tag }}
+{{ 'quiz-analytics.js' | asset_url | script_tag }}
+{{ 'hubspot-integration.js' | asset_url | script_tag }}
+
+<div class="crown-seating-quiz-wrapper" id="section-{{ section.id }}">
+  <div class="container">
+    <!-- Trust Indicators -->
+    <div class="trust-indicators">
+      <h3>🏆 Trusted by Dental Professionals Worldwide</h3>
+      <div class="trust-stats">
+        <div class="trust-stat">
+          <h4>25+</h4>
+          <p>Years of Experience</p>
+        </div>
+        <div class="trust-stat">
+          <h4>48</h4>
+          <p>Professional Models</p>
+        </div>
+        <div class="trust-stat">
+          <h4>10K+</h4>
+          <p>Satisfied Dentists</p>
+        </div>
+        <div class="trust-stat">
+          <h4>5⭐</h4>
+          <p>Average Rating</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+      <div class="logo-area">
+        <h1>{{ section.settings.heading | default: 'Crown Seating Professional Quiz' }}</h1>
+        <h2>{{ section.settings.subheading | default: 'Find Your Perfect Dental Stool' }}</h2>
+      </div>
+      <p>
+        {{
+          section.settings.description
+          | default: 'Get personalized recommendations from our 48-model lineup. This comprehensive assessment analyzes your height, role, workspace, and ergonomic needs to match you with the ideal Crown Seating solution.'
+        }}
+      </p>
+      <div class="progress-container">
+        <div class="progress-fill" id="progressBar"></div>
+        <div class="progress-text" id="progressText">0% Complete</div>
+      </div>
+    </div>
+
+    <form id="seatingQuiz">
+      <!-- Question 1: Height & Body Measurements -->
+      <div class="question-card active" data-question="1">
+        <div class="question-header">
+          <div class="question-number">1</div>
+          <div class="question">What is your height range?</div>
+        </div>
+
+        <div class="health-impact">
+          <h4>🔬 Ergonomic Science</h4>
+          <p>
+            Proper seat height is crucial for maintaining the ideal 90-110° thigh-to-torso angle, reducing spinal
+            compression by up to 40% during procedures.
+          </p>
+        </div>
+
+        <div class="height-visualization">
+          <h4>Height-Based Seating Requirements:</h4>
+          <div class="height-categories">
+            <div class="height-category small">
+              <h5>PETITE (Under 5'4")</h5>
+              <p>
+                • Requires lower minimum heights<br>
+                • Smaller seat dimensions<br>
+                • Closer reach adjustments
+              </p>
+            </div>
+            <div class="height-category medium">
+              <h5>AVERAGE (5'4" - 5'10")</h5>
+              <p>
+                • Standard height ranges<br>
+                • Most model compatibility<br>
+                • Balanced proportions
+              </p>
+            </div>
+            <div class="height-category tall">
+              <h5>TALL (Over 5'10")</h5>
+              <p>
+                • Extended height ranges<br>
+                • Larger seat dimensions<br>
+                • Enhanced stability features
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="height" value="Under 5'4" - Petite" required>
+            <span class="option-text">Under 5'4" - Petite frame requiring optimized ergonomics</span>
+            <span class="option-benefit">Best with compact, lower-profile models</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="height" value="5'4" - 5'10" - Average" required>
+            <span class="option-text">5'4" - 5'10" - Average height with standard requirements</span>
+            <span class="option-benefit">Compatible with our full model range</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="height" value="Over 5'10" - Tall" required>
+            <span class="option-text">Over 5'10" - Tall stature needing extended features</span>
+            <span class="option-benefit">Requires higher adjustments and larger seats</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 2: Professional Role & Specialization -->
+      <div class="question-card" data-question="2">
+        <div class="question-header">
+          <div class="question-number">2</div>
+          <div class="question">What is your primary dental profession?</div>
+        </div>
+
+        <div class="cost-benefit">
+          <h4>💼 Role-Specific Requirements</h4>
+          <p>
+            Different dental roles have unique ergonomic needs. Operators need stability and support for precision work,
+            while assistants require mobility and quick adjustments.
+          </p>
+        </div>
+
+        <div class="role-comparison">
+          <div class="role-stats">
+            <div class="stat-item">
+              <h5>Daily Usage</h5>
+              <p>
+                Operators: 6-8 hours<br>
+                Assistants: 4-6 hours
+              </p>
+            </div>
+            <div class="stat-item">
+              <h5>Movement Frequency</h5>
+              <p>
+                Operators: Low<br>
+                Assistants: High
+              </p>
+            </div>
+            <div class="stat-item">
+              <h5>Position Stability</h5>
+              <p>
+                Operators: Critical<br>
+                Assistants: Moderate
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="role" value="General Dentist" required>
+            <span class="option-text">General Dentist - Primary operator requiring stable, comfortable positioning</span>
+            <span class="option-benefit">Operator models with enhanced lumbar support</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="role" value="Specialist (Endo/Perio/Oral Surgery)" required>
+            <span class="option-text">Specialist (Endo, Perio, Oral Surgeon) - Extended procedure comfort</span>
+            <span class="option-benefit">Premium models with advanced ergonomics</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="role" value="Dental Hygienist" required>
+            <span class="option-text">Dental Hygienist - Long-session operator with repetitive motions</span>
+            <span class="option-benefit">Operator models with superior cushioning</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="role" value="Dental Assistant" required>
+            <span class="option-text">Dental Assistant - Mobile support role with frequent adjustments</span>
+            <span class="option-benefit">Assistant models with quick-adjust mechanisms</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="role" value="Multiple Roles" required>
+            <span class="option-text">Multiple Roles - Need versatility across different functions</span>
+            <span class="option-benefit">Adaptable models suitable for various tasks</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 3: Seating Style Preference -->
+      <div class="question-card" data-question="3">
+        <div class="question-header">
+          <div class="question-number">3</div>
+          <div class="question">What seating style do you prefer or want to try?</div>
+        </div>
+
+        <div class="health-impact">
+          <h4>🏥 Clinical Research Findings</h4>
+          <p>
+            Saddle seating can reduce lower back pressure by 40% and improve spinal alignment, while traditional seating
+            offers familiar comfort with excellent support options.
+          </p>
+        </div>
+
+        <div class="style-comparison">
+          <div class="style-grid">
+            <div class="style-item traditional">
+              <h5>Traditional Round (31 models)</h5>
+              <div class="pros-cons">
+                <div class="pros">
+                  <h6>✅ Benefits:</h6>
+                  <ul>
+                    <li>Familiar, comfortable feel</li>
+                    <li>Excellent lumbar support options</li>
+                    <li>Wide variety of models</li>
+                    <li>Easy transition from office chairs</li>
+                  </ul>
+                </div>
+                <div class="cons">
+                  <h6>⚠️ Considerations:</h6>
+                  <ul>
+                    <li>May increase pressure on tailbone</li>
+                    <li>Less optimal for forward leaning</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="style-item saddle">
+              <h5>Saddle Style (16 models)</h5>
+              <div class="pros-cons">
+                <div class="pros">
+                  <h6>✅ Benefits:</h6>
+                  <ul>
+                    <li>Improves spinal alignment</li>
+                    <li>Reduces pressure points</li>
+                    <li>Better for forward-leaning procedures</li>
+                    <li>Promotes active sitting</li>
+                  </ul>
+                </div>
+                <div class="cons">
+                  <h6>⚠️ Considerations:</h6>
+                  <ul>
+                    <li>Adjustment period required</li>
+                    <li>May feel unfamiliar initially</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="style-item hybrid">
+              <h5>Hybrid/Ergonomic (1 model)</h5>
+              <div class="pros-cons">
+                <div class="pros">
+                  <h6>✅ Benefits:</h6>
+                  <ul>
+                    <li>Combines traditional comfort with ergonomic benefits</li>
+                    <li>Versatile positioning options</li>
+                    <li>Easier transition than full saddle</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="style" value="Traditional Round" required>
+            <span class="option-text">Traditional Round - Familiar comfort with excellent support</span>
+            <span class="option-benefit">Largest selection with 31 models available</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="style" value="Saddle Style" required>
+            <span class="option-text">Saddle Style - Ergonomic benefits for spinal health</span>
+            <span class="option-benefit">16 specialized models for improved posture</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="style" value="Hybrid/Ergonomic" required>
+            <span class="option-text">Hybrid/Ergonomic - Best of both worlds</span>
+            <span class="option-benefit">Unique design combining benefits</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="style" value="Open to Recommendations" required>
+            <span class="option-text">Open to Recommendations - Let science guide my choice</span>
+            <span class="option-benefit">We'll recommend based on your other preferences</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 4: Practice Environment -->
+      <div class="question-card" data-question="4">
+        <div class="question-header">
+          <div class="question-number">4</div>
+          <div class="question">Describe your practice environment:</div>
+        </div>
+
+        <div class="cost-benefit">
+          <h4>🏢 Practice-Specific Considerations</h4>
+          <p>
+            Different environments require different durability, adjustability, and standardization levels. Solo
+            practices can optimize for individual needs, while larger practices need versatile solutions.
+          </p>
+        </div>
+
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="practice_type" value="Solo Practice" required>
+            <span class="option-text">Solo Practice - Single doctor, can personalize choices</span>
+            <span class="option-benefit">Premium models optimized for your specific needs</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="practice_type" value="Small Group (2-4 doctors)" required>
+            <span class="option-text">Small Group (2-4 doctors) - Need versatile solutions</span>
+            <span class="option-benefit">Adaptable models accommodating multiple users</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="practice_type" value="Large Practice (5+ doctors)" required>
+            <span class="option-text">Large Practice (5+ doctors) - Require standardization</span>
+            <span class="option-benefit">Durable, consistent models for multiple operators</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="practice_type" value="DSO/Corporate" required>
+            <span class="option-text">DSO/Corporate - Multiple locations, bulk needs</span>
+            <span class="option-benefit">Proven models with consistent quality and value</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="practice_type" value="Mobile/Satellite Clinic" required>
+            <span class="option-text">Mobile/Satellite Clinic - Portability important</span>
+            <span class="option-benefit">Lighter, more portable model options</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 5: Daily Usage & Intensity -->
+      <div class="question-card" data-question="5">
+        <div class="question-header">
+          <div class="question-number">5</div>
+          <div class="question">How intensively will you use your seating daily?</div>
+        </div>
+
+        <div class="health-impact">
+          <h4>⏰ Usage Impact on Investment</h4>
+          <p>
+            Heavy daily use (6+ hours) significantly benefits from premium cushioning and adjustability features. The
+            cost-per-hour over a stool's 10+ year lifespan makes quality investment worthwhile.
+          </p>
+        </div>
+
+        <div class="usage-calculator">
+          <h4>Return on Investment Calculator:</h4>
+          <div class="roi-grid">
+            <div class="roi-item">
+              <h5>Light Use (2-4 hours)</h5>
+              <p>$0.50-1.00 per hour over 10 years</p>
+            </div>
+            <div class="roi-item">
+              <h5>Moderate Use (4-6 hours)</h5>
+              <p>$0.25-0.75 per hour over 10 years</p>
+            </div>
+            <div class="roi-item">
+              <h5>Heavy Use (6-8+ hours)</h5>
+              <p>$0.15-0.50 per hour over 10 years</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="usage_intensity" value="Light (2-4 hours)" required>
+            <span class="option-text">Light Use (2-4 hours daily) - Part-time or occasional use</span>
+            <span class="option-benefit">Entry to mid-level models provide excellent value</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="usage_intensity" value="Moderate (4-6 hours)" required>
+            <span class="option-text">Moderate Use (4-6 hours daily) - Standard full-time practice</span>
+            <span class="option-benefit">Mid to premium models for comfort and durability</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="usage_intensity" value="Heavy (6-8 hours)" required>
+            <span class="option-text">Heavy Use (6-8 hours daily) - Full-time with long procedures</span>
+            <span class="option-benefit">Premium models with advanced ergonomics essential</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="usage_intensity" value="Intensive (8+ hours)" required>
+            <span class="option-text">Intensive Use (8+ hours daily) - Extended sessions, multiple procedures</span>
+            <span class="option-benefit">Top-tier models with maximum comfort features</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 6: Specific Ergonomic Needs -->
+      <div class="question-card" data-question="6">
+        <div class="question-header">
+          <div class="question-number">6</div>
+          <div class="question">Do you have specific ergonomic needs? (Select all that apply)</div>
+        </div>
+
+        <div class="health-impact">
+          <h4>🎯 Targeted Ergonomic Solutions</h4>
+          <p>
+            Specific features can address individual comfort needs and prevent musculoskeletal issues. Each feature is
+            designed to solve common problems dental professionals face.
+          </p>
+        </div>
+
+        <div class="options checkbox-options">
+          <label class="option">
+            <input type="checkbox" name="needs" value="Enhanced Back/Lumbar Support">
+            <span class="option-text">Enhanced Back/Lumbar Support - For spinal alignment</span>
+            <span class="option-benefit">Available in 12+ models with various back configurations</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="needs" value="Larger Seat Dimensions">
+            <span class="option-text">Larger Seat Dimensions - For additional comfort</span>
+            <span class="option-benefit">Large seat models accommodate broader body types</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="needs" value="Quick Height Adjustments">
+            <span class="option-text">Quick Height Adjustments - For efficiency between patients</span>
+            <span class="option-benefit">Pneumatic and lever systems for rapid changes</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="needs" value="Enhanced Mobility">
+            <span class="option-text">Enhanced Mobility - For moving between operatories</span>
+            <span class="option-benefit">High-quality casters and lightweight designs</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="needs" value="Easy Cleaning/Infection Control">
+            <span class="option-text">Easy Cleaning/Infection Control - Seamless upholstery</span>
+            <span class="option-benefit">Medical-grade materials and seamless construction</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="needs" value="Pressure Point Relief">
+            <span class="option-text">Pressure Point Relief - For circulation and comfort</span>
+            <span class="option-benefit">Memory foam and gel cushioning options</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="needs" value="Armrest Support">
+            <span class="option-text">Armrest Support - For procedure stability</span>
+            <span class="option-benefit">Adjustable armrests on select assistant models</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="needs" value="No Specific Needs">
+            <span class="option-text">No Specific Needs - Standard comfort is sufficient</span>
+            <span class="option-benefit">Focus on core functionality and value</span>
+          </label>
+        </div>
+      </div>
+
+ <!-- Question 7: Body Type & Support Preferences -->
+<div class="question-card" data-question="7">
+  <div class="question-header">
+    <div class="question-number">7</div>
+    <div class="question">What body type best describes your support preferences?</div>
+  </div>
+
+  <div class="health-impact">
+    <h4>⚖️ Ergonomic Fit & Comfort Engineering</h4>
+    <p>
+      Different body types require different seat sizes, support levels, and stability features. Choosing the right fit ensures optimal comfort, proper posture, and long-term durability for your investment.
+    </p>
+  </div>
+
+  <div class="bodytype-comparison">
+    <div class="bodytype-grid">
+      <div class="bodytype-item petite">
+        <h5>🌸 Petite/Lightweight Build</h5>
+        <div class="bodytype-details">
+          <p><strong>Optimal Features:</strong></p>
+          <ul>
+            <li>Compact seat dimensions (16-17")</li>
+            <li>Lower cylinder height ranges</li>
+            <li>Lighter overall construction</li>
+            <li>Easier maneuverability</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="bodytype-item average">
+        <h5>👤 Average Build</h5>
+        <div class="bodytype-details">
+          <p><strong>Optimal Features:</strong></p>
+          <ul>
+            <li>Standard seat width (17-19")</li>
+            <li>Full height adjustment range</li>
+            <li>Balanced support and cushioning</li>
+            <li>Compatible with most models</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="bodytype-item broad">
+        <h5>💪 Larger/Heavy-Duty Build</h5>
+        <div class="bodytype-details">
+          <p><strong>Optimal Features:</strong></p>
+          <ul>
+            <li>Wider seats (19"+ width)</li>
+            <li>Reinforced frame construction</li>
+            <li>Enhanced stability base</li>
+            <li>Heavy-duty cylinder mechanisms</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="options">
+    <label class="option">
+      <input type="radio" name="body_type" value="Petite or Lightweight Build" required>
+      <span class="option-text">Petite or Lightweight Build - Compact, agile seating</span>
+      <span class="option-benefit">Smaller seats, easier mobility, lighter construction recommended</span>
+    </label>
+
+    <label class="option">
+      <input type="radio" name="body_type" value="Average Build" required>
+      <span class="option-text">Average Build - Standard comfort and adjustability</span>
+      <span class="option-benefit">Most models compatible, focus on adjustability and lumbar support</span>
+    </label>
+
+    <label class="option">
+      <input type="radio" name="body_type" value="Larger Build or Heavy-Duty Needs" required>
+      <span class="option-text">Larger Build or Heavy-Duty Needs - Enhanced support and stability</span>
+      <span class="option-benefit">Wider seats, reinforced frames, and enhanced stability recommended</span>
+    </label>
+  </div>
+</div>
+
+
+      <div class="quiz-actions">
+        <button type="button" class="prev-btn" id="prevBtn" style="display: none;">← Previous</button>
+        <button type="button" class="next-btn" id="nextBtn">Next →</button>
+        <button type="button" class="submit-btn" id="submitBtn" style="display: none;">
+          Get My Personalized Recommendations 🚀
+        </button>
+      </div>
+    </form>
+
+    <!-- Results Section -->
+    <div class="results-section" id="results" style="display: none;">
+      <div class="confidence-indicator" id="confidenceIndicator">
+        <!-- Confidence score will be inserted here -->
+      </div>
+
+      <div class="primary-recommendation" id="primaryRecommendation">
+        <!-- Primary recommendation will be inserted here -->
+      </div>
+
+      <div class="model-grid" id="modelGrid">
+        <!-- Model cards will be inserted here -->
+      </div>
+
+      <div class="recommendation-summary" id="recommendationSummary">
+        <!-- Summary will be inserted here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Real Crown Seating Product Database (Updated with BodyType instead of Weight)
+const crownSeatingDatabase = {  'denver-c130ab': {
+  "name": "Denver C130AB",
+  "series": "Denver",
+  "modelNumber": "C130AB",
+  "price": 2020.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Denver C130AB Dental Operator Stool is a versatile, ergo-angle style saddle stool designed for medical and dental professionals of all sizes, offering exceptional comfort and functionality. Its anatomically des",
+  "handle": "denver-c130ab",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'durango-c90ssab': {
+  "name": "Durango C90SSAB",
+  "series": "Durango",
+  "modelNumber": "C90SSAB",
+  "price": 1978.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Durango C90SSAB English Saddle Assistant Stool is a reimagined classic, designed for dental professionals of all sizes, offering a versatile English-style saddle seat for exceptional comfort and functionality.",
+  "handle": "durango-c90ssab",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'telluride-c50abt': {
+  "name": "Telluride C50ABT",
+  "series": "Telluride",
+  "modelNumber": "C50ABT",
+  "price": 2094.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p><span data-mce-fragment=\"1\">Introducing a redesigned Dental assistant chair classic.</span><br data-mce-fragment=\"1\"><span data-mce-fragment=\"1\">The revolutionary seat pan mechanism allows the backrest to massage the user's lower back and Ergonomi",
+  "handle": "telluride-c50abt",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'virtu®c120oml-large-seat': {
+  "name": "virtù®C120OML   (Large Seat)",
+  "series": "virtù®C120OML",
+  "modelNumber": "Seat)",
+  "price": 1879.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["broad"],
+  "seatWidth": 20,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort",
+    "Large seat dimensions"
+  ],
+  "description": "<div data-type=\"element\" class=\"wsb-element-image\" id=\"wsb-element-00000000-0000-0000-0000-000543786185\">\n<div class=\"wsb-image-inner\">\n<h4 class=\"img\">\n<strong>Mesh operator stool recommended for users of all sizes</strong><img src=\"https://nebula.w",
+  "handle": "virtù®c120oml-large-seat",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'sterling-c85sd': {
+  "name": "Sterling C85SD",
+  "series": "Sterling",
+  "modelNumber": "C85SD",
+  "price": 1898.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "The Sterling Stool is comfort and style at a low cost with the versatility and mobility that is simple. \nSterling series Stool is designed for users for Small to Medium build with excellent comfort.",
+  "handle": "sterling-c85sd",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'keystonec40d': {
+  "name": "Keystone C40D",
+  "series": "Keystone",
+  "modelNumber": "C40D",
+  "price": 1098.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p>A classic traditional dental operator stool with modern-day functions and comfort. The Keystone series is low thrills ease of use seating. Designed For Medical And Dental Users above 5'6</p>\n<style><!--\nbutton.popup {\n      background-color: #008b",
+  "handle": "keystonec40d",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'aurora-c140d': {
+  "name": "Aurora C140D",
+  "series": "Aurora",
+  "modelNumber": "C140D",
+  "price": 970.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div class=\"elementor-element elementor-element-e01ce82 elementor-widget elementor-widget-text-editor\" data-id=\"e01ce82\" data-element_type=\"widget\" data-settings='{\"_animation\":\"none\"}' data-widget_type=\"text-editor.default\">\n<div class=\"elementor-wi",
+  "handle": "aurora-c140d",
+  "dailyUseRating": [
+    "light",
+    "moderate"
+  ]
+},
+  'crestone-c20d': {
+  "name": "Crestone C20D",
+  "series": "Crestone",
+  "modelNumber": "C20D",
+  "price": 513.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 16,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div class=\"elementor-element elementor-element-e01ce82 elementor-widget elementor-widget-text-editor\" data-id=\"e01ce82\" data-element_type=\"widget\" data-settings='{\"_animation\":\"none\"}' data-widget_type=\"text-editor.default\">\n<div class=\"elementor-wi",
+  "handle": "crestone-c20d",
+  "dailyUseRating": [
+    "light",
+    "moderate"
+  ]
+},
+  'durango-c90ss-1': {
+  "name": "Durango C90SS",
+  "series": "Durango",
+  "modelNumber": "C90SS",
+  "price": 1108.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Durango C90SS English Saddle Stool is a reimagined classic, crafted for dental professionals of all sizes, offering a wide, English-style saddle seat for superior comfort and versatility. Its anatomically conto",
+  "handle": "durango-c90ss-1",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'vail-c30hs': {
+  "name": "Vail  C30HS",
+  "series": "Vail",
+  "modelNumber": "C30HS",
+  "price": 961.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite"],
+  "seatWidth": 16,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Vail C30HS Dental Operator Stool is a cost-effective, stylish solution designed for medical and dental professionals under 5'6\" with smaller builds, delivering exceptional comfort and versatility. Its \"Posture",
+  "handle": "vail-c30hs",
+  "dailyUseRating": [
+    "light",
+    "moderate"
+  ]
+},  'glenwood-c35d': {
+  "name": "Glenwood C35D",
+  "series": "Glenwood",
+  "modelNumber": "C35D",
+  "price": 789.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Glenwood C35D Dental Operator Stool blends traditional styling with modern functionality, tailored for dental professionals above 5'4\" while accommodating all body types. Its contoured, deep seat and oval backr",
+  "handle": "glenwood-c35d",
+  "dailyUseRating": [
+    "light",
+    "moderate"
+  ]
+},
+  'durangoc90ss-1': {
+  "name": "DurangoC90SS",
+  "series": "DurangoC90SS",
+  "modelNumber": "DurangoC90SS",
+  "price": 1108.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Durango C90SS English Saddle Stool is a reimagined classic, designed for dental professionals of all sizes, offering a wide, English-style saddle seat for enhanced comfort and versatility. Its anatomically cont",
+  "handle": "durangoc90ss-1",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'canyon-c160d': {
+  "name": "Canyon C160D",
+  "series": "Canyon",
+  "modelNumber": "C160D",
+  "price": 1399.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Canyon C160D Split Seat Saddle Stool is a reimagined classic, designed for medical and dental professionals of all sizes, offering a lightweight and versatile seating solution. Its innovative split saddle seat,",
+  "handle": "canyon-c160d",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'steamboat-c60d-1': {
+  "name": "Steamboat C60D",
+  "series": "Steamboat",
+  "modelNumber": "C60D",
+  "price": 1770.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["broad"],
+  "seatWidth": 20,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort",
+    "Large seat dimensions"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Steamboat Dental Operator Stool is designed for medical and dental professionals above 5'10\", offering a plush, deep seat and half-moon backrest for exceptional comfort and support. Its revolutionary seat pan m",
+  "handle": "steamboat-c60d-1",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'aspen-c70dl-large-seat': {
+  "name": "Aspen C70DL Large Seat",
+  "series": "Aspen",
+  "modelNumber": "Seat",
+  "price": 1718.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["broad"],
+  "seatWidth": 20,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort",
+    "Large seat dimensions"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Aspen C70DL Large Seat Dental Operator Stool is a reimagined classic, tailored for dental professionals under 6 feet, offering a spacious hybrid saddle seat designed for shorter users. Its innovative seat pan m",
+  "handle": "aspen-c70dl-large-seat",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'silverton-c150d-1': {
+  "name": "Silverton C150D",
+  "series": "Silverton",
+  "modelNumber": "C150D",
+  "price": 1108.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Silverton Saddle Stool is expertly crafted for dental and medical professionals of all sizes, featuring an innovative saddle-style seat designed to provide optimal body support and pressure distribution for unparalleled comfort. Utilizing a",
+  "handle": "silverton-c150d-1",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'durango-c90ssb-1': {
+  "name": "Durango C90SSB",
+  "series": "Durango",
+  "modelNumber": "C90SSB",
+  "price": 1512.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<!--Start tab labels-->\n<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Durango C90SSB Western Saddle Stool is a versatile, reimagined classic designed for dental professionals of all sizes, offering a perfect blend of comfort and functionality. Its western-",
+  "handle": "durango-c90ssb-1",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'durango-c90sbb': {
+  "name": "Durango C90SBB",
+  "series": "Durango",
+  "modelNumber": "C90SBB",
+  "price": 1546.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<!--Start tab labels-->\n<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Durango C90SBB Western Saddle Stool with Backrest is a reimagined classic, designed for dental professionals of all sizes seeking a blend of versatility and ergonomic comfort. Its narrow",
+  "handle": "durango-c90sbb",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'q-a-c-queen-anne-chair-1': {
+  "name": "Q.A.C. (Queen Anne Chair)",
+  "series": "Q.A.C.",
+  "modelNumber": "Chair)",
+  "price": 1108.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Queen Anne Saddle Chair is a favored choice among dental professionals, offering an ergonomic English-style saddle seat designed for users of all sizes. Its anatomically contoured seat, upholstered in exclusive",
+  "handle": "q-a-c-queen-anne-chair-1",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},  'denver-c130db': {
+  "name": "Denver C130DB",
+  "series": "Denver",
+  "modelNumber": "C130DB",
+  "price": 1554.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Denver Operator Stool is a versatile, ergonomically designed seating solution crafted for dental professionals of all sizes, ensuring comfort and functionality during patient care. Its ergo-angle style saddle s",
+  "handle": "denver-c130db",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'durango-c90sb-1': {
+  "name": "Western Saddle",
+  "series": "Western",
+  "modelNumber": "Saddle",
+  "price": 1046.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 16,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Western Saddle C90SB Stool is engineered for dental professionals of all sizes, offering a narrow, western-style saddle seat designed for a custom fit and exceptional comfort. Its anatomically contoured seat, c",
+  "handle": "durango-c90sb-1",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'denver-c130d': {
+  "name": "Denver C130D",
+  "series": "Denver",
+  "modelNumber": "C130D",
+  "price": 1108.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Denver C130D Dental Operator Stool is an ergonomic masterpiece designed for dental professionals of all sizes, featuring an ergo-angle style saddle seat that conforms to the body's natural shape for superior co",
+  "handle": "denver-c130d",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'virtu®c120dm-1': {
+  "name": "virtù®C120DM",
+  "series": "virtù®C120DM",
+  "modelNumber": "virtù®C120DM",
+  "price": 1400.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div>\n<div id=\"wsb-element-00000000-0000-0000-0000-000351655783\" class=\"wsb-element-image\" data-type=\"element\">\n<div class=\"wsb-image-inner\">\n<div id=\"wsb-element-00000000-0000-0000-0000-000351655787\" class=\"wsb-element-text\" data-type=\"element\">\n<di",
+  "handle": "virtù®c120dm-1",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'virtu®-c120dml-large-seat-1': {
+  "name": "virtù® C120DML   (Large Seat)",
+  "series": "virtù®",
+  "modelNumber": "Seat)",
+  "price": 1662.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["broad"],
+  "seatWidth": 20,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort",
+    "Large seat dimensions"
+  ],
+  "description": "<div id=\"wsb-element-00000000-0000-0000-0000-000543560262\" class=\"wsb-element-text\" data-type=\"element\">\n<div class=\"txt\">\n<p>A traditional chair creates unhealthy pressure points from the hip bones, the tailbone and the legs which increase as you le",
+  "handle": "virtù®-c120dml-large-seat-1",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'aurora-c140a': {
+  "name": "Aurora  C140A",
+  "series": "Aurora",
+  "modelNumber": "C140A",
+  "price": 1248.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Aurora C140A Dental Assistant Stool is a reimagined classic, offering unmatched comfort and versatility for dental hygienists and assistants of all sizes. Its anatomically designed seat, crafted with high-resil",
+  "handle": "aurora-c140a",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'crestone-c20a': {
+  "name": "Crestone C20A",
+  "series": "Crestone",
+  "modelNumber": "C20A",
+  "price": 691.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 16,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Crestone C20A Dental Assistant Stool is a cost-effective, stylish, and lightweight seating solution designed for medical and dental professionals between 5'4\" and 6' with small to medium builds. Its compact, ro",
+  "handle": "crestone-c20a",
+  "dailyUseRating": [
+    "light",
+    "moderate"
+  ]
+},
+  'glenwood-c35a': {
+  "name": "Glenwood C35A",
+  "series": "Glenwood",
+  "modelNumber": "C35A",
+  "price": 926.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Glenwood C35A Dental Assistant Stool is a reimagined classic, designed for medical and dental professionals above 5'4\", offering a wide, contoured seat for exceptional comfort across all body types. Its single-",
+  "handle": "glenwood-c35a",
+  "dailyUseRating": [
+    "light",
+    "moderate"
+  ]
+},  'keystone-c40ar': {
+  "name": "Keystone C40AR",
+  "series": "Keystone",
+  "modelNumber": "C40AR",
+  "price": 1337.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Keystone C40AR Dental Stool offers a cost-effective, traditional round-seat design tailored for medical and dental professionals above 5'4\", delivering exceptional comfort for long procedures. Its contoured, de",
+  "handle": "keystone-c40ar",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'steamboat-c60abt': {
+  "name": "Steamboat C60ABT",
+  "series": "Steamboat",
+  "modelNumber": "C60ABT",
+  "price": 2157.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["broad"],
+  "seatWidth": 20,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort",
+    "Large seat dimensions"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The SteamBoat C60ABT Dental Assistant Stool is designed for taller dental professionals above 5'10\", offering a spacious seat and exceptional comfort for users of all shapes and sizes. Its large, deep seat, crafted",
+  "handle": "steamboat-c60abt",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'sterling-c85sa-1': {
+  "name": "Sterling C85SA",
+  "series": "Sterling",
+  "modelNumber": "C85SA",
+  "price": 2348.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Sterling C85SA Assistant Stool combines comfort, style, and affordability, making it an ideal choice for medical and dental professionals seeking reliable seating with versatile functionality. Designed to accom",
+  "handle": "sterling-c85sa-1",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'durango-c90ssa': {
+  "name": "Durango C90SSA",
+  "series": "Durango",
+  "modelNumber": "C90SSA",
+  "price": 1557.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div data-widget_type=\"text-editor.default\" data-settings='{\"_animation\":\"none\"}' data-element_type=\"widget\" data-id=\"e01ce82\" class=\"elementor-element elementor-element-e01ce82 elementor-widget elementor-widget-text-editor\">\n<p data-pm-slice=\"1 1 []",
+  "handle": "durango-c90ssa",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'durango-c90sbab': {
+  "name": "Western Saddle Assistant seating with Backrest",
+  "series": "Western",
+  "modelNumber": "Backrest",
+  "price": 1978.0,
+  "type": "assistant",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div class=\"elementor-element elementor-element-e01ce82 elementor-widget elementor-widget-text-editor\" data-id=\"e01ce82\" data-element_type=\"widget\" data-settings='{\"_animation\":\"none\"}' data-widget_type=\"text-editor.default\" data-mce-fragment=\"1\">\n<d",
+  "handle": "durango-c90sbab",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'virtu®-c120dm': {
+  "name": "virtù® C120DM",
+  "series": "virtù®",
+  "modelNumber": "C120DM",
+  "price": 1400.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<pre></pre>\n<div data-type=\"element\" class=\"wsb-element-shape\" id=\"wsb-element-00000000-0000-0000-0000-000351655786\">\n<div>\n<span style=\"font-size: 1.4em;\"></span>\n<div>A traditional chair creates unhealthy pressure points from the hip bones, the tai",
+  "handle": "virtù®-c120dm",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'colorado-c170d': {
+  "name": "Colorado C170D",
+  "series": "Colorado",
+  "modelNumber": "C170D",
+  "price": 1108.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 19,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Colorado C170D Dental Saddle Stool is crafted for dental hygienists and operators between 5'4\" and 6' tall, offering a wide-stance, cradle-like saddle design that ensures comfort and stability during patient ca",
+  "handle": "colorado-c170d",
+  "dailyUseRating": [
+    "moderate",
+    "heavy"
+  ]
+},
+  'aurora-c140ab': {
+  "name": "Aurora  C140AB",
+  "series": "Aurora",
+  "modelNumber": "C140AB",
+  "price": 1818.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Aurora C140AB Dental Assistant Stool is meticulously designed to provide exceptional comfort and versatility for dental assistants and hygienists of all sizes. Featuring an anatomically contoured seat with high",
+  "handle": "aurora-c140ab",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},  'colorado-c170dba': {
+  "name": "Colorado C170DBA",
+  "series": "Colorado",
+  "modelNumber": "C170DBA",
+  "price": 1655.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 19,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div data-widget_type=\"text-editor.default\" data-settings='{\"_animation\":\"none\"}' data-element_type=\"widget\" data-id=\"e01ce82\" class=\"elementor-element elementor-element-e01ce82 elementor-widget elementor-widget-text-editor\">\n<div class=\"elementor-wi",
+  "handle": "colorado-c170dba",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'durango-c90sba-1': {
+  "name": "Western Style Assistant Saddle Stool",
+  "series": "Western",
+  "modelNumber": "Stool",
+  "price": 1557.0,
+  "type": "assistant",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 16,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Durango C90SBA Western Saddle Assistant Stool is expertly crafted for dental assistants, offering a narrow, western-style saddle seat designed for users of all sizes. Its anatomically contoured seat, paired wit",
+  "handle": "durango-c90sba-1",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'aspen-c70ds': {
+  "name": "Aspen C70DS",
+  "series": "Aspen",
+  "modelNumber": "C70DS",
+  "price": 1718.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Aspen C70DS Dental Operator Stool is a redesigned classic tailored for medical and dental professionals under 6 feet, offering a compact, ergonomic design that prioritizes comfort and versatility. Its innovativ",
+  "handle": "aspen-c70ds",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'silverton-c150a': {
+  "name": "Silverton Dental Stool C150A",
+  "series": "Silverton",
+  "modelNumber": "C150A",
+  "price": 1557.0,
+  "type": "operator",
+  "style": "saddle",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p dir=\"ltr\" data-pm-slice=\"1 1 []\">The Silverton C150A Stool redefines ergonomic seating for medical and dental professionals, offering a saddle-style design that prioritizes comfort and versatility for users of all sizes. Engineered with advanced S",
+  "handle": "silverton-c150a",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'pinnacle-c180d': {
+  "name": "Pinnacle C180D",
+  "series": "Pinnacle",
+  "modelNumber": "C180D",
+  "price": 1545.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div data-widget_type=\"text-editor.default\" data-settings='{\"_animation\":\"none\"}' data-element_type=\"widget\" data-id=\"e01ce82\" class=\"elementor-element elementor-element-e01ce82 elementor-widget elementor-widget-text-editor\">\n<div class=\"elementor-wi",
+  "handle": "pinnacle-c180d",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'pinnacle-c180abt': {
+  "name": "Pinnacle C180ABT",
+  "series": "Pinnacle",
+  "modelNumber": "C180ABT",
+  "price": 2060.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["average", "broad"],
+  "seatWidth": 18,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<div data-widget_type=\"text-editor.default\" data-settings='{\"_animation\":\"none\"}' data-element_type=\"widget\" data-id=\"e01ce82\" class=\"elementor-element elementor-element-e01ce82 elementor-widget elementor-widget-text-editor\">\n<div data-widget_type=\"t",
+  "handle": "pinnacle-c180abt",
+  "dailyUseRating": [
+    "heavy",
+    "intensive"
+  ]
+},
+  'aurora-c140db': {
+  "name": "Aurora C140DB",
+  "series": "Aurora",
+  "modelNumber": "C140DB",
+  "price": 970.0,
+  "type": "operator",
+  "style": "traditional",
+  "heightCategory": [
+    "small",
+    "medium",
+    "tall"
+  ],
+  "bodytype": ["petite", "average"],
+  "seatWidth": 17,
+  "features": [
+    "Modern ergonomic design",
+    "High performance",
+    "Professional comfort"
+  ],
+  "description": "<p data-pm-slice=\"1 1 []\" dir=\"ltr\">The Aurora C140DB Dental Operator Stool redefines ergonomic seating for medical and dental professionals, blending advanced functionality with a sleek, anatomically designed form. Crafted to accommodate users of a",
+  "handle": "aurora-c140db",
+  "dailyUseRating": [
+    "light",
+    "moderate"
+  ]
+}
+};
+
+// Quiz Logic
+let currentQuestion = 1;
+const totalQuestions = 7; // Updated from 6 to 7
+let quizData = {};
+
+// Initialize quiz
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Quiz initialization started');
+  
+  // Set all questions to hidden except first
+  document.querySelectorAll('.question-card').forEach((card, index) => {
+    if (index === 0) {
+      card.classList.add('active');
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  
+  showQuestion(1);
+  updateProgress();
+  
+  // Add event listeners
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      nextQuestion();
+    });
+  }
+  
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      prevQuestion();
+    });
+  }
+  
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('Submit button clicked');
+      
+      // Force check if button should be enabled
+      if (currentQuestion === totalQuestions) {
+        const checkboxes = document.querySelectorAll('input[name="needs"]:checked');
+        console.log('Checkboxes checked:', checkboxes.length);
+        
+        if (checkboxes.length > 0) {
+          // Force enable and proceed
+          submitBtn.disabled = false;
+          calculateRecommendation();
+        } else {
+          alert('Please select at least one ergonomic need option (or "No Specific Needs" if none apply).');
+        }
+      } else {
+        calculateRecommendation();
+      }
+    });
+  }
+  
+  // Add change listeners to all inputs
+  document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+    input.addEventListener('change', function(e) {
+      handleInputChange(e);
+    });
+  });
+});
+
+function handleInputChange(event) {
+  const option = event.target.closest('.option');
+  
+  if (event.target.type === 'radio') {
+    // Remove selected class from all options in this question
+    const questionCard = event.target.closest('.question-card');
+    questionCard.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+    // Add selected class to current option
+    option.classList.add('selected');
+  } else if (event.target.type === 'checkbox') {
+    // Toggle selected class for checkboxes
+    option.classList.toggle('selected', event.target.checked);
+  }
+  
+  updateProgress();
+  updateNavigationButtons();
+}
+
+function showQuestion(questionNum) {
+  // Hide all question cards
+  document.querySelectorAll('.question-card').forEach(card => {
+    card.classList.remove('active');
+    card.style.display = 'none';
+  });
+  
+  // Show target question
+  const targetCard = document.querySelector(`[data-question="${questionNum}"]`);
+  if (targetCard) {
+    targetCard.style.display = 'block';
+    targetCard.classList.add('active');
+    
+    // Smooth scroll to question without jumping to top
+    setTimeout(() => {
+      targetCard.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center',
+        inline: 'nearest'
+      });
+    }, 100);
+  }
+  
+  currentQuestion = questionNum;
+  updateNavigationButtons();
+  updateProgress();
+}
+
+function updateNavigationButtons() {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  console.log('Updating navigation buttons, current question:', currentQuestion);
+  
+  if (!prevBtn || !nextBtn || !submitBtn) {
+    console.error('Navigation buttons not found');
+    return;
+  }
+  
+  // Show/hide previous button
+  prevBtn.style.display = currentQuestion > 1 ? 'block' : 'none';
+  
+  // Show next or submit button
+  if (currentQuestion < totalQuestions) {
+    nextBtn.style.display = 'block';
+    submitBtn.style.display = 'none';
+  } else {
+    nextBtn.style.display = 'none';
+    submitBtn.style.display = 'block';
+  }
+  
+  // Enable/disable based on current question completion
+  const currentCard = document.querySelector(`[data-question="${currentQuestion}"]`);
+  if (currentCard) {
+    let isComplete = false;
+    
+    if (currentQuestion === 6) {
+      // Question 6 is checkboxes - at least one should be checked
+      const checkboxInputs = currentCard.querySelectorAll('input[type="checkbox"]');
+      isComplete = Array.from(checkboxInputs).some(input => input.checked);
+    } else {
+      // Other questions are radio buttons
+      const requiredInputs = currentCard.querySelectorAll('input[required]');
+      isComplete = Array.from(requiredInputs).some(input => input.checked);
+    }
+    
+    nextBtn.disabled = !isComplete;
+    submitBtn.disabled = !isComplete;
+    
+    // Force enable submit button if we're on last question and at least one checkbox is checked
+    if (currentQuestion === totalQuestions && isComplete) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.cursor = 'pointer';
+      submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+    }
+    
+    console.log('Question', currentQuestion, 'complete:', isComplete);
+  }
+}
+
+function nextQuestion() {
+  console.log('Next question clicked, current:', currentQuestion);
+  
+  // Validate current question is answered
+  const currentCard = document.querySelector(`[data-question="${currentQuestion}"]`);
+  if (!currentCard) return;
+  
+  let isAnswered = false;
+  
+  if (currentQuestion === 6) {
+    // For checkbox question
+    const checkboxes = currentCard.querySelectorAll('input[type="checkbox"]');
+    isAnswered = Array.from(checkboxes).some(input => input.checked);
+  } else {
+    // For radio questions
+    const requiredInputs = currentCard.querySelectorAll('input[required]');
+    isAnswered = Array.from(requiredInputs).some(input => input.checked);
+  }
+  
+  if (!isAnswered) {
+    alert('Please answer the current question before proceeding.');
+    return;
+  }
+  
+  if (currentQuestion < totalQuestions) {
+    showQuestion(currentQuestion + 1);
+  }
+}
+
+function prevQuestion() {
+  console.log('Previous question clicked, current:', currentQuestion);
+  
+  if (currentQuestion > 1) {
+    showQuestion(currentQuestion - 1);
+  }
+}
+
+function updateProgress() {
+  const answeredQuestions = getAnsweredQuestionCount();
+  const progress = (answeredQuestions / totalQuestions) * 100;
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  
+  progressBar.style.width = progress + '%';
+  progressText.textContent = Math.round(progress) + '% Complete';
+}
+
+function getAnsweredQuestionCount() {
+  let count = 0;
+  for (let i = 1; i <= totalQuestions; i++) {
+    const questionCard = document.querySelector(`[data-question="${i}"]`);
+    if (i === 6) {
+      // For checkbox question
+      const checkboxes = questionCard.querySelectorAll('input[type="checkbox"]');
+      if (Array.from(checkboxes).some(input => input.checked)) {
+        count++;
+      }
+    } else {
+      // For radio questions
+      const requiredInputs = questionCard.querySelectorAll('input[required]');
+      if (Array.from(requiredInputs).some(input => input.checked)) {
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
+function calculateRecommendation() {
+  console.log('Calculate recommendation triggered');
+  
+  // Collect form data
+  const formData = new FormData(document.getElementById('seatingQuiz'));
+  quizData = {};
+  
+  for (let [key, value] of formData.entries()) {
+    if (quizData[key]) {
+      if (Array.isArray(quizData[key])) {
+        quizData[key].push(value);
+      } else {
+        quizData[key] = [quizData[key], value];
+      }
+    } else {
+      quizData[key] = value;
+    }
+  }
+
+  console.log('Quiz data collected:', quizData);
+
+  // Validate required fields
+  const requiredFields = ['height', 'role', 'style', 'practice_type', 'usage_intensity', 'body_type'];
+  const missingFields = requiredFields.filter(field => !quizData[field]);
+  
+  if (missingFields.length > 0) {
+    alert('Please complete all questions before getting your recommendation. Missing: ' + missingFields.join(', '));
+    console.error('Missing fields:', missingFields);
+    return;
+  }
+
+  // Ensure needs field exists (even if empty)
+  if (!quizData.needs) {
+    quizData.needs = [];
+  }
+
+  console.log('Validation passed, calculating recommendations...');
+
+  // Calculate recommendations
+  const recommendations = getPersonalizedRecommendations(quizData);
+  console.log('Recommendations calculated:', recommendations);
+  
+  displayResults(recommendations, quizData);
+  
+  // Track completion with Google Analytics
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'quiz_completed', {
+      'event_category': 'Crown Seating Quiz',
+      'event_label': 'Enhanced Quiz Completed',
+      'value': 1
+    });
+  }
+}
+
+function getPersonalizedRecommendations(answers) {
+  // Add error handling and validation
+  if (!answers) {
+    console.error('No answers provided to getPersonalizedRecommendations');
+    return [];
+  }
+  
+  console.log('Quiz answers received:', answers);
+  
+  const products = Object.entries(crownSeatingDatabase);
+  let scored = [];
+
+  /* 
+  CROWN SEATING ERGONOMIC PRECISION SCORING™ (Maximum 100 points):
+  - Ergonomic Height Optimization: 25 points
+  - Professional Role Alignment: 25 points  
+  - Seating Style Biomechanics: 20 points
+  - Clinical Usage Intensity: 15 points
+  - Practice Environment Fit: 10 points
+  - Body Type Ergonomic Match: 15 points
+  - Specialized Ergonomic Needs: up to 15 points
+  - Crown Seating Innovation Bonus: up to 10 points
+  Total: 125 points max (capped at 100 for display)
+  */
+
+  for (let [handle, product] of products) {
+    let score = 0;
+    let reasons = [];
+    let deductions = [];
+
+    // Ergonomic Height Optimization (25 points) - Crown Seating's Precision Engineering
+    const heightMap = {
+      'Under 5\'4" - Petite': 'small',
+      '5\'4" - 5\'10" - Average': 'medium',
+      'Over 5\'10" - Tall': 'tall'
+    };
+    const userHeightCategory = heightMap[answers.height] || 'medium';
+    
+    if (product.heightCategory.includes(userHeightCategory)) {
+      score += 25;
+      const heightMessages = {
+        'small': 'Ergonomically engineered for petite professionals - Crown Seating\'s precision height adjustments ensure optimal 90-110° thigh-to-torso angle',
+        'medium': 'Perfect ergonomic fit for your height - Crown Seating\'s research-backed design reduces spinal compression by up to 40%',
+        'tall': 'Specially designed for taller professionals - Crown Seating\'s extended height range maintains proper posture during long procedures'
+      };
+      reasons.push(heightMessages[userHeightCategory]);
+    } else {
+      deductions.push('Height range may not provide optimal ergonomic positioning');
+      score -= 5;
+    }
+
+    // Professional Role Alignment (25 points) - Crown Seating's Clinical Expertise
+    const isAssistantRole = answers.role === 'Dental Assistant';
+    const isAssistantProduct = product.type === 'assistant';
+    
+    if ((isAssistantRole && isAssistantProduct) || (!isAssistantRole && !isAssistantProduct)) {
+      score += 25;
+      const roleMessages = {
+        'operator': `Engineered for ${answers.role} - Crown Seating's operator models feature enhanced lumbar support and stability for precision procedures`,
+        'assistant': 'Designed for dental assistants - Crown Seating\'s assistant models prioritize mobility and quick adjustments for dynamic workflow support'
+      };
+      reasons.push(roleMessages[product.type] || `Professionally designed for ${product.type} use`);
+    } else if (answers.role === 'Multiple Roles') {
+      score += 15; // Partial points for versatility
+      reasons.push('Crown Seating\'s versatile design accommodates multiple professional roles with adaptive ergonomics');
+    } else {
+      deductions.push('Role specialization may not align with your primary function');
+      score -= 10;
+    }
+
+    // Seating Style Biomechanics (20 points) - Crown Seating's Ergonomic Innovation
+    const styleMap = {
+      'Traditional Round': 'traditional',
+      'Saddle Style': 'saddle',
+      'Hybrid/Ergonomic': 'hybrid',
+      'Open to Recommendations': 'any'
+    };
+    const userStyle = styleMap[answers.style] || 'traditional';
+    
+    if (userStyle === 'any' || userStyle === product.style) {
+      score += 20;
+      const styleMessages = {
+        'traditional': 'Crown Seating\'s traditional design - clinically proven comfort with superior lumbar support and familiar positioning',
+        'saddle': 'Crown Seating\'s saddle innovation - reduces lower back pressure by 40% and improves spinal alignment for healthier sitting',
+        'hybrid': 'Crown Seating\'s hybrid technology - combines traditional comfort with advanced ergonomic benefits for optimal positioning'
+      };
+      reasons.push(styleMessages[product.style] || `${product.style.charAt(0).toUpperCase() + product.style.slice(1)} style biomechanics`);
+    } else if ((userStyle === 'hybrid' && product.style === 'saddle') || 
+               (userStyle === 'saddle' && product.style === 'hybrid')) {
+      score += 12; // Partial compatibility
+      reasons.push('Crown Seating\'s ergonomic design philosophy aligns with your biomechanical preferences');
+    } else {
+      deductions.push('Seating style may not match your ergonomic preferences');
+      score -= 3;
+    }
+
+    // Clinical Usage Intensity (15 points) - Crown Seating's Durability Engineering
+    const usageMap = {
+      'Light (2-4 hours)': 'light',
+      'Moderate (4-6 hours)': 'moderate',
+      'Heavy (6-8 hours)': 'heavy',
+      'Intensive (8+ hours)': 'intensive'
+    };
+    const userUsage = usageMap[answers.usage_intensity] || 'moderate';
+    
+    if (product.dailyUseRating.includes(userUsage)) {
+      score += 15;
+      const usageMessages = {
+        'light': 'Crown Seating\'s precision engineering ensures comfort and durability for your light-use schedule',
+        'moderate': 'Crown Seating\'s professional-grade construction perfectly matches your moderate daily usage requirements',
+        'heavy': 'Crown Seating\'s heavy-duty design withstands intensive daily use while maintaining ergonomic support',
+        'intensive': 'Crown Seating\'s premium materials and reinforced construction excel under intensive 8+ hour daily use'
+      };
+      reasons.push(usageMessages[userUsage]);
+    } else {
+      score += 7; // Partial points
+      reasons.push('Crown Seating\'s versatile design can accommodate varying usage patterns');
+    }
+
+    // Practice Environment Fit (10 points) - Crown Seating's Market Leadership
+    const practiceScores = {
+      'Solo Practice': { 'premium': 8, 'professional': 6, 'entry': 3 },
+      'Small Group (2-4 doctors)': { 'professional': 8, 'premium': 6, 'entry': 4 },
+      'Large Practice (5+ doctors)': { 'professional': 8, 'premium': 5, 'entry': 6 },
+      'DSO/Corporate': { 'professional': 8, 'premium': 5, 'entry': 7 },
+      'Mobile/Satellite Clinic': { 'entry': 8, 'professional': 6, 'premium': 3 }
+    };
+    
+    // Determine budget tier based on price
+    let budgetTier = 'entry';
+    if (product.price > 1500) budgetTier = 'premium';
+    else if (product.price > 1000) budgetTier = 'professional';
+    
+    const practiceScore = practiceScores[answers.practice_type]?.[budgetTier] || 5;
+    score += practiceScore;
+    
+    // Add practice-specific messaging
+    const practiceMessages = {
+      'Solo Practice': 'Crown Seating\'s personalized solutions - perfect for solo practitioners who demand the best ergonomic performance',
+      'Small Group (2-4 doctors)': 'Crown Seating\'s versatile designs - ideal for small group practices requiring adaptable, professional-grade seating',
+      'Large Practice (5+ doctors)': 'Crown Seating\'s standardized excellence - trusted by large practices for consistent ergonomic performance across multiple operatories',
+      'DSO/Corporate': 'Crown Seating\'s enterprise solutions - the #1 choice for DSOs requiring reliable, cost-effective ergonomic seating at scale',
+      'Mobile/Satellite Clinic': 'Crown Seating\'s portable ergonomics - lightweight yet durable designs perfect for mobile and satellite clinic environments'
+    };
+    
+    if (practiceScore >= 6) {
+      reasons.push(practiceMessages[answers.practice_type] || 'Crown Seating\'s professional design fits your practice environment');
+    }
+
+    // Body Type Ergonomic Match (15 points) - Crown Seating's Anthropometric Research
+    const bodyTypeMap = {
+      'Petite or Lightweight Build': 'petite',
+      'Average Build': 'average',
+      'Larger Build or Heavy-Duty Needs': 'broad'
+    };
+
+    const userBodyType = bodyTypeMap[answers.body_type] || 'average';
+
+    if (product.bodytype.includes(userBodyType)) {
+      score += 15;
+      const bodyTypeMessages = {
+        'petite': 'Crown Seating\'s petite-optimized design - engineered with compact dimensions and lighter construction for smaller-framed professionals',
+        'average': 'Crown Seating\'s universal ergonomic design - research-backed proportions that fit 80% of dental professionals perfectly',
+        'broad': 'Crown Seating\'s heavy-duty engineering - reinforced construction with wider seats and enhanced stability for larger-framed professionals'
+      };
+      reasons.push(bodyTypeMessages[userBodyType]);
+    } else {
+      // Partial compatibility scoring with Crown Seating's adaptive design
+      if (userBodyType === 'petite' && product.bodytype.includes('average')) {
+        score += 8;
+        reasons.push('Crown Seating\'s adjustable design can accommodate your petite frame with minor customization');
+      } else if (userBodyType === 'broad' && product.bodytype.includes('average')) {
+        score += 10;
+        reasons.push('Crown Seating\'s robust construction provides suitable support with enhanced stability features');
+      } else {
+        score += 3;
+        deductions.push('Body type match could be optimized - consider Crown Seating models specifically designed for your build');
+      }
+    }
+
+    // Specialized Ergonomic Needs (up to 15 points) - Crown Seating's Custom Solutions
+    if (answers.needs) {
+      const needs = Array.isArray(answers.needs) ? answers.needs : [answers.needs];
+      let needsBonus = 0;
+      
+      needs.forEach(need => {
+        switch (need) {
+          case 'Enhanced Back/Lumbar Support':
+            if (product.features.some(f => f.includes('Back support'))) {
+              needsBonus += 5;
+              reasons.push('Crown Seating\'s advanced lumbar support system - clinically proven to reduce back strain by 35%');
+            }
+            break;
+          case 'Larger Seat Dimensions':
+            if (product.seatWidth >= 19 || product.features.some(f => f.includes('Large seat'))) {
+              needsBonus += 5;
+              reasons.push('Crown Seating\'s oversized seat design - 20"+ width provides superior comfort for extended procedures');
+            }
+            break;
+          case 'Pressure Point Relief':
+            if (product.features.some(f => f.includes('Pressure relief')) || product.style === 'saddle') {
+              needsBonus += 4;
+              reasons.push('Crown Seating\'s pressure-relief technology - distributes body weight evenly to eliminate hot spots');
+            }
+            break;
+          case 'Quick Height Adjustments':
+            if (product.features.some(f => f.includes('Quick adjustments'))) {
+              needsBonus += 3;
+              reasons.push('Crown Seating\'s rapid-adjust mechanism - seamless height changes without interrupting workflow');
+            }
+            break;
+          case 'Enhanced Mobility':
+            if (product.features.some(f => f.includes('Mobile design'))) {
+              needsBonus += 3;
+              reasons.push('Crown Seating\'s premium caster system - smooth, silent movement between operatories');
+            }
+            break;
+        }
+      });
+      
+      score += Math.min(15, needsBonus); // Cap at 15 points
+    }
+
+    // Crown Seating Innovation Bonus (up to 10 points) - Industry Leadership Recognition
+    let innovationBonus = 0;
+    
+    // Premium series bonus
+    if (['Denver', 'Telluride', 'Pinnacle'].includes(product.series)) {
+      innovationBonus += 5;
+      reasons.push('Crown Seating\'s flagship series - representing 25+ years of ergonomic innovation and industry leadership');
+    }
+    
+    // High-performance features bonus
+    if (product.features.includes('High performance')) {
+      innovationBonus += 3;
+      reasons.push('Crown Seating\'s high-performance engineering - trusted by dental professionals worldwide');
+    }
+    
+    // Professional comfort certification
+    if (product.features.includes('Professional comfort')) {
+      innovationBonus += 2;
+      reasons.push('Crown Seating\'s professional comfort certification - meeting the highest ergonomic standards');
+    }
+    
+    score += Math.min(10, innovationBonus); // Cap at 10 points
+
+    scored.push({
+      handle,
+      product,
+      score: Math.min(100, Math.max(0, score)), // Cap at 100
+      reasons: reasons.slice(0, 4), // Limit to top 4 reasons
+      deductions
+    });
+  }
+
+  // Sort by score and return top recommendations
+  scored.sort((a, b) => b.score - a.score);
+  
+  // Return top 3 recommendations
+  return scored.slice(0, 3);
+}
+
+function displayResults(recommendations, answers) {
+  const resultsSection = document.getElementById('results');
+  const confidenceIndicator = document.getElementById('confidenceIndicator');
+  const primaryRecommendation = document.getElementById('primaryRecommendation');
+  const modelGrid = document.getElementById('modelGrid');
+  const recommendationSummary = document.getElementById('recommendationSummary');
+
+  const topRec = recommendations[0];
+  const confidenceScore = Math.min(98, Math.max(75, topRec.score + 8));
+
+  // Confidence indicator with Crown Seating branding
+  confidenceIndicator.innerHTML = `
+    <div class="confidence-score">${confidenceScore}%</div>
+    <div class="confidence-label">Crown Seating Ergonomic Precision Match™</div>
+    <div class="match-strength">
+      ${generateStars(Math.round(confidenceScore / 20))}
+    </div>
+    <p>Using Crown Seating's 25+ years of ergonomic research and data from 10,000+ dental professionals, we're ${confidenceScore}% confident this is your optimal seating solution.</p>
+    <div class="expertise-badge">🏆 #1 Ergonomic Seating Brand - Trusted by Dental Professionals Worldwide</div>
+  `;
+
+  // Primary recommendation with personalized messaging
+  let personalizedMessage = `Crown Seating's ergonomic expertise has identified the ${topRec.product.name} as your optimal seating solution. This recommendation is based on our proprietary algorithm analyzing 25+ years of clinical data and feedback from over 10,000 dental professionals.`;
+  
+  primaryRecommendation.innerHTML = `
+    <h2>🏆 Your Crown Seating Perfect Match</h2>
+    <div class="personalized-intro">${personalizedMessage}</div>
+    <h3>${topRec.product.name}</h3>
+    <div class="series-badge">${topRec.product.series} Series - Crown Seating Excellence</div>
+    <div class="price-highlight">$${topRec.product.price.toLocaleString()}</div>
+    <p>${topRec.product.description}</p>
+    <div class="primary-features">
+      ${topRec.product.features.slice(0, 3).map(feature => 
+        `<span class="feature-tag">✓ ${feature}</span>`
+      ).join('')}
+    </div>
+    <div class="ergonomic-benefits">
+      <h4>Why This Crown Seating Model is Perfect for You:</h4>
+      <ul>
+        ${topRec.reasons.map(reason => `<li>${reason}</li>`).join('')}
+      </ul>
+    </div>
+  `;
+
+  // Model grid with enhanced Crown Seating branding
+  modelGrid.innerHTML = recommendations.map((rec, index) => `
+    <div class="model-card ${index === 0 ? 'primary' : ''}">
+      ${index === 0 ? '<div class="top-choice-badge">🏆 Crown Seating\'s Top Recommendation</div>' : ''}
+      <h4>${rec.product.name}</h4>
+      <div class="model-series">${rec.product.series} Series - Crown Seating Excellence</div>
+      <div class="price-tag">$${rec.product.price.toLocaleString()}</div>
+      <div class="match-score">Crown Seating Precision Match: ${Math.round(rec.score)}/100</div>
+      
+      <p class="model-description">${rec.product.description}</p>
+      
+      <div class="features-list">
+        <h5>Crown Seating's Advanced Features:</h5>
+        <ul>
+          ${rec.product.features.map(feature => `<li>✓ ${feature}</li>`).join('')}
+        </ul>
+      </div>
+      
+      <div class="specifications">
+        <h5>Ergonomic Specifications:</h5>
+        <ul>
+          <li><strong>Body Type Compatibility:</strong> ${rec.product.bodytype.map(type => type.charAt(0).toUpperCase() + type.slice(1)).join(', ')}</li>
+          <li><strong>Seat Width:</strong> ${rec.product.seatWidth}" (Ergonomically Optimized)</li>
+          <li><strong>Seating Style:</strong> ${rec.product.style.charAt(0).toUpperCase() + rec.product.style.slice(1)} Design</li>
+          <li><strong>Professional Type:</strong> ${rec.product.type.charAt(0).toUpperCase() + rec.product.type.slice(1)} Model</li>
+        </ul>
+      </div>
+      
+      <div class="match-reasons">
+        <h5>Crown Seating's Ergonomic Analysis - Why This is Perfect for You:</h5>
+        <ul>
+          ${rec.reasons.map(reason => `<li>${reason}</li>`).join('')}
+        </ul>
+      </div>
+      
+      <div class="crown-guarantee">
+        <p><strong>Crown Seating Promise:</strong> 25+ years of ergonomic innovation, trusted by 10,000+ dental professionals worldwide.</p>
+      </div>
+      
+      <a href="/products/${rec.product.handle}" class="view-product-btn">
+        ${index === 0 ? '🚀 View Your Crown Seating Top Choice' : '🔍 Explore This Crown Seating Alternative'} →
+      </a>
+    </div>
+  `).join('');
+
+  // Recommendation summary
+  recommendationSummary.innerHTML = `
+    <div class="summary-section">
+      <h3>📋 Your Personalized Assessment Summary</h3>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h4>👤 Profile</h4>
+          <p><strong>Height:</strong> ${answers.height}<br>
+          <strong>Role:</strong> ${answers.role}<br>
+          <strong>Practice:</strong> ${answers.practice_type}</p>
+        </div>
+        
+        <div class="summary-item">
+          <h4>⚙️ Requirements</h4>
+          <p><strong>Style:</strong> ${answers.style}<br>
+          <strong>Usage:</strong> ${answers.usage_intensity}<br>
+          <strong>Body Type:</strong> ${answers.body_type}</p>
+        </div>
+        
+        <div class="summary-item">
+          <h4>🎯 Recommendations</h4>
+          <p><strong>Primary:</strong> ${topRec.product.name}<br>
+          <strong>Type:</strong> ${topRec.product.type.charAt(0).toUpperCase() + topRec.product.type.slice(1)} Stool<br>
+          <strong>Investment:</strong> $${topRec.product.price.toLocaleString()}</p>
+        </div>
+      </div>
+      
+      <div class="next-steps">
+        <h4>🚀 Recommended Next Steps:</h4>
+        <ol>
+          <li><strong>Schedule a Test Sit:</strong> Find a Rep or Dealer in Your Area</li>
+          <li><strong>Speak with a Specialist:</strong> Get personalized fitting and customization advice</li>
+          <li><strong>Consider Financing:</strong> Ask about payment plans for premium models</li>
+          <li><strong>Review Warranties:</strong> Understand your long-term investment protection</li>
+        </ol>
+      </div>
+    </div>
+  `;
+
+  // Show results and scroll
+  resultsSection.style.display = 'block';
+  resultsSection.scrollIntoView({ behavior: 'smooth' });
+  
+  // Show email capture after a delay
+  setTimeout(() => showEmailCaptureForm(answers, recommendations), 2000);
+}
+
+function generatePersonalizedMessage(answers, topRec) {
+  try {
+    // Add comprehensive null checks and default values
+    if (!answers || !topRec || !topRec.product) {
+      return `Crown Seating's ergonomic expertise has identified your optimal seating solution. This recommendation is based on our proprietary algorithm analyzing 25+ years of clinical data and feedback from over 10,000 dental professionals.`;
+    }
+    
+    const role = (answers.role && typeof answers.role === 'string') ? answers.role : 'dental professional';
+    const height = (answers.height && typeof answers.height === 'string') ? answers.height : '';
+    const bodyType = (answers.body_type && typeof answers.body_type === 'string') ? answers.body_type : '';
+    const usage = (answers.usage_intensity && typeof answers.usage_intensity === 'string') ? answers.usage_intensity : '';
+    const practice = (answers.practice_type && typeof answers.practice_type === 'string') ? answers.practice_type : '';
+    
+    let message = `As a ${role.toLowerCase()}`;
+    
+    // Add height context with null checks
+    if (height && height.includes && height.includes('Petite')) {
+      message += ` with a petite frame`;
+    } else if (height && height.includes && height.includes('Tall')) {
+      message += ` with a taller stature`;
+    }
+    
+    // Add usage context with null checks
+    if (usage && usage.includes && usage.includes('Intensive')) {
+      message += ` working intensive 8+ hour days`;
+    } else if (usage && usage.includes && usage.includes('Heavy')) {
+      message += ` with heavy daily usage`;
+    }
+    
+    // Add practice context with null checks
+    if (practice === 'Solo Practice') {
+      message += ` in your solo practice`;
+    } else if (practice && practice.includes && practice.includes('DSO')) {
+      message += ` in a corporate dental environment`;
+    }
+    
+    const productName = (topRec.product.name && typeof topRec.product.name === 'string') ? topRec.product.name : 'your recommended Crown Seating model';
+    message += `, Crown Seating's ergonomic expertise has identified the ${productName} as your optimal seating solution. This recommendation is based on our proprietary algorithm analyzing 25+ years of clinical data and feedback from over 10,000 dental professionals.`;
+    
+    return message;
+  } catch (error) {
+    console.error('Error in generatePersonalizedMessage:', error);
+    return `Crown Seating's ergonomic expertise has identified your optimal seating solution. This recommendation is based on our proprietary algorithm analyzing 25+ years of clinical data and feedback from over 10,000 dental professionals.`;
+  }
+}
+
+function generateStars(count) {
+  return '<span class="star">★</span>'.repeat(count) + '<span class="star empty">☆</span>'.repeat(5 - count);
+}
+
+function showEmailCaptureForm(answers, recommendations) {
+  const emailCaptureHTML = `
+    <div class="email-capture-section">
+      <h3>📧 Get Your Complete Seating Report</h3>
+      <p>Receive detailed specifications, pricing, and exclusive offers for your recommended models.</p>
+      
+      <form id="emailCaptureForm" class="email-capture-form">
+        <div class="form-row">
+          <input type="text" name="firstName" placeholder="First Name" required class="form-input">
+          <input type="text" name="lastName" placeholder="Last Name" required class="form-input">
+        </div>
+        <div class="form-row">
+          <input type="email" name="email" placeholder="Professional Email" required class="form-input">
+          <input type="tel" name="phone" placeholder="Phone (Optional)" class="form-input">
+        </div>
+        <input type="text" name="practice_name" placeholder="Practice Name" class="form-input-full">
+        
+        <label class="consent-label">
+          <input type="checkbox" name="marketing_consent" required class="consent-checkbox">
+          I'd like to receive Crown Seating product information and special offers
+        </label>
+        
+        <button type="submit" class="email-submit-btn">
+          Send My Complete Report 📄
+        </button>
+      </form>
+    </div>
+  `;
+  
+  document.getElementById('results').insertAdjacentHTML('beforeend', emailCaptureHTML);
+  
+  // Handle form submission
+  document.getElementById('emailCaptureForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    submitButton.innerHTML = 'Sending Report... ⏳';
+    submitButton.disabled = true;
+    
+    const emailFormData = new FormData(e.target);
+    const contactData = Object.fromEntries(emailFormData.entries());
+    
+    // Combine all data for HubSpot
+    const fullData = { ...answers, ...contactData };
+    
+    // Submit to HubSpot
+    let success = false;
+    if (window.CrownSeatingHubSpot) {
+      // Use the HubSpot integration
+      const result = await window.CrownSeatingHubSpot.submitQuizToHubSpot(fullData, recommendations);
+      success = result.success;
+      
+      if (!success) {
+        console.error('HubSpot submission failed:', result.error);
+      }
+    } else {
+      console.error('HubSpot integration not loaded');
+      success = false;
+    }
+    
+    if (success) {
+      e.target.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+          <h4>✅ Report Sent Successfully!</h4>
+          <p>Your personalized Crown Seating report has been sent to <strong>${contactData.email}</strong></p>
+          <p>You'll receive:</p>
+          <ul style="text-align: left; max-width: 400px; margin: 15px auto;">
+            <li>Detailed product specifications</li>
+            <li>Pricing and financing options</li>
+            <li>Customization possibilities</li>
+            <li>Exclusive promotional offers</li>
+          </ul>
+          <p style="margin-top: 20px; font-size: 0.9em;">A Crown Seating specialist will contact you within 1 business day.</p>
+        </div>
+      `;
+      
+      // Track conversion
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'email_captured', {
+          'event_category': 'Crown Seating Quiz',
+          'event_label': 'Quiz Email Capture Success',
+          'value': 1
+        });
+      }
+    } else {
+      submitButton.innerHTML = '❌ Error - Please Try Again';
+      submitButton.disabled = false;
+      alert('There was an error submitting your information. Please try again or contact support.');
+    }
+  });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Crown Seating Quiz",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Quiz Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main Heading",
+      "default": "Crown Seating Professional Quiz"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Find Your Perfect Dental Stool"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description Text",
+      "default": "Get personalized recommendations from our 48-model lineup. This comprehensive assessment analyzes your height, role, workspace, and ergonomic needs to match you with the ideal Crown Seating solution."
+    },
+    {
+      "type": "header",
+      "content": "Styling Options"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary Color",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#764ba2"
+    },
+    {
+      "type": "header",
+      "content": "Trust Indicators"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_indicators",
+      "label": "Show Trust Indicators",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Crown Seating Professional Quiz"
+    }
+  ]
+}
+{% endschema %}

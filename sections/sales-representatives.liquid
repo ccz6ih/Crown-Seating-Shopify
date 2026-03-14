@@ -1,0 +1,824 @@
+<!-- File: sections/sales-representatives.liquid -->
+
+{{ 'sales-representatives.css' | asset_url | stylesheet_tag }}
+
+<div class="sales-reps-section" data-section-id="{{ section.id }}">
+  {% if section.settings.heading != blank %}
+    <h2 class="sales-reps-heading">{{ section.settings.heading }}</h2>
+  {% endif %}
+
+  {% if section.settings.subheading != blank %}
+    <p class="sales-reps-subheading">{{ section.settings.subheading }}</p>
+  {% endif %}
+
+  <!-- Search and Filter Controls -->
+  <div class="sales-reps-controls">
+    <div class="search-container">
+      <input
+        type="text"
+        id="repSearch"
+        placeholder="Search by name, territory, state, ZIP code, or phone..."
+        class="search-input"
+      >
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </div>
+
+    <div class="filter-container">
+      <select id="territoryFilter" class="territory-filter">
+        <option value="">All Territories</option>
+        {% assign territories = '' %}
+        {% for block in section.blocks %}
+          {% if block.settings.territory != blank %}
+            {% assign current_territory = block.settings.territory %}
+            {% unless territories contains current_territory %}
+              {% assign territories = territories | append: current_territory | append: ',' %}
+              <option value="{{ current_territory }}">{{ current_territory }}</option>
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <!-- Representatives Grid -->
+  <div class="sales-reps-grid" id="repsGrid">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'sales_rep' %}
+          <div
+            class="rep-card"
+            data-name="{{ block.settings.name | downcase }}"
+            data-territory="{{ block.settings.territory | downcase }}"
+            data-phone="{{ block.settings.phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '.' }}"
+            data-email="{{ block.settings.email | downcase }}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="rep-photo-container">
+              {% if block.settings.photo != blank %}
+                <img
+                  src="{{ block.settings.photo | image_url: width: 120 }}"
+                  alt="{{ block.settings.name }}"
+                  class="rep-photo"
+                  loading="lazy"
+                >
+              {% else %}
+                <div class="rep-photo-placeholder">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="rep-info">
+              <h3 class="rep-name">{{ block.settings.name }}</h3>
+
+              {% if block.settings.territory != blank %}
+                <p class="rep-territory">{{ block.settings.territory }}</p>
+              {% endif %}
+
+              {% if block.settings.phone != blank %}
+                <p class="rep-phone"><strong>Cell:</strong> {{ block.settings.phone }}</p>
+              {% endif %}
+
+              {% if block.settings.email != blank %}
+                <p class="rep-email"><strong>Email:</strong> {{ block.settings.email }}</p>
+              {% endif %}
+            </div>
+
+            <div class="rep-actions">
+              {% if block.settings.phone != blank %}
+                <a
+                  href="tel:{{ block.settings.phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '.' }}"
+                  class="contact-btn call-btn"
+                >
+                  📞 Call
+                </a>
+              {% endif %}
+
+              {% if block.settings.email != blank %}
+                <a
+                  href="mailto:{{ block.settings.email }}"
+                  class="contact-btn email-btn"
+                >
+                  📧 Email
+                </a>
+              {% endif %}
+
+              {% if block.settings.phone != blank %}
+                <a
+                  href="sms:{{ block.settings.phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '.' }}"
+                  class="contact-btn text-btn"
+                >
+                  💬 Text
+                </a>
+              {% endif %}
+            </div>
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+
+  <!-- No Results Message -->
+  <div class="no-results" id="noResults" style="display: none;">
+    <h3>No representatives found</h3>
+    <p>Try adjusting your search or filter criteria.</p>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // State abbreviation to full name mapping
+  const stateMapping = {
+    'AL': 'alabama', 'AK': 'alaska', 'AZ': 'arizona', 'AR': 'arkansas', 'CA': 'california',
+    'CO': 'colorado', 'CT': 'connecticut', 'DE': 'delaware', 'FL': 'florida', 'GA': 'georgia',
+    'HI': 'hawaii', 'ID': 'idaho', 'IL': 'illinois', 'IN': 'indiana', 'IA': 'iowa',
+    'KS': 'kansas', 'KY': 'kentucky', 'LA': 'louisiana', 'ME': 'maine', 'MD': 'maryland',
+    'MA': 'massachusetts', 'MI': 'michigan', 'MN': 'minnesota', 'MS': 'mississippi', 'MO': 'missouri',
+    'MT': 'montana', 'NE': 'nebraska', 'NV': 'nevada', 'NH': 'new hampshire', 'NJ': 'new jersey',
+    'NM': 'new mexico', 'NY': 'new york', 'NC': 'north carolina', 'ND': 'north dakota', 'OH': 'ohio',
+    'OK': 'oklahoma', 'OR': 'oregon', 'PA': 'pennsylvania', 'RI': 'rhode island', 'SC': 'south carolina',
+    'SD': 'south dakota', 'TN': 'tennessee', 'TX': 'texas', 'UT': 'utah', 'VT': 'vermont',
+    'VA': 'virginia', 'WA': 'washington', 'WV': 'west virginia', 'WI': 'wisconsin', 'WY': 'wyoming',
+    'DC': 'district of columbia',
+    // Canadian provinces
+    'BC': 'british columbia', 'AB': 'alberta', 'SK': 'saskatchewan', 'MB': 'manitoba',
+    'ON': 'ontario', 'QC': 'quebec', 'NB': 'new brunswick', 'NS': 'nova scotia',
+    'PE': 'prince edward island', 'NL': 'newfoundland'
+  };
+
+  // ZIP code to sales rep mapping (3-digit prefixes from your Excel file)
+  const zipToRep = {
+    "006": "robert rodriguez", "007": "robert rodriguez", "008": "robert rodriguez", "009": "robert rodriguez",
+    "010": "rob parsons", "011": "rob parsons", "012": "rob parsons", "013": "rob parsons", "014": "rob parsons",
+    "015": "rob parsons", "016": "rob parsons", "017": "rob parsons", "018": "rob parsons", "019": "rob parsons",
+    "020": "rob parsons", "021": "rob parsons", "022": "rob parsons", "023": "rob parsons", "024": "rob parsons",
+    "025": "rob parsons", "026": "rob parsons", "027": "rob parsons", "028": "rob parsons", "029": "rob parsons",
+    "030": "rob parsons", "031": "rob parsons", "032": "rob parsons", "033": "rob parsons", "034": "rob parsons",
+    "035": "rob parsons", "036": "rob parsons", "037": "rob parsons", "038": "rob parsons", "039": "rob parsons",
+    "040": "rob parsons", "041": "rob parsons", "042": "rob parsons", "043": "rob parsons", "044": "rob parsons",
+    "045": "rob parsons", "046": "rob parsons", "047": "rob parsons", "048": "rob parsons", "049": "rob parsons",
+    "050": "rob parsons", "051": "rob parsons", "052": "rob parsons", "053": "rob parsons", "054": "rob parsons",
+    "055": "rob parsons", "056": "rob parsons", "057": "rob parsons", "058": "rob parsons", "059": "rob parsons",
+    "060": "rob parsons", "061": "rob parsons", "062": "rob parsons", "063": "rob parsons", "064": "rob parsons",
+    "065": "rob parsons", "066": "rob parsons", "067": "rob parsons", "068": "rob parsons", "069": "rob parsons",
+    "070": "gilbert frellick", "071": "gilbert frellick", "072": "gilbert frellick", "073": "gilbert frellick",
+    "074": "gilbert frellick", "075": "gilbert frellick", "076": "gilbert frellick", "077": "gilbert frellick",
+    "078": "gilbert frellick", "079": "gilbert frellick", "080": "don rogers, iii", "081": "don rogers, iii",
+    "082": "don rogers, iii", "083": "don rogers, iii", "084": "don rogers, iii", "085": "don rogers, iii",
+    "086": "don rogers, iii", "087": "gilbert frellick", "088": "gilbert frellick", "089": "gilbert frellick",
+    "100": "gilbert frellick", "101": "gilbert frellick", "102": "gilbert frellick", "103": "gilbert frellick",
+    "104": "gilbert frellick", "105": "gilbert frellick", "106": "gilbert frellick", "107": "gilbert frellick",
+    "108": "gilbert frellick", "109": "gilbert frellick", "110": "gilbert frellick", "111": "gilbert frellick",
+    "112": "gilbert frellick", "113": "gilbert frellick", "114": "gilbert frellick", "115": "gilbert frellick",
+    "116": "gilbert frellick", "117": "gilbert frellick", "118": "gilbert frellick", "119": "gilbert frellick",
+    "120": "rob parsons", "121": "rob parsons", "122": "rob parsons", "123": "rob parsons", "124": "rob parsons",
+    "125": "rob parsons", "126": "rob parsons", "127": "rob parsons", "128": "rob parsons", "129": "rob parsons",
+    "130": "milton lorring", "131": "milton lorring", "132": "milton lorring", "133": "milton lorring",
+    "134": "milton lorring", "135": "milton lorring", "136": "milton lorring", "137": "milton lorring",
+    "138": "milton lorring", "139": "don rogers, iii", "140": "milton lorring", "141": "milton lorring",
+    "142": "milton lorring", "143": "milton lorring", "144": "milton lorring", "145": "milton lorring",
+    "146": "milton lorring", "147": "milton lorring", "148": "milton lorring", "149": "milton lorring",
+    "150": "milton lorring", "151": "milton lorring", "152": "milton lorring", "153": "milton lorring",
+    "154": "milton lorring", "155": "milton lorring", "156": "milton lorring", "157": "milton lorring",
+    "158": "milton lorring", "159": "milton lorring", "160": "milton lorring", "161": "milton lorring",
+    "162": "milton lorring", "163": "milton lorring", "164": "milton lorring", "165": "milton lorring",
+    "166": "milton lorring", "167": "milton lorring", "168": "don rogers, iii", "169": "don rogers, iii",
+    "170": "don rogers, iii", "171": "don rogers, iii", "172": "don rogers, iii", "173": "don rogers, iii",
+    "174": "don rogers, iii", "175": "don rogers, iii", "176": "don rogers, iii", "177": "don rogers, iii",
+    "178": "don rogers, iii", "179": "don rogers, iii", "180": "don rogers, iii", "181": "don rogers, iii",
+    "182": "don rogers, iii", "183": "don rogers, iii", "184": "don rogers, iii", "185": "don rogers, iii",
+    "186": "don rogers, iii", "187": "don rogers, iii", "188": "don rogers, iii", "189": "don rogers, iii",
+    "190": "don rogers, iii", "191": "don rogers, iii", "192": "don rogers, iii", "193": "don rogers, iii",
+    "194": "don rogers, iii", "195": "don rogers, iii", "196": "don rogers, iii", "197": "don rogers, iii",
+    "198": "don rogers, iii", "199": "don rogers, iii", "200": "don rogers, iii", "201": "don rogers, iii",
+    "202": "don rogers, iii", "203": "don rogers, iii", "204": "don rogers, iii", "205": "don rogers, iii",
+    "206": "don rogers, iii", "207": "don rogers, iii", "208": "don rogers, iii", "209": "don rogers, iii",
+    "210": "don rogers, iii", "211": "don rogers, iii", "212": "don rogers, iii", "214": "don rogers, iii",
+    "215": "don rogers, iii", "216": "don rogers, iii", "217": "don rogers, iii", "218": "don rogers, iii",
+    "219": "don rogers, iii", "220": "don rogers, iii", "221": "don rogers, iii", "222": "don rogers, iii",
+    "223": "don rogers, iii", "224": "ryan o'berry", "225": "ryan o'berry", "226": "ryan o'berry",
+    "227": "ryan o'berry", "228": "ryan o'berry", "229": "ryan o'berry", "230": "ryan o'berry",
+    "231": "ryan o'berry", "232": "ryan o'berry", "233": "ryan o'berry", "234": "ryan o'berry",
+    "235": "ryan o'berry", "236": "ryan o'berry", "237": "ryan o'berry", "238": "ryan o'berry",
+    "239": "ryan o'berry", "240": "ryan o'berry", "241": "ryan o'berry", "242": "ryan o'berry",
+    "243": "ryan o'berry", "244": "ryan o'berry", "245": "ryan o'berry", "246": "ryan o'berry",
+    "247": "ryan o'berry", "248": "ryan o'berry", "249": "ryan o'berry", "250": "milton lorring",
+    "251": "milton lorring", "252": "milton lorring", "253": "milton lorring", "254": "don rogers, iii",
+    "255": "milton lorring", "256": "milton lorring", "257": "milton lorring", "258": "milton lorring",
+    "259": "milton lorring", "260": "milton lorring", "261": "milton lorring", "262": "milton lorring",
+    "263": "milton lorring", "264": "milton lorring", "265": "milton lorring", "266": "milton lorring",
+    "267": "don rogers, iii", "268": "don rogers, iii", "270": "ryan o'berry", "271": "ryan o'berry",
+    "272": "ryan o'berry", "273": "ryan o'berry", "274": "ryan o'berry", "275": "ryan o'berry",
+    "276": "ryan o'berry", "277": "ryan o'berry", "278": "ryan o'berry", "279": "ryan o'berry",
+    "280": "ryan o'berry", "281": "ryan o'berry", "282": "ryan o'berry", "283": "ryan o'berry",
+    "284": "ryan o'berry", "285": "ryan o'berry", "286": "ryan o'berry", "287": "ryan o'berry",
+    "288": "ryan o'berry", "289": "ryan o'berry", "290": "ryan o'berry", "291": "ryan o'berry",
+    "292": "ryan o'berry", "293": "ryan o'berry", "294": "ryan o'berry", "295": "ryan o'berry",
+    "296": "ryan o'berry", "297": "ryan o'berry", "298": "mike gullage", "299": "ryan o'berry",
+    "300": "mike gullage", "301": "mike gullage", "302": "mike gullage", "303": "mike gullage",
+    "304": "mike gullage", "305": "mike gullage", "306": "mike gullage", "307": "mike gullage",
+    "308": "mike gullage", "309": "mike gullage", "310": "mike gullage", "311": "mike gullage",
+    "312": "mike gullage", "313": "ryan o'berry", "314": "ryan o'berry", "315": "robert rodriguez",
+    "316": "mike gullage", "317": "mike gullage", "318": "mike gullage", "319": "mike gullage",
+    "320": "robert rodriguez", "321": "robert rodriguez", "322": "robert rodriguez", "323": "robert rodriguez",
+    "324": "mike gullage", "325": "mike gullage", "326": "robert rodriguez", "327": "robert rodriguez",
+    "328": "robert rodriguez", "329": "robert rodriguez", "330": "robert rodriguez", "331": "robert rodriguez",
+    "332": "robert rodriguez", "333": "robert rodriguez", "334": "robert rodriguez", "335": "robert rodriguez",
+    "336": "robert rodriguez", "337": "robert rodriguez", "338": "robert rodriguez", "339": "robert rodriguez",
+    "341": "robert rodriguez", "342": "robert rodriguez", "344": "robert rodriguez", "346": "robert rodriguez",
+    "347": "robert rodriguez", "349": "robert rodriguez", "350": "mike gullage", "351": "mike gullage",
+    "352": "mike gullage", "354": "mike gullage", "355": "mike gullage", "356": "mike gullage",
+    "357": "mike gullage", "358": "mike gullage", "359": "mike gullage", "360": "mike gullage",
+    "361": "mike gullage", "362": "mike gullage", "363": "mike gullage", "364": "mike gullage",
+    "365": "mike gullage", "366": "mike gullage", "367": "mike gullage", "368": "mike gullage",
+    "369": "mike gullage", "370": "mike gullage", "371": "mike gullage", "372": "mike gullage",
+    "373": "mike gullage", "374": "mike gullage", "375": "mike gullage", "376": "mike gullage",
+    "377": "mike gullage", "378": "mike gullage", "379": "mike gullage", "380": "shawn silvey",
+    "381": "shawn silvey", "382": "shawn silvey", "383": "shawn silvey", "384": "shawn silvey",
+    "385": "shawn silvey", "386": "shawn silvey", "387": "mike gullage", "388": "mike gullage",
+    "389": "mike gullage", "390": "mike gullage", "391": "mike gullage", "392": "mike gullage",
+    "393": "mike gullage", "394": "mike gullage", "395": "mike gullage", "396": "mike gullage",
+    "397": "mike gullage", "398": "mike gullage", "399": "mike gullage", "400": "bill highland",
+    "401": "bill highland", "402": "bill highland", "403": "bill highland", "404": "bill highland",
+    "405": "bill highland", "406": "bill highland", "407": "milton lorring", "408": "milton lorring",
+    "409": "milton lorring", "410": "milton lorring", "411": "milton lorring", "412": "milton lorring",
+    "413": "milton lorring", "414": "milton lorring", "415": "milton lorring", "416": "milton lorring",
+    "417": "milton lorring", "418": "milton lorring", "419": "milton lorring", "420": "milton lorring",
+    "421": "milton lorring", "422": "milton lorring", "423": "milton lorring", "424": "bill highland",
+    "425": "milton lorring", "426": "milton lorring", "427": "milton lorring", "430": "milton lorring",
+    "431": "milton lorring", "432": "milton lorring", "433": "milton lorring", "434": "bill highland",
+    "435": "bill highland", "436": "bill highland", "437": "milton lorring", "438": "milton lorring",
+    "439": "milton lorring", "440": "milton lorring", "441": "milton lorring", "442": "milton lorring",
+    "443": "milton lorring", "444": "milton lorring", "445": "milton lorring", "446": "milton lorring",
+    "447": "milton lorring", "448": "milton lorring", "449": "milton lorring", "450": "milton lorring",
+    "451": "milton lorring", "452": "milton lorring", "453": "milton lorring", "454": "milton lorring",
+    "455": "milton lorring", "456": "milton lorring", "457": "milton lorring", "458": "bill highland",
+    "460": "bill highland", "461": "bill highland", "462": "bill highland", "463": "bill highland",
+    "464": "bill highland", "465": "bill highland", "466": "bill highland", "467": "bill highland",
+    "468": "bill highland", "469": "bill highland", "470": "milton lorring", "471": "bill highland",
+    "472": "bill highland", "473": "bill highland", "474": "bill highland", "475": "bill highland",
+    "476": "bill highland", "477": "bill highland", "478": "bill highland", "479": "bill highland",
+    "480": "bill highland", "481": "bill highland", "482": "bill highland", "483": "bill highland",
+    "484": "bill highland", "485": "bill highland", "486": "bill highland", "487": "bill highland",
+    "488": "bill highland", "489": "bill highland", "490": "bill highland", "491": "bill highland",
+    "492": "bill highland", "493": "bill highland", "494": "bill highland", "495": "bill highland",
+    "496": "bill highland", "497": "bill highland", "498": "brett hobbs", "499": "brett hobbs",
+    "500": "steve carlin", "501": "steve carlin", "502": "steve carlin", "503": "steve carlin",
+    "504": "steve carlin", "505": "steve carlin", "506": "steve carlin", "507": "steve carlin",
+    "508": "steve carlin", "509": "steve carlin", "510": "steve carlin", "511": "steve carlin",
+    "512": "steve carlin", "513": "steve carlin", "514": "steve carlin", "515": "steve carlin",
+    "516": "steve carlin", "520": "steve carlin", "521": "steve carlin", "522": "steve carlin",
+    "523": "steve carlin", "524": "steve carlin", "525": "steve carlin", "526": "steve carlin",
+    "527": "steve carlin", "528": "steve carlin", "530": "brett hobbs", "531": "brett hobbs",
+    "532": "brett hobbs", "534": "brett hobbs", "535": "brett hobbs", "537": "brett hobbs",
+    "538": "brett hobbs", "539": "brett hobbs", "540": "steve carlin", "541": "brett hobbs",
+    "542": "brett hobbs", "543": "brett hobbs", "544": "brett hobbs", "545": "brett hobbs",
+    "546": "steve carlin", "547": "steve carlin", "548": "brett hobbs", "549": "brett hobbs",
+    "550": "steve carlin", "551": "steve carlin", "553": "steve carlin", "554": "steve carlin",
+    "555": "steve carlin", "556": "steve carlin", "557": "steve carlin", "558": "steve carlin",
+    "559": "steve carlin", "560": "steve carlin", "561": "steve carlin", "562": "steve carlin",
+    "563": "steve carlin", "564": "steve carlin", "565": "steve carlin", "566": "steve carlin",
+    "567": "steve carlin", "570": "steve carlin", "571": "steve carlin", "572": "steve carlin",
+    "573": "steve carlin", "574": "steve carlin", "575": "steve carlin", "576": "steve carlin",
+    "577": "steve carlin", "580": "steve carlin", "581": "steve carlin", "582": "steve carlin",
+    "583": "steve carlin", "584": "steve carlin", "585": "steve carlin", "586": "steve carlin",
+    "587": "steve carlin", "588": "steve carlin", "590": "john miller", "591": "john miller",
+    "592": "john miller", "593": "john miller", "594": "john miller", "595": "john miller",
+    "596": "john miller", "597": "john miller", "598": "john miller", "599": "john miller",
+    "600": "brett hobbs", "601": "brett hobbs", "602": "brett hobbs", "603": "brett hobbs",
+    "604": "brett hobbs", "605": "brett hobbs", "606": "brett hobbs", "607": "brett hobbs",
+    "608": "brett hobbs", "609": "brett hobbs", "610": "brett hobbs", "611": "brett hobbs",
+    "612": "steve carlin", "613": "brett hobbs", "614": "steve carlin", "615": "brett hobbs",
+    "616": "brett hobbs", "617": "brett hobbs", "618": "brett hobbs", "619": "shawn silvey",
+    "620": "shawn silvey", "622": "shawn silvey", "623": "shawn silvey", "624": "shawn silvey",
+    "625": "shawn silvey", "626": "shawn silvey", "627": "shawn silvey", "628": "shawn silvey",
+    "629": "shawn silvey", "630": "shawn silvey", "631": "shawn silvey", "633": "shawn silvey",
+    "634": "shawn silvey", "635": "shawn silvey", "636": "shawn silvey", "637": "shawn silvey",
+    "638": "shawn silvey", "639": "shawn silvey", "640": "shawn silvey", "641": "shawn silvey",
+    "644": "shawn silvey", "645": "shawn silvey", "646": "shawn silvey", "647": "shawn silvey",
+    "648": "shawn silvey", "650": "shawn silvey", "651": "shawn silvey", "652": "shawn silvey",
+    "653": "shawn silvey", "654": "shawn silvey", "655": "shawn silvey", "656": "shawn silvey",
+    "657": "shawn silvey", "658": "shawn silvey", "660": "shawn silvey", "661": "shawn silvey",
+    "662": "shawn silvey", "664": "shawn silvey", "665": "shawn silvey", "666": "shawn silvey",
+    "667": "shawn silvey", "668": "shawn silvey", "669": "shawn silvey", "670": "shawn silvey",
+    "671": "shawn silvey", "672": "shawn silvey", "673": "shawn silvey", "674": "shawn silvey",
+    "675": "shawn silvey", "676": "shawn silvey", "677": "shawn silvey", "678": "shawn silvey",
+    "679": "shawn silvey", "680": "steve carlin", "681": "steve carlin", "683": "steve carlin",
+    "684": "steve carlin", "685": "steve carlin", "686": "steve carlin", "687": "steve carlin",
+    "688": "steve carlin", "689": "steve carlin", "690": "steve carlin", "691": "steve carlin",
+    "692": "steve carlin", "693": "steve carlin", "700": "mike gullage", "701": "mike gullage",
+    "703": "mike gullage", "704": "mike gullage", "705": "mike gullage", "706": "mike gullage",
+    "707": "mike gullage", "708": "mike gullage", "710": "stephan nugent", "711": "stephan nugent",
+    "712": "stephan nugent", "713": "mike gullage", "714": "mike gullage", "716": "stephan nugent",
+    "717": "stephan nugent", "718": "stephan nugent", "719": "stephan nugent", "720": "stephan nugent",
+    "721": "stephan nugent", "722": "stephan nugent", "723": "shawn silvey", "724": "stephan nugent",
+    "725": "stephan nugent", "726": "stephan nugent", "727": "stephan nugent", "728": "stephan nugent",
+    "729": "stephan nugent", "730": "stephan nugent", "731": "stephan nugent", "733": "scott rumble",
+    "734": "stephan nugent", "735": "stephan nugent", "736": "stephan nugent", "737": "stephan nugent",
+    "738": "stephan nugent", "739": "shawn silvey", "740": "stephan nugent", "741": "stephan nugent",
+    "743": "stephan nugent", "744": "stephan nugent", "745": "stephan nugent", "746": "stephan nugent",
+    "747": "stephan nugent", "748": "stephan nugent", "749": "stephan nugent", "750": "stephan nugent",
+    "751": "stephan nugent", "752": "stephan nugent", "753": "stephan nugent", "754": "stephan nugent",
+    "755": "stephan nugent", "756": "stephan nugent", "757": "stephan nugent", "758": "stephan nugent",
+    "759": "stephan nugent", "760": "stephan nugent", "761": "stephan nugent", "762": "stephan nugent",
+    "763": "stephan nugent", "764": "stephan nugent", "765": "stephan nugent", "766": "stephan nugent",
+    "767": "stephan nugent", "768": "stephan nugent", "769": "stephan nugent", "770": "scott rumble",
+    "772": "scott rumble", "773": "scott rumble", "774": "scott rumble", "775": "scott rumble",
+    "776": "scott rumble", "777": "scott rumble", "778": "scott rumble", "779": "scott rumble",
+    "780": "scott rumble", "781": "scott rumble", "782": "scott rumble", "783": "scott rumble",
+    "784": "scott rumble", "785": "scott rumble", "786": "scott rumble", "787": "scott rumble",
+    "788": "scott rumble", "789": "scott rumble", "790": "stephan nugent", "791": "stephan nugent",
+    "792": "stephan nugent", "793": "stephan nugent", "794": "stephan nugent", "795": "stephan nugent",
+    "796": "stephan nugent", "797": "stephan nugent", "798": "skip ellender", "799": "skip ellender",
+    "800": "skip ellender", "801": "skip ellender", "802": "skip ellender", "803": "skip ellender",
+    "804": "skip ellender", "805": "skip ellender", "806": "skip ellender", "807": "skip ellender",
+    "808": "skip ellender", "809": "skip ellender", "810": "skip ellender", "811": "skip ellender",
+    "812": "skip ellender", "813": "skip ellender", "814": "skip ellender", "815": "skip ellender",
+    "816": "skip ellender", "820": "skip ellender", "821": "john miller", "822": "skip ellender",
+    "823": "skip ellender", "824": "john miller", "825": "john miller", "826": "john miller",
+    "827": "john miller", "828": "john miller", "829": "skip ellender", "830": "skip ellender",
+    "831": "skip ellender", "832": "john miller", "833": "john miller", "834": "john miller",
+    "835": "john miller", "836": "john miller", "837": "john miller", "838": "john miller",
+    "840": "jim schlosser", "841": "jim schlosser", "842": "jim schlosser", "843": "jim schlosser",
+    "844": "jim schlosser", "845": "jim schlosser", "846": "jim schlosser", "847": "jim schlosser",
+    "850": "skip ellender", "851": "skip ellender", "852": "skip ellender", "853": "skip ellender",
+    "855": "skip ellender", "856": "skip ellender", "857": "skip ellender", "859": "skip ellender",
+    "860": "skip ellender", "863": "skip ellender", "864": "skip ellender", "865": "skip ellender",
+    "870": "skip ellender", "871": "skip ellender", "872": "skip ellender", "873": "skip ellender",
+    "874": "skip ellender", "875": "skip ellender", "877": "skip ellender", "878": "skip ellender",
+    "879": "skip ellender", "880": "skip ellender", "881": "skip ellender", "882": "skip ellender",
+    "883": "skip ellender", "884": "skip ellender", "889": "jim schlosser", "890": "jim schlosser",
+    "891": "jim schlosser", "893": "jim schlosser", "894": "jim schlosser", "895": "jim schlosser",
+    "897": "jim schlosser", "898": "jim schlosser", "900": "jim schlosser", "901": "jim schlosser",
+    "902": "jim schlosser", "903": "jim schlosser", "904": "jim schlosser", "905": "jim schlosser",
+    "906": "jim schlosser", "907": "jim schlosser", "908": "jim schlosser", "910": "jim schlosser",
+    "911": "jim schlosser", "912": "jim schlosser", "913": "jim schlosser", "914": "jim schlosser",
+    "915": "jim schlosser", "916": "jim schlosser", "917": "jim schlosser", "918": "jim schlosser",
+    "919": "jim schlosser", "920": "jim schlosser", "921": "jim schlosser", "922": "jim schlosser",
+    "923": "jim schlosser", "924": "jim schlosser", "925": "jim schlosser", "926": "jim schlosser",
+    "927": "jim schlosser", "928": "jim schlosser", "930": "jim schlosser", "931": "jim schlosser",
+    "932": "jim schlosser", "933": "jim schlosser", "934": "jim schlosser", "935": "jim schlosser",
+    "936": "jim schlosser", "937": "jim schlosser", "938": "jim schlosser", "939": "jim schlosser",
+    "940": "jim schlosser", "941": "jim schlosser", "942": "jim schlosser", "943": "jim schlosser",
+    "944": "jim schlosser", "945": "jim schlosser", "946": "jim schlosser", "947": "jim schlosser",
+    "948": "jim schlosser", "949": "jim schlosser", "950": "jim schlosser", "951": "jim schlosser",
+    "952": "jim schlosser", "953": "jim schlosser", "954": "jim schlosser", "955": "jim schlosser",
+    "956": "jim schlosser", "957": "jim schlosser", "958": "jim schlosser", "959": "jim schlosser",
+    "960": "jim schlosser", "961": "jim schlosser", "967": "jim schlosser", "968": "jim schlosser",
+    "970": "john miller", "971": "john miller", "972": "john miller", "973": "john miller",
+    "974": "john miller", "975": "john miller", "976": "john miller", "977": "john miller",
+    "978": "john miller", "979": "john miller", "980": "john miller", "981": "john miller",
+    "982": "john miller", "983": "john miller", "984": "john miller", "985": "john miller",
+    "986": "john miller", "988": "john miller", "989": "john miller", "990": "john miller",
+    "991": "john miller", "992": "john miller", "993": "john miller", "994": "john miller",
+    "995": "john miller", "996": "john miller", "997": "john miller", "998": "john miller",
+    "999": "john miller"
+  };
+
+  // Function to look up rep by ZIP code (handles 3-digit prefixes)
+  function getRepByZip(zip) {
+    // Remove all non-digits
+    const digitsOnly = zip.replace(/\D/g, '');
+    
+    // Try exact match first (for 3-digit prefixes in our data)
+    if (zipToRep[digitsOnly]) {
+      return zipToRep[digitsOnly];
+    }
+    
+    // Try first 3 digits (most common case)
+    if (digitsOnly.length >= 3) {
+      const prefix3 = digitsOnly.substring(0, 3);
+      if (zipToRep[prefix3]) {
+        return zipToRep[prefix3];
+      }
+    }
+    
+    // Try padded version for shorter inputs
+    if (digitsOnly.length < 5) {
+      const paddedZip = digitsOnly.padStart(5, '0');
+      if (zipToRep[paddedZip]) {
+        return zipToRep[paddedZip];
+      }
+    }
+    
+    return null;
+  }
+
+  // Function to expand territory with full state names
+  function expandTerritoryWithStates(territory) {
+    let expandedTerritory = territory.toLowerCase();
+    
+    // Find state abbreviations in parentheses or after commas
+    Object.keys(stateMapping).forEach(abbrev => {
+      const regex = new RegExp('\\b' + abbrev.toLowerCase() + '\\b', 'gi');
+      if (expandedTerritory.match(regex)) {
+        expandedTerritory += ' ' + stateMapping[abbrev];
+      }
+    });
+    
+    return expandedTerritory;
+  }
+
+  const searchInput = document.getElementById('repSearch');
+  const territoryFilter = document.getElementById('territoryFilter');
+  const repsGrid = document.getElementById('repsGrid');
+  const noResults = document.getElementById('noResults');
+  
+  if (!searchInput || !territoryFilter || !repsGrid || !noResults) {
+    console.log('Sales rep elements not found');
+    return;
+  }
+  
+  const repCards = repsGrid.querySelectorAll('.rep-card');
+  console.log('Found', repCards.length, 'rep cards');
+  
+  // Enhance each card with expanded territory data
+  repCards.forEach((card, index) => {
+    const originalTerritory = card.dataset.territory || '';
+    const expandedTerritory = expandTerritoryWithStates(originalTerritory);
+    card.dataset.expandedTerritory = expandedTerritory;
+    
+    // Debug first few cards
+    if (index < 3) {
+      console.log(`Card ${index}:`, {
+        name: card.dataset.name,
+        originalTerritory: originalTerritory,
+        expandedTerritory: expandedTerritory.substring(0, 50) + '...'
+      });
+    }
+  });
+
+  function filterReps() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const selectedTerritory = territoryFilter.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    console.log('Filtering with search:', searchTerm, 'territory:', selectedTerritory);
+
+    // Check if search term is a ZIP code
+    const isZipSearch = /^\d{3,5}$/.test(searchTerm);
+    let zipMatchRep = null;
+    
+    if (isZipSearch) {
+      zipMatchRep = getRepByZip(searchTerm);
+      console.log('ZIP search for', searchTerm, '→', zipMatchRep || 'Not found');
+    }
+
+    repCards.forEach((card, index) => {
+      const name = card.dataset.name || '';
+      const territory = card.dataset.territory || '';
+      const expandedTerritory = card.dataset.expandedTerritory || '';
+      const phone = card.dataset.phone || '';
+      const email = card.dataset.email || '';
+      
+      // Debug first few cards
+      if (index < 2 && searchTerm) {
+        console.log(`Card ${index}: checking "${searchTerm}" against:`, {
+          name: name,
+          zipMatch: zipMatchRep ? (name === zipMatchRep) : false
+        });
+      }
+      
+      // Fix phone matching - only match if search has digits
+      const searchDigits = searchTerm.replace(/\D/g, '');
+      const phoneMatches = searchDigits.length > 0 && phone.includes(searchDigits);
+      
+      // ZIP code matching
+      const zipMatches = zipMatchRep && name === zipMatchRep;
+      
+      // Check if search term matches any field
+      const matchesSearch = !searchTerm || 
+                           name.includes(searchTerm) || 
+                           territory.includes(searchTerm) || 
+                           expandedTerritory.includes(searchTerm) ||
+                           phoneMatches ||
+                           email.includes(searchTerm) ||
+                           zipMatches;
+      
+      // Check if territory filter matches
+      const matchesTerritory = !selectedTerritory || territory.includes(selectedTerritory);
+      
+      // Debug match results for first few
+      if (index < 2 && searchTerm) {
+        console.log(`Card ${index} matches:`, {
+          nameMatch: name.includes(searchTerm),
+          territoryMatch: territory.includes(searchTerm),
+          expandedTerritoryMatch: expandedTerritory.includes(searchTerm),
+          phoneMatch: phoneMatches,
+          emailMatch: email.includes(searchTerm),
+          zipMatch: zipMatches,
+          overallMatch: matchesSearch && matchesTerritory
+        });
+      }
+      
+      if (matchesSearch && matchesTerritory) {
+        card.style.display = 'block';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    console.log('Visible cards:', visibleCount);
+
+    // Show/hide no results message
+    if (visibleCount === 0) {
+      noResults.style.display = 'block';
+      repsGrid.style.display = 'none';
+    } else {
+      noResults.style.display = 'none';  
+      repsGrid.style.display = 'grid';
+    }
+  }
+
+  // Event listeners
+  searchInput.addEventListener('input', function(e) {
+    console.log('Search input:', e.target.value);
+    filterReps();
+  });
+  
+  territoryFilter.addEventListener('change', function(e) {
+    console.log('Territory filter:', e.target.value);
+    filterReps();
+  });
+
+  console.log('Sales rep search initialized with ZIP code lookup (complete data loaded)');
+});
+</script>
+
+{% schema %}
+{
+  "name": "Sales Representatives",
+  "tag": "section",
+  "class": "section-sales-reps",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Professional Sales Associates"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Find your local sales representative"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "sales_rep",
+      "name": "Sales Representative",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "placeholder": "John Smith"
+        },
+        {
+          "type": "text",
+          "id": "territory",
+          "label": "Territory/Region",
+          "placeholder": "West Coast (CA, OR, WA)"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Phone Number",
+          "placeholder": "555-123-4567"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Email Address",
+          "placeholder": "john@prosales.com"
+        },
+        {
+          "type": "image_picker",
+          "id": "photo",
+          "label": "Representative Photo"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sales Representatives",
+      "blocks": [
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Victor Yoon",
+            "territory": "Western Canada (BC, AB, SK, MB)",
+            "phone": "778-688-8429",
+            "email": "vyoon@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Aaron Renner",
+            "territory": "Eastern Canada (ON, QC, NB, NS, PE, NL)",
+            "phone": "519-319-7457",
+            "email": "arenner@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Michel Cabanie",
+            "territory": "Quebec, Canada",
+            "phone": "514-793-3368",
+            "email": "mcabanie@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Mike Murphy",
+            "territory": "Southwest US (CA, NV, AZ)",
+            "phone": "951-526-9422",
+            "email": "mmurphy@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "John Miller",
+            "territory": "Pacific Northwest (OR, WA, ID)",
+            "phone": "503-758-7895",
+            "email": "jmiller@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Jim Schlosser",
+            "territory": "California, Nevada",
+            "phone": "909-215-3277",
+            "email": "jschlosser@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Shawn Silvey",
+            "territory": "Central Plains (MO, KS, NE, IA)",
+            "phone": "314-249-6052",
+            "email": "ssilvey@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Sam Paola",
+            "territory": "Southern California",
+            "phone": "310-569-1178",
+            "email": "spaola@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Skip Ellender",
+            "territory": "Mountain West (CO, WY, MT, UT, NM)",
+            "phone": "617-894-1224",
+            "email": "sellender@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Stephan Nugent",
+            "territory": "South Central (TX, OK, AR, LA)",
+            "phone": "214-394-0074",
+            "email": "snugent@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Scott Rumble",
+            "territory": "Gulf States (TX, LA, MS, AL)",
+            "phone": "832-665-0543",
+            "email": "srumble@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Milton Lorring",
+            "territory": "Great Lakes (OH, MI, IN, IL)",
+            "phone": "216-396-2341",
+            "email": "mlorring@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Rob Parsons",
+            "territory": "New England (MA, RI, CT, NH, VT, ME)",
+            "phone": "774-277-7734",
+            "email": "rparsons@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Don Rogers, III",
+            "territory": "Mid-Atlantic (PA, NJ, DE, MD)",
+            "phone": "717-201-7332",
+            "email": "drogers@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Rich Ellis",
+            "territory": "Mid-Atlantic (VA, WV, DC, MD)",
+            "phone": "301-502-7424",
+            "email": "rellis@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Gilbert Frellick",
+            "territory": "New York, New Jersey",
+            "phone": "631-579-6145",
+            "email": "gfrellick@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Brett Hobbs",
+            "territory": "Midwest (IL, WI, IN, MI)",
+            "phone": "630-772-4321",
+            "email": "bhobbs@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Mike Gullage",
+            "territory": "Southeast (AL, MS, TN, GA)",
+            "phone": "205-529-0243",
+            "email": "mgullage@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Steve Carlin",
+            "territory": "Upper Midwest (MN, WI, ND, SD)",
+            "phone": "952-491-1223",
+            "email": "scarlin@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Bill Highland",
+            "territory": "Great Lakes (MI, OH, IN)",
+            "phone": "810-623-7297",
+            "email": "bhighland@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Matt Highland",
+            "territory": "Southeast (TN, KY, NC, SC)",
+            "phone": "901-606-3633",
+            "email": "mhighland@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Ryan O'Berry",
+            "territory": "Southeast (NC, SC, VA)",
+            "phone": "336-554-4466",
+            "email": "robery@prosales.com"
+          }
+        },
+        {
+          "type": "sales_rep",
+          "settings": {
+            "name": "Robert Rodriguez",
+            "territory": "Florida, Georgia",
+            "phone": "305-458-6538",
+            "email": "rrodriguez@prosales.com"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

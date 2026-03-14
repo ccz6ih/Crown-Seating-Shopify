@@ -1,0 +1,395 @@
+<!-- sections/material-navigation.liquid -->
+<div class="material-navigation" id="material-nav-{{ section.id }}">
+  <div class="container">
+    {% if section.settings.main_title != blank %}
+      <h2 class="material-navigation__title">{{ section.settings.main_title }}</h2>
+    {% endif %}
+
+    {% if section.settings.main_description != blank %}
+      <div class="material-navigation__description">
+        {{ section.settings.main_description }}
+      </div>
+    {% endif %}
+
+    <div class="material-tabs">
+      {% for block in section.blocks %}
+        {% if block.type == 'material_tab' %}
+          <button
+            class="material-tab {% if forloop.first %}active{% endif %}"
+            data-target="{{ block.settings.target_section }}"
+            {{ block.shopify_attributes }}
+          >
+            {{ block.settings.tab_name }}
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Instructions -->
+    {% if section.settings.show_instructions %}
+      <div class="material-instructions">
+        <p>{{ section.settings.instructions_text }}</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .material-navigation {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .material-navigation .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .material-navigation__title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: {{ section.settings.title_color }};
+  }
+
+  .material-navigation__description {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+    color: {{ section.settings.text_color }};
+  }
+
+  .material-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .material-tab {
+    background-color: {{ section.settings.tab_background }};
+    color: {{ section.settings.tab_text_color }};
+    border: 2px solid {{ section.settings.tab_border_color }};
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .material-tab:hover {
+    background-color: {{ section.settings.tab_hover_background }};
+    transform: translateY(-2px);
+  }
+
+  .material-tab.active {
+    background-color: {{ section.settings.tab_active_background }};
+    color: {{ section.settings.tab_active_text_color }};
+    border-color: {{ section.settings.tab_active_border }};
+  }
+
+  .material-instructions {
+    text-align: center;
+    padding: 15px;
+    background-color: rgba(0, 139, 213, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .material-instructions p {
+    margin: 0;
+    color: {{ section.settings.text_color }};
+    font-size: 0.95rem;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .material-tabs {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .material-tab {
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .material-navigation__title {
+      font-size: 2rem;
+    }
+
+    .material-navigation {
+      position: relative;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.material-tab');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const targetId = this.dataset.target;
+        console.log('Clicked tab with target:', targetId); // Debug log
+        
+        // Remove active class from all tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        this.classList.add('active');
+        
+        // Scroll to target section
+        if (targetId) {
+          // Try multiple selector strategies
+          let targetSection = null;
+          
+          // Strategy 1: Look for exact ID match with any section ID suffix
+          targetSection = document.querySelector(`[id^="${targetId}-"]`);
+          
+          // Strategy 2: If not found, try the contains selector
+          if (!targetSection) {
+            targetSection = document.querySelector(`[id*="${targetId}"]`);
+          }
+          
+          // Strategy 3: If still not found, try looking for class
+          if (!targetSection) {
+            targetSection = document.querySelector(`.${targetId}`);
+          }
+          
+          console.log('Found target section:', targetSection); // Debug log
+          
+          if (targetSection) {
+            const navElement = document.querySelector('.material-navigation');
+            const navHeight = navElement ? navElement.offsetHeight : 0;
+            
+            // Get the actual position of the section relative to the document
+            const rect = targetSection.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const sectionTop = rect.top + scrollTop;
+            
+            // Add extra offset for spacing
+            const extraOffset = 20;
+            const targetPosition = sectionTop - navHeight - extraOffset;
+            
+            console.log('Scrolling to position:', targetPosition); // Debug log
+            console.log('Section getBoundingClientRect().top:', rect.top); // Debug log
+            console.log('Current scroll position:', scrollTop); // Debug log
+            console.log('Calculated section top:', sectionTop); // Debug log
+            console.log('Nav height:', navHeight); // Debug log
+            
+            window.scrollTo({
+              top: Math.max(0, targetPosition),
+              behavior: 'smooth'
+            });
+          } else {
+            console.error('Target section not found for:', targetId);
+            // List all sections with IDs for debugging
+            const allSectionsWithIds = document.querySelectorAll('[id]');
+            console.log('All elements with IDs:', Array.from(allSectionsWithIds).map(el => el.id));
+          }
+        }
+      });
+    });
+    
+    // Additional debug: Log all section IDs on page load
+    console.log('Page loaded. All section IDs:');
+    const allSections = document.querySelectorAll('.material-colors-section[id]');
+    allSections.forEach(section => {
+      console.log('Section ID:', section.id);
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Material Navigation",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "Main Title",
+      "default": "Upholstery Color Options"
+    },
+    {
+      "type": "textarea",
+      "id": "main_description",
+      "label": "Main Description",
+      "default": "Choose from our wide selection of premium upholstery materials and colors."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_instructions",
+      "label": "Show Instructions",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "instructions_text",
+      "label": "Instructions Text",
+      "default": "Click on any tab below to view colors for that material. Click on individual colors to see them in high resolution."
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Tab Styling"
+    },
+    {
+      "type": "color",
+      "id": "tab_background",
+      "label": "Tab Background",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "tab_text_color",
+      "label": "Tab Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "tab_border_color",
+      "label": "Tab Border Color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "tab_hover_background",
+      "label": "Tab Hover Background",
+      "default": "#e9ecef"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_background",
+      "label": "Active Tab Background",
+      "default": "#008bd5"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_text_color",
+      "label": "Active Tab Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_border",
+      "label": "Active Tab Border",
+      "default": "#008bd5"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "material_tab",
+      "name": "Material Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_name",
+          "label": "Tab Name",
+          "placeholder": "e.g. Standard Vinyl"
+        },
+        {
+          "type": "text",
+          "id": "target_section",
+          "label": "Target Section ID",
+          "placeholder": "e.g. vinyl-colors",
+          "info": "The section name to scroll to (without the section ID numbers)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Material Navigation",
+      "blocks": [
+        {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Standard Vinyl",
+            "target_section": "vinyl-colors"
+          }
+        },
+        {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Ultra Leather",
+            "target_section": "ultra-leather-colors"
+          }
+        },
+        {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Silvertex",
+            "target_section": "silvertex-colors"
+          }
+        },
+        {
+          "type": "material_tab",
+          "settings": {
+            "tab_name": "Sta-Kleen",
+            "target_section": "stakleen-colors"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

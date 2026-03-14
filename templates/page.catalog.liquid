@@ -1,0 +1,1614 @@
+
+<style>
+  /* Crown Seating Interactive Catalog Styles - Improved */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .catalog-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+    position: relative;
+  }
+
+  .catalog-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 1s ease;
+  }
+
+  .main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  .subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .catalog-viewer {
+    display: flex;
+    gap: 1rem;
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 1s ease 0.3s both;
+    min-height: 70vh;
+  }
+
+  /* Mobile-first responsive sidebar */
+  .sidebar {
+    width: 250px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    height: fit-content;
+    position: sticky;
+    top: 1rem;
+  }
+
+  .sidebar-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .search-section {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .search-box {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+
+  .search-box:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #007bff;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .search-result-item {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f3f4;
+    transition: background 0.2s ease;
+    font-size: 0.9rem;
+  }
+
+  .search-result-item:hover {
+    background: #f8f9fa;
+  }
+
+  .search-result-item:last-child {
+    border-bottom: none;
+  }
+
+  .search-highlight {
+    background: #fff3cd;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .page-jump {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-jump label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .jump-input {
+    width: 60px;
+    padding: 0.5rem;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .jump-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: background 0.3s ease;
+  }
+
+  .jump-btn:hover {
+    background: #0056b3;
+  }
+
+  .page-thumbnails {
+    display: grid;
+    gap: 0.75rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+
+  .page-thumbnails::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .page-thumbnails::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 2px;
+  }
+
+  .page-thumbnails::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 2px;
+  }
+
+  .thumbnail {
+    aspect-ratio: 3/4;
+    background: #e9ecef;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0.5rem;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .thumbnail::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 25px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    pointer-events: none;
+  }
+
+  .thumbnail-label {
+    position: relative;
+    z-index: 2;
+    color: white;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    font-size: 0.7rem;
+  }
+
+  .thumbnail:hover {
+    transform: translateY(-2px);
+    border-color: #007bff;
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+  }
+
+  .thumbnail.active {
+    border-color: #007bff;
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+  }
+
+  .main-viewer {
+    flex: 1;
+    position: relative;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 600px;
+    border: 1px solid #dee2e6;
+  }
+
+  .page-container {
+    position: relative;
+    width: calc(100% - 2rem);
+    height: auto;
+    max-width: 700px;
+    background: white;
+    border-radius: 8px;
+    margin: 1rem auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.5s ease;
+    aspect-ratio: 8.5 / 11;
+  }
+
+  /* Two-page spread styles */
+  .page-container.two-page-spread {
+    max-width: 900px;
+    aspect-ratio: 17 / 11;
+    display: flex;
+  }
+
+  .catalog-page {
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .catalog-page.spread-container {
+    display: flex;
+  }
+
+  .catalog-page.left-page,
+  .catalog-page.right-page {
+    width: 50%;
+    height: 100%;
+    background: white;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .catalog-page.left-page {
+    border-right: 1px solid #dee2e6;
+  }
+
+  .catalog-page img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #6c757d;
+  }
+
+  .loading-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .top-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+  }
+
+  .control-button {
+    background: white;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #495057;
+  }
+
+  .control-button:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .control-button.primary {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .control-button.primary:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+  }
+
+  .control-button.active {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+  }
+
+  .zoom-controls {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 0.25rem;
+    z-index: 10;
+  }
+
+  .zoom-btn {
+    width: 35px;
+    height: 35px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #495057;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .zoom-btn:hover {
+    background: #f8f9fa;
+    transform: scale(1.05);
+  }
+
+  .controls {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    background: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #dee2e6;
+  }
+
+  .nav-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .nav-btn:hover:not(:disabled) {
+    background: #0056b3;
+    transform: translateY(-1px);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    background: #6c757d;
+  }
+
+  .page-indicator {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    min-width: 120px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+  }
+
+  .sound-toggle {
+    background: #ffc107;
+    color: #212529;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .sound-toggle:hover {
+    background: #e0a800;
+  }
+
+  .sound-toggle.muted {
+    background: #6c757d;
+    color: white;
+  }
+
+  .download-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .download-btn:hover {
+    background: #1e7e34;
+    transform: translateY(-1px);
+  }
+
+  .error-message {
+    color: #dc3545;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem;
+    text-align: center;
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Mobile Responsive Design */
+  @media (max-width: 768px) {
+    .catalog-container {
+      padding: 0.5rem;
+    }
+
+    .main-title {
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+    }
+
+    .catalog-header {
+      margin-bottom: 1rem;
+    }
+
+    .catalog-viewer {
+      flex-direction: column;
+      padding: 0.75rem;
+      gap: 0.75rem;
+    }
+
+    .sidebar {
+      width: 100%;
+      position: static;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 0.75rem;
+    }
+
+    .page-thumbnails {
+      display: flex;
+      overflow-x: auto;
+      max-height: 100px;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .thumbnail {
+      min-width: 60px;
+      height: 80px;
+      flex-shrink: 0;
+    }
+
+    .thumbnail-label {
+      font-size: 0.6rem;
+    }
+
+    .main-viewer {
+      min-height: 500px;
+    }
+
+    .page-container {
+      width: calc(100% - 1rem);
+      margin: 0.5rem auto;
+    }
+
+    .top-controls {
+      position: static;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .zoom-controls {
+      position: static;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .controls {
+      position: static;
+      margin-top: 0.5rem;
+      transform: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .page-indicator {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      min-width: 100px;
+    }
+
+    .control-button {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+    }
+
+    .search-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .page-jump {
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .main-title {
+      font-size: 1.75rem;
+    }
+
+    .controls {
+      padding: 0.4rem 0.8rem;
+    }
+
+    .nav-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+    }
+
+    .page-indicator {
+      font-size: 0.7rem;
+      min-width: 80px;
+    }
+  }
+
+  /* Fullscreen styles */
+  .main-viewer:fullscreen,
+  .main-viewer:-webkit-full-screen,
+  .main-viewer:-moz-full-screen {
+    background: #1a1a1a;
+    border-radius: 0;
+  }
+
+  .main-viewer:fullscreen .page-container,
+  .main-viewer:-webkit-full-screen .page-container,
+  .main-viewer:-moz-full-screen .page-container {
+    max-width: calc(100vh * 8.5 / 11);
+    max-height: calc(100vh - 4rem);
+    margin: 2rem auto;
+  }
+
+  .main-viewer:fullscreen .page-container.two-page-spread,
+  .main-viewer:-webkit-full-screen .page-container.two-page-spread,
+  .main-viewer:-moz-full-screen .page-container.two-page-spread {
+    max-width: calc(100vh * 17 / 11);
+  }
+
+
+  /* Full Catalog Download Section */
+  .full-catalog-section {
+    text-align: center;
+    margin: 2rem auto;
+    padding: 2rem;
+    max-width: 600px;
+  }
+
+  .full-catalog-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .full-catalog-download:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 123, 255, 0.4);
+    background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  }
+
+  .full-catalog-download:active {
+    transform: translateY(-1px);
+  }
+
+  .download-icon {
+    font-size: 1.5rem;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-5px);
+    }
+    60% {
+      transform: translateY(-3px);
+    }
+  }
+
+  .catalog-info {
+    margin-top: 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .full-catalog-section {
+      margin: 1.5rem auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .full-catalog-download {
+      font-size: 1rem;
+      padding: 0.875rem 1.75rem;
+    }
+  }
+</style>
+<div class="catalog-container">
+  <div class="catalog-header">
+    <h1 class="main-title">Crown Seating Catalog</h1>
+    <p class="subtitle">Interactive Product Discovery Experience</p>
+  </div>
+
+  <div class="catalog-viewer">
+    <div class="sidebar">
+      <h3 class="sidebar-title">Navigate Pages</h3>
+
+      <div class="search-section">
+        <input type="text" class="search-box" placeholder="Search pages..." id="searchBox">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+
+      <div class="page-jump">
+        <label for="jumpInput">Go to:</label>
+        <input type="number" class="jump-input" id="jumpInput" min="1" max="63" placeholder="1">
+        <button class="jump-btn" id="jumpBtn">Go</button>
+      </div>
+
+      <div class="page-thumbnails" id="thumbnails">
+        <!-- Thumbnails will be generated by JavaScript -->
+      </div>
+    </div>
+
+    <div class="main-viewer">
+      <div class="top-controls">
+        <button class="control-button" id="fullscreenBtn" title="Enter fullscreen view">🔍 Fullscreen</button>
+        <button class="control-button" id="spreadToggle" title="Switch to two-page spread">📖 Two Pages</button>
+      </div>
+
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomInBtn" title="Zoom In">+</button>
+        <button class="zoom-btn" id="zoomOutBtn" title="Zoom Out">-</button>
+        <button class="zoom-btn" id="resetZoomBtn" title="Reset Zoom">⌂</button>
+      </div>
+
+      <div class="page-container" id="pageContainer">
+        <div class="catalog-page" id="currentPage">
+          <!-- Page content will be loaded here -->
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="sound-toggle" id="soundToggle" title="Toggle Sound Effects">🔊</button>
+        <button class="nav-btn" id="prevBtn">← Previous</button>
+        <div class="page-indicator" id="pageIndicator">Page 1 of 63</div>
+        <button class="nav-btn" id="nextBtn">Next →</button>
+        <button class="download-btn" id="downloadBtn" title="Download Current Page">📥 Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Full Catalog Download Section -->
+<div class="full-catalog-section">
+  <a href="https://cdn.shopify.com/s/files/1/0515/5717/1371/files/CSCATALOG-compressed.pdf?v=1761337602" 
+     class="full-catalog-download" 
+     download
+     target="_blank">
+    <span class="download-icon">📄</span>
+    <span>Download Full Catalog (PDF)</span>
+  </a>
+  <p class="catalog-info">Get the complete Crown Seating catalog as a convenient PDF file</p>
+</div>
+
+<!-- Audio elements for sound effects -->
+<audio id="pageTurnAudio" preload="auto">
+  <source
+    src="https://cdn.shopify.com/s/files/1/0515/5717/1371/files/Page_Turn_Flip.wav?v=1753464927"
+    type="audio/wav"
+  >
+</audio>
+
+<script>
+// Crown Seating Interactive Catalog JavaScript - Improved
+(function() {
+    'use strict';
+    
+    // Global variables
+    let currentPageIndex = 0;
+    const totalPages = 63;
+    let zoomLevel = 1;
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let imageOffset = { x: 0, y: 0 };
+    let soundEnabled = true;
+    let isAnimating = false;
+    let isSpreadMode = false;
+    
+    // Base URL for your Shopify CDN images
+    const baseImageUrl = 'https://cdn.shopify.com/s/files/1/0515/5717/1371/files/page-';
+    const imageExtension = '.png';
+    
+    // Cache for loaded images
+    const imageCache = new Map();
+    
+    // Simplified page data (removed hotspots)
+    const pageData = {
+        1: { title: "Cover & Introduction", keywords: ["cover", "home"] },
+        2: { title: "Ergonomics", keywords: ["ergonomics"] },
+        3: { title: "Saddle Seating", keywords: ["saddles", "why saddles", "back pain"] },
+        4: { title: "Cindy Purdy - Silverton", keywords: ["cindy purdy", "silverton"] },
+        5: { title: "Silverton C150D", keywords: ["silverton", "c150d"] },
+        6: { title: "Storage Solutions", keywords: ["storage", "filing", "cabinet", "organization", "shelving"] },
+        7: { title: "Meeting Tables", keywords: ["meeting", "table", "conference", "collaborative", "round", "rectangular"] },
+        8: { title: "Lounge Seating", keywords: ["lounge", "comfortable", "casual", "soft", "relaxation"] },
+        9: { title: "Task Chairs", keywords: ["task", "chair", "ergonomic", "work", "adjustable", "mesh"] },
+        10: { title: "Stacking Chairs", keywords: ["stack", "portable", "versatile", "event", "training"] }
+    };
+    
+    // Generate titles for remaining pages
+    for (let i = 11; i <= 63; i++) {
+        if (!pageData[i]) {
+            pageData[i] = { 
+                title: `Catalog Page ${i}`, 
+                keywords: [`page${i}`, "furniture", "seating", "crown"]
+            };
+        }
+    }
+
+    // Utility Functions
+    function formatPageNumber(pageNum) {
+        return pageNum.toString().padStart(3, '0');
+    }
+
+    function getImageUrl(pageIndex) {
+        const pageNumber = formatPageNumber(pageIndex + 1);
+        return `${baseImageUrl}${pageNumber}${imageExtension}?v=${Date.now()}`;
+    }
+
+    function getPageTitle(pageIndex) {
+        return pageData[pageIndex + 1]?.title || `Catalog Page ${pageIndex + 1}`;
+    }
+
+    function getPageKeywords(pageIndex) {
+        return pageData[pageIndex + 1]?.keywords || [];
+    }
+
+    // Sound effect functions
+    function playPageTurnSound() {
+        if (soundEnabled && elements.pageTurnAudio) {
+            elements.pageTurnAudio.currentTime = 0;
+            elements.pageTurnAudio.play().catch(() => {});
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        elements.soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+        elements.soundToggle.classList.toggle('muted', !soundEnabled);
+        elements.soundToggle.title = soundEnabled ? 'Mute Sound Effects' : 'Enable Sound Effects';
+        
+        try {
+            localStorage.setItem('catalogSoundEnabled', soundEnabled.toString());
+        } catch (e) {
+            console.log('Could not save sound preference');
+        }
+    }
+
+    function loadSoundPreference() {
+        try {
+            const saved = localStorage.getItem('catalogSoundEnabled');
+            if (saved !== null) {
+                soundEnabled = saved === 'true';
+                elements.soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+                elements.soundToggle.classList.toggle('muted', !soundEnabled);
+            }
+        } catch (e) {
+            console.log('Could not load sound preference');
+        }
+    }
+
+    // Two-page spread functionality
+    function toggleSpreadMode() {
+        isSpreadMode = !isSpreadMode;
+        elements.spreadToggle.classList.toggle('active', isSpreadMode);
+        elements.spreadToggle.textContent = isSpreadMode ? '📄 Single Page' : '📖 Two Pages';
+        elements.spreadToggle.title = isSpreadMode ? 'Switch to single page view' : 'Switch to two-page spread';
+        
+        elements.pageContainer.classList.toggle('two-page-spread', isSpreadMode);
+        
+        if (isSpreadMode && currentPageIndex % 2 !== 0) {
+            currentPageIndex = Math.max(0, currentPageIndex - 1);
+        }
+        
+        updatePage();
+        
+        try {
+            localStorage.setItem('catalogSpreadMode', isSpreadMode.toString());
+        } catch (e) {
+            console.log('Could not save spread preference');
+        }
+    }
+
+    function loadSpreadPreference() {
+        try {
+            const saved = localStorage.getItem('catalogSpreadMode');
+            if (saved !== null) {
+                isSpreadMode = saved === 'true';
+                elements.spreadToggle.classList.toggle('active', isSpreadMode);
+                elements.spreadToggle.textContent = isSpreadMode ? '📄 Single Page' : '📖 Two Pages';
+                elements.pageContainer.classList.toggle('two-page-spread', isSpreadMode);
+            }
+        } catch (e) {
+            console.log('Could not load spread preference');
+        }
+    }
+
+    // Cache DOM Elements
+    let elements = {};
+    
+    function cacheElements() {
+        elements = {
+            thumbnails: document.getElementById('thumbnails'),
+            currentPage: document.getElementById('currentPage'),
+            pageIndicator: document.getElementById('pageIndicator'),
+            pageContainer: document.getElementById('pageContainer'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            searchBox: document.getElementById('searchBox'),
+            searchResults: document.getElementById('searchResults'),
+            jumpInput: document.getElementById('jumpInput'),
+            jumpBtn: document.getElementById('jumpBtn'),
+            fullscreenBtn: document.getElementById('fullscreenBtn'),
+            spreadToggle: document.getElementById('spreadToggle'),
+            zoomInBtn: document.getElementById('zoomInBtn'),
+            zoomOutBtn: document.getElementById('zoomOutBtn'),
+            resetZoomBtn: document.getElementById('resetZoomBtn'),
+            soundToggle: document.getElementById('soundToggle'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            pageTurnAudio: document.getElementById('pageTurnAudio')
+        };
+    }
+
+    // Generate thumbnail navigation
+    function generateThumbnails() {
+        const thumbnailContainer = elements.thumbnails;
+        
+        for (let i = 0; i < totalPages; i++) {
+            const thumbnail = document.createElement('div');
+            thumbnail.className = 'thumbnail';
+            thumbnail.dataset.pageIndex = i;
+            
+            const label = document.createElement('div');
+            label.className = 'thumbnail-label';
+            label.textContent = `${i + 1}`;
+            thumbnail.appendChild(label);
+            
+            const thumbnailUrl = getImageUrl(i);
+            thumbnail.style.backgroundImage = `url(${thumbnailUrl})`;
+            
+            thumbnail.addEventListener('click', function() {
+                goToPage(parseInt(this.dataset.pageIndex));
+            });
+            
+            if (i === 0) thumbnail.classList.add('active');
+            thumbnailContainer.appendChild(thumbnail);
+        }
+    }
+
+    // Preload nearby images
+    function preloadNearbyImages() {
+        const preloadRange = 2;
+        
+        for (let i = Math.max(0, currentPageIndex - preloadRange); 
+             i <= Math.min(totalPages - 1, currentPageIndex + preloadRange); 
+             i++) {
+            
+            if (!imageCache.has(i)) {
+                const img = new Image();
+                img.src = getImageUrl(i);
+                img.onload = () => imageCache.set(i, img);
+            }
+        }
+    }
+
+    // Navigate to specific page
+    function goToPage(pageIndex) {
+        if (pageIndex >= 0 && pageIndex < totalPages && pageIndex !== currentPageIndex && !isAnimating) {
+            isAnimating = true;
+            
+            const thumbnails = elements.thumbnails.querySelectorAll('.thumbnail');
+            
+            playPageTurnSound();
+            
+            if (thumbnails[currentPageIndex]) {
+                thumbnails[currentPageIndex].classList.remove('active');
+            }
+            
+            setTimeout(() => {
+                currentPageIndex = pageIndex;
+                
+                if (thumbnails[currentPageIndex]) {
+                    thumbnails[currentPageIndex].classList.add('active');
+                }
+                
+                updatePage();
+                
+                setTimeout(() => {
+                    isAnimating = false;
+                    preloadNearbyImages();
+                }, 200);
+            }, 100);
+        }
+    }
+
+    // Update page content
+    function updatePage() {
+        resetZoom();
+        
+        if (isSpreadMode) {
+            updateSpreadPages();
+        } else {
+            updateSinglePage();
+        }
+        
+        if (isSpreadMode) {
+            const rightPageIndex = Math.min(currentPageIndex + 1, totalPages - 1);
+            elements.pageIndicator.textContent = `Pages ${currentPageIndex + 1}-${rightPageIndex + 1} of ${totalPages}`;
+        } else {
+            elements.pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${totalPages}`;
+        }
+        
+        elements.prevBtn.disabled = currentPageIndex === 0;
+        if (isSpreadMode) {
+            elements.nextBtn.disabled = currentPageIndex >= totalPages - 2;
+        } else {
+            elements.nextBtn.disabled = currentPageIndex === totalPages - 1;
+        }
+        
+        if (window.history && window.history.pushState) {
+            const newUrl = `${window.location.pathname}?page=${currentPageIndex + 1}`;
+            window.history.pushState({page: currentPageIndex + 1}, '', newUrl);
+        }
+    }
+
+    function updateSinglePage() {
+        const loadingHtml = `
+            <div class="loading-indicator">
+                <div class="loading-spinner"></div>
+                <p>Loading page ${currentPageIndex + 1}...</p>
+            </div>
+        `;
+        
+        elements.currentPage.innerHTML = loadingHtml;
+        elements.currentPage.className = 'catalog-page';
+        
+        const imageUrl = getImageUrl(currentPageIndex);
+        const img = new Image();
+        
+        img.onload = function() {
+            elements.currentPage.innerHTML = '';
+            elements.currentPage.appendChild(img);
+            imageCache.set(currentPageIndex, img);
+        };
+        
+        img.onerror = function() {
+            elements.currentPage.innerHTML = `
+                <div class="error-message">
+                    <h3>Unable to load page ${currentPageIndex + 1}</h3>
+                    <p>Please check your connection and try again.</p>
+                    <button class="nav-btn" onclick="CatalogApp.updatePage()" style="margin-top: 1rem;">Retry</button>
+                </div>
+            `;
+        };
+        
+        if (imageCache.has(currentPageIndex)) {
+            img.src = imageCache.get(currentPageIndex).src;
+        } else {
+            img.src = imageUrl;
+        }
+    }
+
+    function updateSpreadPages() {
+        const leftPageIndex = currentPageIndex;
+        const rightPageIndex = Math.min(currentPageIndex + 1, totalPages - 1);
+        
+        elements.currentPage.innerHTML = `
+            <div class="catalog-page left-page" id="leftPage">
+                <div class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                    <p>Loading...</p>
+                </div>
+            </div>
+            <div class="catalog-page right-page" id="rightPage">
+                <div class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                    <p>Loading...</p>
+                </div>
+            </div>
+        `;
+        
+        elements.currentPage.className = 'catalog-page spread-container';
+        
+        // Load left page
+        const leftImg = new Image();
+        const leftImageUrl = getImageUrl(leftPageIndex);
+        
+        leftImg.onload = function() {
+            const leftPageElement = document.getElementById('leftPage');
+            if (leftPageElement) {
+                leftPageElement.innerHTML = '';
+                leftPageElement.appendChild(leftImg);
+            }
+        };
+        
+        leftImg.onerror = function() {
+            const leftPageElement = document.getElementById('leftPage');
+            if (leftPageElement) {
+                leftPageElement.innerHTML = `<div class="error-message">Page ${leftPageIndex + 1} failed to load</div>`;
+            }
+        };
+        
+        if (imageCache.has(leftPageIndex)) {
+            leftImg.src = imageCache.get(leftPageIndex).src;
+        } else {
+            leftImg.src = leftImageUrl;
+        }
+        
+        // Load right page
+        if (rightPageIndex < totalPages && rightPageIndex !== leftPageIndex) {
+            const rightImg = new Image();
+            const rightImageUrl = getImageUrl(rightPageIndex);
+            
+            rightImg.onload = function() {
+                const rightPageElement = document.getElementById('rightPage');
+                if (rightPageElement) {
+                    rightPageElement.innerHTML = '';
+                    rightPageElement.appendChild(rightImg);
+                }
+            };
+            
+            rightImg.onerror = function() {
+                const rightPageElement = document.getElementById('rightPage');
+                if (rightPageElement) {
+                    rightPageElement.innerHTML = `<div class="error-message">Page ${rightPageIndex + 1} failed to load</div>`;
+                }
+            };
+            
+            if (imageCache.has(rightPageIndex)) {
+                rightImg.src = imageCache.get(rightPageIndex).src;
+            } else {
+                rightImg.src = rightImageUrl;
+            }
+        } else {
+            const rightPageElement = document.getElementById('rightPage');
+            if (rightPageElement) {
+                rightPageElement.innerHTML = '<div style="color: #999; font-style: italic;">End of catalog</div>';
+            }
+        }
+    }
+
+    // Navigation functions
+    function previousPage() {
+        const step = isSpreadMode ? 2 : 1;
+        if (currentPageIndex > 0) {
+            const newIndex = Math.max(0, currentPageIndex - step);
+            goToPage(newIndex);
+        }
+    }
+
+    function nextPage() {
+        const step = isSpreadMode ? 2 : 1;
+        const maxIndex = isSpreadMode ? totalPages - 2 : totalPages - 1;
+        if (currentPageIndex < maxIndex) {
+            const newIndex = Math.min(maxIndex, currentPageIndex + step);
+            goToPage(newIndex);
+        }
+    }
+
+    // Jump to specific page
+    function jumpToPage() {
+        const pageNumber = parseInt(elements.jumpInput.value);
+        
+        if (pageNumber && pageNumber >= 1 && pageNumber <= totalPages) {
+            goToPage(pageNumber - 1);
+            elements.jumpInput.value = '';
+        } else {
+            alert(`Please enter a page number between 1 and ${totalPages}`);
+        }
+    }
+
+    // Search functionality
+    function searchPages() {
+        const searchTerm = elements.searchBox.value.toLowerCase().trim();
+        const searchResults = elements.searchResults;
+        const thumbnails = elements.thumbnails.querySelectorAll('.thumbnail');
+        
+        if (searchTerm.length === 0) {
+            searchResults.style.display = 'none';
+            thumbnails.forEach(thumbnail => {
+                thumbnail.style.display = 'flex';
+            });
+            return;
+        }
+        
+        if (searchTerm.length < 2) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        const matches = [];
+        for (let i = 0; i < totalPages; i++) {
+            const pageTitle = getPageTitle(i).toLowerCase();
+            const pageKeywords = getPageKeywords(i);
+            const pageNumber = (i + 1).toString();
+            
+            const titleMatch = pageTitle.includes(searchTerm);
+            const keywordMatch = pageKeywords.some(keyword => 
+                keyword.toLowerCase().includes(searchTerm)
+            );
+            const numberMatch = pageNumber.includes(searchTerm);
+            
+            if (titleMatch || keywordMatch || numberMatch) {
+                matches.push({
+                    index: i,
+                    title: getPageTitle(i)
+                });
+            }
+        }
+        
+        thumbnails.forEach((thumbnail, index) => {
+            const isMatch = matches.some(match => match.index === index);
+            thumbnail.style.display = isMatch ? 'flex' : 'none';
+        });
+        
+        if (matches.length > 0) {
+            searchResults.innerHTML = matches.slice(0, 8).map(match => {
+                const highlightedTitle = highlightSearchTerm(match.title, searchTerm);
+                return `
+                    <div class="search-result-item" data-page="${match.index}">
+                        <strong>Page ${match.index + 1}:</strong> ${highlightedTitle}
+                    </div>
+                `;
+            }).join('');
+            searchResults.style.display = 'block';
+            
+            searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const pageIndex = parseInt(this.dataset.page);
+                    goToPage(pageIndex);
+                    elements.searchBox.value = '';
+                    searchResults.style.display = 'none';
+                    thumbnails.forEach(thumb => thumb.style.display = 'flex');
+                });
+            });
+        } else {
+            searchResults.innerHTML = '<div class="search-result-item">No pages found</div>';
+            searchResults.style.display = 'block';
+        }
+    }
+
+    function highlightSearchTerm(text, term) {
+        if (!term) return text;
+        const regex = new RegExp(`(${term})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    function hideSearchResults(e) {
+        if (!elements.searchBox.contains(e.target) && !elements.searchResults.contains(e.target)) {
+            elements.searchResults.style.display = 'none';
+        }
+    }
+
+    // Download functionality
+    function downloadCurrentPage() {
+        const currentImageUrl = getImageUrl(currentPageIndex);
+        const pageTitle = getPageTitle(currentPageIndex);
+        const fileName = `Crown-Seating-Catalog-Page-${(currentPageIndex + 1).toString().padStart(3, '0')}-${pageTitle.replace(/[^a-zA-Z0-9]/g, '-')}.png`;
+        
+        const link = document.createElement('a');
+        link.href = currentImageUrl;
+        link.download = fileName;
+        link.target = '_blank';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Zoom functions
+    function zoomIn() {
+        zoomLevel = Math.min(zoomLevel + 0.3, 3);
+        applyZoom();
+    }
+
+    function zoomOut() {
+        zoomLevel = Math.max(zoomLevel - 0.3, 0.5);
+        applyZoom();
+    }
+
+    function resetZoom() {
+        zoomLevel = 1;
+        imageOffset = { x: 0, y: 0 };
+        applyZoom();
+    }
+
+    function applyZoom() {
+        const img = elements.currentPage.querySelector('img');
+        
+        if (img) {
+            img.style.transform = `scale(${zoomLevel}) translate(${imageOffset.x}px, ${imageOffset.y}px)`;
+            elements.currentPage.style.cursor = zoomLevel > 1 ? 'grab' : 'default';
+        }
+    }
+
+    // Drag and pan functionality
+    function setupDragAndPan() {
+        const currentPage = elements.currentPage;
+        
+        currentPage.addEventListener('mousedown', startDrag);
+        currentPage.addEventListener('mousemove', drag);
+        currentPage.addEventListener('mouseup', endDrag);
+        currentPage.addEventListener('mouseleave', endDrag);
+        
+        currentPage.addEventListener('touchstart', startDrag);
+        currentPage.addEventListener('touchmove', drag);
+        currentPage.addEventListener('touchend', endDrag);
+    }
+
+    function startDrag(e) {
+        if (zoomLevel <= 1) return;
+        
+        isDragging = true;
+        elements.currentPage.classList.add('dragging');
+        
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
+        dragStart = { x: clientX - imageOffset.x, y: clientY - imageOffset.y };
+        e.preventDefault();
+    }
+
+    function drag(e) {
+        if (!isDragging || zoomLevel <= 1) return;
+        
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
+        imageOffset = {
+            x: Math.max(Math.min(clientX - dragStart.x, 100), -100),
+            y: Math.max(Math.min(clientY - dragStart.y, 100), -100)
+        };
+        
+        applyZoom();
+        e.preventDefault();
+    }
+
+    function endDrag() {
+        isDragging = false;
+        elements.currentPage.classList.remove('dragging');
+    }
+
+    // Fullscreen functionality
+    function toggleFullscreen() {
+        const viewer = document.querySelector('.main-viewer');
+        
+        if (!document.fullscreenElement) {
+            elements.fullscreenBtn.textContent = '🔍 Fullscreen';
+            if (viewer.requestFullscreen) {
+                viewer.requestFullscreen();
+            } else if (viewer.webkitRequestFullscreen) {
+                viewer.webkitRequestFullscreen();
+            } else if (viewer.msRequestFullscreen) {
+                viewer.msRequestFullscreen();
+            }
+        } else {
+            elements.fullscreenBtn.textContent = '🔍 Fullscreen';
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+
+    function handleFullscreenChange() {
+        if (document.fullscreenElement) {
+            elements.fullscreenBtn.textContent = '📖 Exit Fullscreen';
+            elements.fullscreenBtn.title = 'Exit fullscreen view';
+        } else {
+            elements.fullscreenBtn.textContent = '🔍 Fullscreen';
+            elements.fullscreenBtn.title = 'Enter fullscreen view';
+        }
+    }
+
+    // Event Listeners Setup
+    function setupEventListeners() {
+        elements.prevBtn.addEventListener('click', previousPage);
+        elements.nextBtn.addEventListener('click', nextPage);
+        
+        elements.searchBox.addEventListener('input', searchPages);
+        elements.searchBox.addEventListener('focus', function() {
+            if (this.value.length >= 2) {
+                searchPages();
+            }
+        });
+        
+        elements.jumpBtn.addEventListener('click', jumpToPage);
+        elements.jumpInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                jumpToPage();
+            }
+        });
+        
+        elements.soundToggle.addEventListener('click', toggleSound);
+        elements.spreadToggle.addEventListener('click', toggleSpreadMode);
+        elements.downloadBtn.addEventListener('click', downloadCurrentPage);
+        
+        elements.zoomInBtn.addEventListener('click', zoomIn);
+        elements.zoomOutBtn.addEventListener('click', zoomOut);
+        elements.resetZoomBtn.addEventListener('click', resetZoom);
+        elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+        
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        
+        document.addEventListener('click', hideSearchResults);
+        document.addEventListener('keydown', handleKeydown);
+        window.addEventListener('popstate', handlePopstate);
+    }
+
+    function handleKeydown(e) {
+        if (e.target.tagName === 'INPUT') return;
+        
+        switch(e.key) {
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                e.preventDefault();
+                previousPage();
+                break;
+            case 'ArrowRight':
+            case 'ArrowDown':
+                e.preventDefault();
+                nextPage();
+                break;
+            case 'Home':
+                e.preventDefault();
+                goToPage(0);
+                break;
+            case 'End':
+                e.preventDefault();
+                goToPage(totalPages - 1);
+                break;
+            case 'f':
+            case 'F':
+                if (!e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    toggleFullscreen();
+                }
+                break;
+            case '+':
+            case '=':
+                e.preventDefault();
+                zoomIn();
+                break;
+            case '-':
+                e.preventDefault();
+                zoomOut();
+                break;
+            case '0':
+                e.preventDefault();
+                resetZoom();
+                break;
+            case '/':
+                e.preventDefault();
+                elements.searchBox.focus();
+                break;
+        }
+    }
+
+    function handlePopstate(event) {
+        if (event.state && event.state.page) {
+            const pageIndex = event.state.page - 1;
+            if (pageIndex !== currentPageIndex) {
+                currentPageIndex = pageIndex;
+                const thumbnails = document.querySelectorAll('.thumbnail');
+                thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                if (thumbnails[currentPageIndex]) {
+                    thumbnails[currentPageIndex].classList.add('active');
+                }
+                updatePage();
+            }
+        }
+    }
+
+    // Initialize from URL parameter
+    function initializeFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = urlParams.get('page');
+        
+        if (pageParam) {
+            const pageNumber = parseInt(pageParam);
+            if (pageNumber >= 1 && pageNumber <= totalPages) {
+                currentPageIndex = pageNumber - 1;
+            }
+        }
+    }
+
+    // Main initialization function
+    function initializeCatalog() {
+        setTimeout(() => {
+            cacheElements();
+            loadSoundPreference();
+            loadSpreadPreference();
+            initializeFromUrl();
+            generateThumbnails();
+            setupEventListeners();
+            setupDragAndPan();
+            updatePage();
+            preloadNearbyImages();
+        }, 100);
+    }
+
+    // Expose public methods
+    window.CatalogApp = {
+        goToPage: goToPage,
+        previousPage: previousPage,
+        nextPage: nextPage,
+        updatePage: updatePage,
+        downloadCurrentPage: downloadCurrentPage,
+        toggleSound: toggleSound,
+        toggleSpreadMode: toggleSpreadMode,
+        searchPages: searchPages,
+        getCurrentPage: () => currentPageIndex + 1,
+        getTotalPages: () => totalPages,
+        isSoundEnabled: () => soundEnabled,
+        isSpreadMode: () => isSpreadMode,
+        getPageTitle: (pageIndex) => getPageTitle(pageIndex || currentPageIndex)
+    };
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeCatalog);
+    } else {
+        initializeCatalog();
+    }
+
+})();
+</script>
