@@ -87,7 +87,7 @@
             "enable_sorting": true,
             "enable_grid_density": false,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-4",
+            "color_scheme": "scheme-5",
             "padding-block-start": 8,
             "padding-block-end": 8,
             "padding-inline-start": 40,
@@ -232,15 +232,15 @@
       },
       "settings": {
         "layout_type": "grid",
-        "product_card_size": "medium",
+        "product_card_size": "large",
         "mobile_product_card_size": "large",
         "product_grid_width": "centered",
         "full_width_on_mobile": true,
         "columns_gap_horizontal": 4,
-        "columns_gap_vertical": 3,
+        "columns_gap_vertical": 4,
         "padding-inline-start": 4,
         "padding-inline-end": 4,
-        "color_scheme": "",
+        "color_scheme": "scheme-1",
         "padding-block-start": 0,
         "padding-block-end": 0
       }
