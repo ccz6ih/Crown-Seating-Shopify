@@ -291,6 +291,18 @@
     transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
   }
 
+  /* Hover bridge: invisible pseudo-element extends above the submenu
+     to prevent pointer gaps when moving from menu item to dropdown */
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: transparent;
+  }
+
   /* Show the submenus on hover */
   .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
   /* Show the overflow menu when a menu item is hovered */
