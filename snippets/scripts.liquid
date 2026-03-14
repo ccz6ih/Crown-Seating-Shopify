@@ -219,4 +219,79 @@
       name: '{{ template }}',
     },
   };
+
+  /** Product card video player - triggered by Play Video button onclick */
+  window.__playVideoCard = function(btn) {
+    var wrap = btn.closest('.product-card-video-wrap')
+      || btn.parentElement?.previousElementSibling?.querySelector('.product-card-video-wrap')
+      || document.querySelector('.product-card-video-wrap');
+
+    // Walk up from button to find the wrap in the same card context
+    var card = btn.closest('.product-card-video__actions');
+    if (card) {
+      wrap = card.previousElementSibling?.querySelector('.product-card-video-wrap')
+        || card.parentElement?.querySelector('.product-card-video-wrap');
+    }
+
+    if (!wrap) {
+      console.warn('[VideoCard] No video wrap found');
+      return;
+    }
+
+    var video = null;
+
+    // Strategy 1: Clone from Shopify video_tag template
+    var template = wrap.querySelector('.product-card-video__template');
+    console.log('[VideoCard] Template found:', !!template, 'innerHTML length:', template ? template.innerHTML.length : 0);
+    if (template && template.innerHTML.trim().length > 0) {
+      // template.content may not work in all contexts, parse innerHTML instead
+      var temp = document.createElement('div');
+      temp.innerHTML = template.innerHTML;
+      video = temp.querySelector('video');
+      console.log('[VideoCard] Strategy 1 - video from template:', !!video);
+    }
+
+    // Strategy 2: Build from data attributes
+    if (!video) {
+      var sourceCount = parseInt(btn.getAttribute('data-video-source-count'), 10) || 0;
+      console.log('[VideoCard] Strategy 2 - sourceCount:', sourceCount);
+      if (sourceCount > 0) {
+        video = document.createElement('video');
+        for (var i = 0; i < sourceCount; i++) {
+          var srcUrl = btn.getAttribute('data-vsrc' + i);
+          var srcType = btn.getAttribute('data-vtype' + i) || 'video/mp4';
+          console.log('[VideoCard] Source', i, ':', srcUrl);
+          if (srcUrl) {
+            var source = document.createElement('source');
+            source.src = srcUrl;
+            source.type = srcType;
+            video.appendChild(source);
+          }
+        }
+        if (video.querySelectorAll('source').length === 0) {
+          video = null;
+        }
+      }
+    }
+
+    if (!video) {
+      console.warn('[VideoCard] Both strategies failed - no video sources available');
+      console.log('[VideoCard] Button HTML:', btn.outerHTML);
+      return;
+    }
+
+    video.className = 'product-card-video';
+    video.controls = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    video.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+
+    video.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+    });
+
+    wrap.innerHTML = '';
+    wrap.appendChild(video);
+    console.log('[VideoCard] Video inserted successfully');
+  };
 </script>

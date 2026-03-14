@@ -39,11 +39,6 @@
   "
 >
   {% if has_video and product_video != null %}
-    {% comment %}
-      Video card: Shows poster image by default (clickable for product navigation).
-      Play button overlays the poster - clicking it swaps in the actual video.
-      This keeps the card clickable while still allowing video playback.
-    {% endcomment %}
     {% liquid
       assign poster_url = null
       if product_video.preview_image != null and product_video.preview_image != blank
@@ -52,6 +47,8 @@
         assign poster_url = product.featured_image | image_url: width: 600
       endif
     %}
+
+    {% capture video_tag_html %}{{ product_video | video_tag: autoplay: true, controls: true, playsinline: true }}{% endcapture %}
 
     <div class="product-card-video-wrap" data-product-video-card>
       {% if poster_url != null %}
@@ -64,29 +61,7 @@
       {% else %}
         {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
       {% endif %}
-      <div class="product-card-video__actions">
-        <a
-          href="{{ product.url }}"
-          class="product-card-video__btn product-card-video__btn--learn"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          Learn More
-        </a>
-        <button
-          type="button"
-          class="product-card-video__btn product-card-video__btn--play"
-          aria-label="Play video for {{ product.title | escape }}"
-          data-video-id="{{ product_video.id }}"
-          {% for source in product_video.sources %}
-            data-video-src-{{ forloop.index0 }}="{{ source.url }}"
-            data-video-type-{{ forloop.index0 }}="{{ source.mime_type }}"
-          {% endfor %}
-          data-video-source-count="{{ product_video.sources.size }}"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-          Play Video
-        </button>
-      </div>
+      <template class="product-card-video__template">{{ video_tag_html }}</template>
     </div>
   {% else %}
     {% if product != blank and product.featured_image %}
@@ -103,6 +78,32 @@
   {{ children }}
 </div>
 
+{% if has_video and product_video != null %}
+  <div class="product-card-video__actions">
+    <a
+      href="{{ product.url }}"
+      class="product-card-video__btn product-card-video__btn--learn"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Learn More
+    </a>
+    <button
+      type="button"
+      class="product-card-video__btn product-card-video__btn--play"
+      aria-label="Play video for {{ product.title | escape }}"
+      onclick="window.__playVideoCard(this)"
+      data-video-source-count="{{ product_video.sources.size }}"
+      {% for source in product_video.sources %}
+        data-vsrc{{ forloop.index0 }}="{{ source.url }}"
+        data-vtype{{ forloop.index0 }}="{{ source.mime_type }}"
+      {% endfor %}
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+      Play Video
+    </button>
+  </div>
+{% endif %}
+
 {% # Title and price for the zoomed out grid view %}
 <div class="product-grid-view-zoom-out--details">
   {% if product == blank %}
@@ -116,48 +117,6 @@
     </div>
   {% endif %}
 </div>
-
-<script>
-  document.addEventListener('click', function(e) {
-    var playBtn = e.target.closest('.product-card-video__btn--play');
-    if (!playBtn) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    var wrap = playBtn.closest('.product-card-video-wrap');
-    if (!wrap) return;
-
-    var sourceCount = parseInt(playBtn.dataset.videoSourceCount, 10) || 0;
-    if (sourceCount === 0) return;
-
-    var video = document.createElement('video');
-    video.className = 'product-card-video';
-    video.controls = true;
-    video.playsinline = true;
-    video.autoplay = true;
-    video.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-
-    for (var i = 0; i < sourceCount; i++) {
-      var src = playBtn.dataset['videoSrc' + i];
-      var type = playBtn.dataset['videoType' + i] || 'video/mp4';
-      if (src) {
-        var source = document.createElement('source');
-        source.src = src;
-        source.type = type;
-        video.appendChild(source);
-      }
-    }
-
-    // Stop clicks on the playing video from navigating to product page
-    video.addEventListener('click', function(ev) {
-      ev.stopPropagation();
-    });
-
-    wrap.innerHTML = '';
-    wrap.appendChild(video);
-  });
-</script>
 
 {% stylesheet %}
   .product-card-video-wrap {
@@ -174,19 +133,9 @@
   }
 
   .product-card-video__actions {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     display: flex;
     gap: 0;
-    opacity: 0;
-    transition: opacity 0.25s;
     z-index: 2;
-  }
-
-  .product-card-video-wrap:hover .product-card-video__actions {
-    opacity: 1;
   }
 
   .product-card-video__btn {
@@ -208,6 +157,7 @@
   .product-card-video__btn--learn {
     background: rgba(255, 255, 255, 0.92);
     color: #1a1a2e;
+    border-top: 1px solid rgba(0,0,0,0.08);
   }
 
   .product-card-video__btn--learn:hover {
