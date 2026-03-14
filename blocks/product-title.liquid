@@ -1,18 +1,12 @@
 
 
-{% if closest.product == blank %}
+{% if closest.product == blank and request.design_mode %}
   {% assign text = 'placeholders.product_title' | t %}
   {% assign product_title = '<p>' | append: text | append: '</p>' %}
   {% render 'text', fallback_text: product_title, block: block %}
-{% else %}
+{% elsif closest.product != blank %}
   {% assign product_title = '<p>' | append: closest.product.title | append: '</p>' %}
-  <a
-    class="contents user-select-text"
-    ref="productTitleLink"
-    href="{{ closest.product.selected_or_first_available_variant.url }}"
-  >
-    {% render 'text', fallback_text: product_title, block: block %}
-  </a>
+  {% render 'text', fallback_text: product_title, block: block %}
 {% endif %}
 
 {% schema %}

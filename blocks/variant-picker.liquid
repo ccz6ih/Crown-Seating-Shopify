@@ -7,9 +7,7 @@
   endif
 -%}
 
-{% unless product_resource == blank %}
-  {% render 'variant-main-picker', product_resource: product_resource %}
-{% endunless %}
+{% render 'variant-main-picker', product_resource: product_resource %}
 
 {% schema %}
 {

@@ -5,10 +5,9 @@
   Intended for product-form.liquid block.
 
   @param {string} can_add_to_cart - Whether the product can be added to the cart
-  @param form_obj - The form object
 
   @example
-  {% content_for 'block', type: 'accelerated-checkout', id: 'accelerated-checkout', can_add_to_cart: can_add_to_cart, form_obj: form %}
+  {% content_for 'block', type: 'accelerated-checkout', id: 'accelerated-checkout', can_add_to_cart: can_add_to_cart %}
 {%- enddoc -%}
 
 {% liquid
@@ -18,27 +17,23 @@
   endif
 %}
 
-{% capture accelerated_checkout_button %}
-  {% if product != blank and form_obj != blank %}
-    {{ form_obj | payment_button }}
+<div
+  class="accelerated-checkout-block"
+  ref="acceleratedCheckoutButtonContainer"
+  {{ block.shopify_attributes }}
+  {% if request.visual_preview_mode %}
+    data-shopify-visual-preview
   {% endif %}
-{% endcapture %}
-
-{% if accelerated_checkout_button != blank %}
-  <div
-    class="accelerated-checkout-block"
-    ref="acceleratedCheckoutButtonContainer"
-    {{ block.shopify_attributes }}
-    {% if request.visual_preview_mode %}
-      data-shopify-visual-preview
-    {% endif %}
-    {% unless can_add_to_cart %}
-      hidden
-    {% endunless %}
-  >
-    {{ accelerated_checkout_button }}
-  </div>
-{% endif %}
+  {% unless can_add_to_cart %}
+    hidden
+  {% endunless %}
+>
+  {% if product != blank %}
+    {%- form 'product', product -%}
+      {{ form | payment_button }}
+    {%- endform -%}
+  {% endif %}
+</div>
 
 {% stylesheet %}
   .accelerated-checkout-block[data-shopify-visual-preview] {

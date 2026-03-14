@@ -7,33 +7,44 @@
 {%- enddoc -%}
 
 {% liquid
-  assign block_settings = block.settings
+  assign animation_speed = 200
+
+  if block.settings.menu_style == 'featured_products' and block.settings.product_title_case == 'uppercase'
+    assign title_case_style = ' --title-case: uppercase;'
+  elsif block.settings.menu_style == 'featured_collections' and block.settings.collection_title_case == 'uppercase'
+    assign title_case_style = ' --title-case: uppercase;'
+  elsif block.settings.menu_style == 'collection_images' and block.settings.collection_title_case == 'uppercase'
+    assign title_case_style = ' --title-case: uppercase;'
+  endif
 %}
 
 {% case variant %}
   {% when 'mobile' %}
     <div
-      class="header__drawer"
+      class="header__drawer desktop:hidden"
       ref="headerDrawerContainer"
-      data-hydration-key="header-drawer-mobile"
+      style="{{ title_case_style }}"
       {{ block.shopify_attributes }}
     >
-      {% render 'header-drawer', linklist: block_settings.menu, data_header_drawer_type: 'mobile-drawer' %}
+      {% render 'header-drawer',
+        class: 'header__drawer--mobile',
+        linklist: block.settings.menu,
+        data_header_drawer_type: 'mobile-drawer'
+      %}
     </div>
 
   {% when 'navigation_bar' %}
-    {% if block_settings.navigation_bar == true %}
+    {% if block.settings.navigation_bar == true %}
       <div
-        class="menu-list menu-list--mobile{% if transparent == blank %} color-{{ block_settings.color_scheme_navigation_bar }}{% endif %}"
-        style="--menu-horizontal-gap: 15px; --mobile-nav-margin: auto;"
-        data-hydration-key="header-menu-mobile-navigation-bar"
+        class="menu-list menu-list--mobile{% if transparent == blank %} color-{{ block.settings.color_scheme_navigation_bar }}{% endif %}"
+        style="--menu-horizontal-gap: 15px; --mobile-nav-margin: auto;{{ title_case_style }}"
       >
         <div class="menu-list__scroll-container">
           <ul
             class="menu-list__list list-unstyled"
             role="list"
           >
-            {% for link in block_settings.menu.links %}
+            {% for link in block.settings.menu.links %}
               <li>
                 <a
                   href="{{ link.url }}"
@@ -52,164 +63,25 @@
       </div>
     {% endif %}
   {% else %}
-    {% liquid
-      assign block_settings = block.settings
-      assign menu_content_type = block_settings.menu_style | default: 'text'
-      assign image_border_radius = block_settings.image_border_radius
-      assign color_scheme_classes = ''
-      assign color_scheme_setting_id = 'color_scheme_' | append: section.settings.menu_row
-      assign current_color_scheme = block_settings.color_scheme
-      assign parent_color_scheme = section.settings[color_scheme_setting_id]
-
-      if parent_color_scheme.id != current_color_scheme.id
-        assign color_scheme_classes = ' color-' | append: current_color_scheme
-      endif
-
-      # Check if header and menu colors match. This is used to apply different padding styles in css
-      if parent_color_scheme.settings.background.rgb == current_color_scheme.settings.background.rgb
-        assign color_scheme_classes = color_scheme_classes | append: ' color-scheme-matches-parent'
-      endif
-
-      if block_settings.menu_style == 'featured_collections'
-        assign ratio = block_settings.featured_collections_aspect_ratio
-      elsif block_settings.menu_style == 'featured_products'
-        assign ratio = block_settings.featured_products_aspect_ratio
-      endif
-    %}
-
-    {% capture children %}
-      {% for link in block_settings.menu.links %}
-        <li
-          role="presentation"
-          class="menu-list__list-item"
-          on:focus="/activate"
-          on:blur="/deactivate"
-          on:pointerenter="/activate"
-          on:pointerleave="/deactivate"
-        >
-          <a
-            href="{{ link.url }}"
-            data-skip-node-update="true"
-            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-            {%- if link.links != blank -%}
-              aria-controls="submenu-{{ forloop.index }}"
-              aria-haspopup="true"
-              aria-expanded="false"
-            {%- endif -%}
-            {% if link.current %}
-              aria-current="page"
-            {% endif %}
-            ref="menuitem"
-          >
-            <span class="menu-list__link-title">{{- link.title -}}</span>
-          </a>
-          {%- if link.links != blank -%}
-            <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
-              <div
-                id="submenu-{{ forloop.index }}"
-                class="menu-list__submenu-inner"
-                style="{% render 'submenu-font-styles', settings: block_settings %}"
-              >
-                {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
-                <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
-                  <div
-                    class="mega-menu__grid"
-                    data-menu-grid-id="{{ list_id }}"
-                  >
-                    {% render 'mega-menu-list',
-                      parent_link: link,
-                      id: list_id,
-                      section: section,
-                      grid_columns_count: 6,
-                      grid_columns_count_tablet: 4,
-                      grid_columns_count_collection_images: 8,
-                      menu_content_type: menu_content_type,
-                      content_aspect_ratio: ratio,
-                      image_border_radius: image_border_radius
-                    %}
-                  </div>
-                </div>
-              </div>
-            </div>
-          {%- endif -%}
-        </li>
-      {% endfor %}
-      <li
-        class="menu-list__list-item"
-        role="presentation"
-        slot="more"
-        on:focus="/activate"
-        on:blur="/deactivate"
-        on:pointerenter="/activate"
-        on:pointerleave="/deactivate"
-      >
-        <button role="listitem" class="menu-list__link button-unstyled">
-          <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
-        </button>
-      </li>
-    {% endcapture %}
-
     <header-menu
       ref="headerMenu"
-      class="header-menu"
+      class="header-menu mobile:hidden"
+      data-animation-delay="{{ animation_speed }}"
       {{ block.shopify_attributes }}
-      data-hydration-key="header-menu"
+      style="--submenu-animation-speed: {{ animation_speed }}ms;{{ title_case_style }}"
     >
       <div class="header-menu__inner">
-        <nav
-          class="menu-list"
-          aria-label="{{ 'accessibility.header_navigation_label' | t }}"
-          style="{% render 'menu-font-styles', settings: block_settings %}"
-        >
-          {% assign class = 'overflow-menu' | append: color_scheme_classes %}
-          {% render 'overflow-list',
-            class: class,
-            ref: 'overflowMenu',
-            children: children,
-            minimum-items: 2,
-            data-testid: 'header-menu-overflow-list',
-            attributes: 'data-skip-node-update'
-          %}
-        </nav>
+        {%- render 'header-menu' %}
       </div>
 
       <script
         src="{{ 'header-menu.js' | asset_url }}"
         type="module"
-        fetchpriority="low"
       ></script>
     </header-menu>
 {% endcase %}
 
-{% style %}
-  .header__underlay {
-    --color-submenu: rgb({{ block_settings.color_scheme.settings.background.rgba }});
-  }
-{% endstyle %}
 {% stylesheet %}
-  .header__drawer {
-    --header-drawer-min-height: 60px;
-    display: flex;
-    min-height: var(--header-drawer-min-height);
-    align-items: center;
-  }
-
-  #header-component[data-menu-style='drawer'] .header__drawer {
-    display: flex;
-    min-height: var(--header-drawer-min-height);
-  }
-
-  @media screen and (min-width: 750px) {
-    #header-component[data-menu-style='menu'] .header__drawer {
-      display: none;
-      min-height: 0;
-    }
-  }
-
-  .header--compact .header__drawer {
-    min-height: var(--minimum-touch-target);
-  }
-
   .menu-list--mobile {
     &.menu-list {
       display: grid;
@@ -242,8 +114,55 @@
   .menu-list__scroll-container {
     position: relative;
     overflow-x: auto;
-    mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+    mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent);
     padding-block: var(--padding-2xs);
+  }
+
+  header-menu {
+    width: 100%;
+  }
+
+  /* Drawer menu featured content */
+  .menu-drawer__featured-content {
+    z-index: var(--layer-lowest);
+    container-type: inline-size;
+  }
+
+  .menu-drawer__featured-content--childlist {
+    z-index: var(--layer-flat);
+  }
+
+  .menu-drawer__featured-content-list {
+    display: flex;
+    gap: 1em;
+    overflow-x: auto;
+    padding-block-end: var(--padding-lg);
+  }
+
+  .menu-drawer__featured-content-list-item {
+    flex: 0 0 auto;
+  }
+
+  .menu-drawer__featured-content-list-item--product {
+    width: 35cqi;
+  }
+
+  .menu-drawer__featured-content-list-item--collection img.resource-card__image {
+    width: 80cqi;
+  }
+
+  .menu-drawer__featured-content-list-item:first-child {
+    margin-inline-start: var(--margin-xl);
+  }
+
+  .menu-drawer__featured-content-list-item:last-child {
+    margin-inline-end: var(--margin-xl);
+  }
+
+  /* Apply title case to drawer menu featured content */
+  .menu-drawer__featured-content-list-item--product .resource-card__title,
+  .menu-drawer__featured-content-list-item--collection .resource-card__title {
+    text-transform: var(--title-case);
   }
 
   .menu-list {
@@ -251,7 +170,6 @@
     --menu-vertical-gap: var(--gap-xl);
 
     display: flex;
-    height: 100%;
   }
 
   .menu-list__list {
@@ -262,9 +180,6 @@
   .menu-list__list-item {
     flex-shrink: 0;
     white-space: nowrap;
-    display: flex;
-    align-items: center;
-    height: 100%;
   }
 
   .menu-list__list-item[aria-hidden='true'] {
@@ -279,13 +194,11 @@
     line-height: var(--menu-top-level-font-line-height);
     text-transform: var(--menu-top-level-font-case);
     color: var(--menu-top-level-font-color);
+    transition: color var(--animation-speed) var(--animation-easing);
     text-decoration: none;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    cursor: pointer;
-    height: 100%;
-    margin-block: 0;
+    min-height: var(--minimum-touch-target);
+    align-items: center;
 
     &:hover,
     &:focus {
@@ -297,36 +210,15 @@
     }
   }
 
-  .menu-list__link-title {
-    padding-inline: calc(var(--gap-xl) / 2);
-  }
-  [slot='overflow'] .menu-list__link-title {
-    padding-inline: 0;
-  }
-
-  .menu-list__list-item:not([slot='overflow']) {
-    flex-direction: column;
-  }
-  .menu-list__list-item:not([slot='overflow'])::after {
-    content: '';
-    width: 100%;
-    height: var(--header-padding);
-    margin-bottom: calc(-1 * var(--header-padding));
-  }
-
-  [slot='overflow'] > .menu-list__link::after {
-    content: none;
-  }
-
   /*
-    High specificity selectors to subdue non-hovered links without javascript.
-    If the need for js-generated `hovered` and `focused` classes arises for another reason we can simplify these.
-  */
+      High specificity selectors to subdue non-hovered links without javascript.
+      If the need for js-generated `hovered` and `focused` classes arises for another reason we can simplify these.
+    */
   .menu-list:where(:has(.menu-list__list-item:hover)),
   .menu-list:where(:has(.menu-list__list-item:focus-within)),
   .menu-list:where(:has(.menu-list__list-item:not([aria-hidden='true']) .menu-list__link--active)) {
     .menu-list__link {
-      color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text));
+      color: rgb(from var(--menu-top-level-font-color) r g b / var(--opacity-subdued-text));
     }
   }
 
@@ -338,17 +230,31 @@
   }
 
   .overflow-menu::part(list) {
+    gap: 0 var(--menu-horizontal-gap);
+
     /* Make sure focus outline is not cut off by overflow hidden */
     --focus-outline-size: calc(var(--focus-outline-offset) + var(--focus-outline-width));
-
-    gap: 0;
-    margin-inline: calc(-1 * var(--menu-horizontal-gap) / 2);
   }
 
   .overflow-menu {
     background-color: transparent;
     padding: var(--focus-outline-size);
     margin: calc(-1 * var(--focus-outline-size));
+  }
+
+  /* the submenu background element to animate */
+  .overflow-menu::after {
+    content: '';
+    position: absolute;
+    top: calc(100% - 1px + var(--border-bottom-width));
+    left: 0;
+    width: 100%;
+    height: var(--submenu-height);
+    background-color: var(--color-background);
+    box-shadow: var(--shadow-popover);
+    clip-path: inset(0.5px 0 -100px 0);
+    transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
+    z-index: calc(var(--layer-header-menu) - 1);
   }
 
   /** mega menu **/
@@ -372,66 +278,78 @@
     --submenu-content-opacity: 0;
     --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
 
+    box-shadow: var(--shadow-drawer);
     visibility: hidden;
+    background-color: transparent;
     position: absolute;
     width: 100%;
     left: 0;
-    top: calc(100% - 1px + var(--border-bottom-width) - (var(--full-open-header-height) - var(--submenu-height)));
+    top: calc(100% - 1px + var(--border-bottom-width));
     z-index: var(--layer-header-menu);
     padding-inline: var(--padding-inline);
-    /* Clip path starts at header height so it doesn't mess with the pointer events in the header */
-    clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
-    transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic); /* stylelint-disable-line */
-  }
-
-  [data-submenu-overlap-bottom-row] {
-    .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
-    .overflow-menu::part(overflow) {
-      clip-path: rect(var(--top-row-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
-    }
+    clip-path: rect(0 100% var(--submenu-height) 0);
+    transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
   }
 
   /* Show the submenus on hover */
   .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
   /* Show the overflow menu when a menu item is hovered */
-  .overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list),
+  .overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow),
   /* Keep the submenus open when they are hovered */
   .menu-list__submenu:is(:hover),
   .overflow-menu::part(overflow):hover {
-    --submenu-content-opacity: 1;
-
     visibility: visible;
+    --submenu-content-opacity: 1;
+  }
+
+  .menu-list__list-item:has([data-animating]) > .menu-list__submenu {
+    visibility: visible;
+    --submenu-content-opacity: 0;
+
+    &:before {
+      height: 0;
+    }
+  }
+
+  .menu-list__submenu-inner,
+  .overflow-menu::part(overflow-list) {
+    grid-column: 2;
+    padding-block-start: var(--submenu-padding-block-start);
+    padding-block-end: var(--submenu-padding-block-end);
+    padding-inline: var(--section-padding-inline);
   }
 
   .overflow-menu::part(overflow) {
     --menu-top-level-font-size: var(--font-size--xlarge);
-
     display: grid;
     grid-template-columns: var(--full-page-grid-with-margins);
   }
 
   .overflow-menu::part(overflow-list) {
+    --submenu-content-opacity: 0;
+
     position: relative;
     display: grid;
     grid-template-columns: minmax(auto, 200px) 1fr;
     grid-template-areas: 'left right';
     grid-template-rows: max-content;
     grid-gap: 0;
-    grid-column: 2;
   }
 
   .menu-list__list-item:is([slot='overflow']) {
     --menu-top-level-font-color: var(--color-foreground);
-    --menu-top-level-font-color-rgb: var(--color-foreground-rgb);
 
     display: contents;
     white-space: normal;
 
     .menu-list__link {
+      --submenu-content-opacity: 0;
+
       grid-area: left;
       grid-row: auto;
       height: min-content;
       font-size: var(--font-size--xl);
+      opacity: var(--submenu-content-opacity);
       transition: var(--submenu-content-animation);
     }
 
@@ -441,12 +359,11 @@
       grid-area: right;
       grid-row-end: span calc(var(--overflow-count) + 1);
       padding-inline-start: var(--menu-horizontal-gap);
-    }
 
-    .menu-list__submenu-inner {
-      transform: none;
-      grid-column: unset;
-      padding-block: 0;
+      .menu-list__submenu-inner {
+        padding-block-start: 0;
+        grid-column: unset;
+      }
     }
 
     .menu-list__link[aria-expanded='true'] + .menu-list__submenu {
@@ -454,8 +371,12 @@
     }
   }
 
-  .header-menu {
-    height: 100%;
+  .header-menu[data-overflow-expanded='true'] .menu-list__list-item:where([slot='overflow']) .menu-list__link {
+    --submenu-content-opacity: 1;
+  }
+
+  .menu-list__list-item:where([slot='overflow']):has([data-animating]) > .menu-list__link {
+    --submenu-content-opacity: 0;
   }
 
   .menu-list__submenu-inner {
@@ -463,23 +384,8 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-  }
-
-  .menu-list__submenu-inner,
-  .overflow-menu::part(overflow-list) {
-    padding-block-start: var(--submenu-padding-block-start);
-    padding-block-end: var(--submenu-padding-block-end);
-    padding-inline: var(--section-padding-inline);
     opacity: var(--submenu-content-opacity);
     transition: var(--submenu-content-animation);
-    transform: translateY(calc(var(--full-open-header-height) - var(--submenu-height)));
-
-    /* Make overflow menu scrollable when content exceeds viewport */
-    max-height: calc(80vh - var(--header-height));
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) transparent;
   }
 
   .mega-menu__link {
@@ -494,6 +400,7 @@
     text-decoration: none;
     display: inline-flex;
     padding: var(--padding-2xs) 0;
+    transition: color var(--animation-speed) var(--animation-easing);
 
     &:hover {
       color: var(--menu-child-active-font-color);
@@ -536,33 +443,6 @@
     border-radius: var(--menu-image-border-radius);
   }
 
-  /* Fix alignment for collection image mode links without images */
-
-  /* Target only top-level links (direct children of column > div) in collection image mode */
-  .mega-menu__grid:has(.mega-menu__link-image)
-    .mega-menu__column
-    > div
-    > .mega-menu__link:not(:has(.mega-menu__link-image)) {
-    display: flex;
-    flex-direction: column;
-    padding-inline: 0;
-    padding-block: var(--padding-sm) 0;
-  }
-
-  .mega-menu__grid:has(.mega-menu__link-image)
-    .mega-menu__column
-    > div
-    > .mega-menu__link:not(:has(.mega-menu__link-image))::before {
-    content: '';
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    margin-bottom: var(--padding-sm);
-    background-color: var(--color-foreground-muted);
-    opacity: 0.1;
-    border-radius: var(--menu-image-border-radius);
-  }
-
   .mega-menu__grid {
     display: grid;
     grid-template-columns: repeat(var(--menu-columns-tablet), minmax(0, 1fr));
@@ -590,7 +470,7 @@
     grid-column: span 4;
   }
 
-  .mega-menu__column--wide-collection-image {
+  .mega-menu__column--collection-image {
     grid-column: span 1;
 
     @media screen and (min-width: 990px) {
@@ -598,8 +478,18 @@
     }
   }
 
-  .mega-menu__submenu .mega-menu__column--wide-collection-image {
+  .mega-menu__column--collection-image .mega-menu__link {
+    text-transform: var(--title-case);
+  }
+
+  .mega-menu__submenu .mega-menu__column--collection-image {
     grid-column: span 1;
+  }
+
+  /* Apply title case to featured products and collections */
+  .mega-menu__content-list--products .resource-card__title,
+  .mega-menu__content-list--collections .resource-card__title {
+    text-transform: var(--title-case);
   }
 
   .mega-menu__content-list {
@@ -662,6 +552,18 @@
     width: 200px;
   }
 
+  .mega-menu__more-list-item .mega-menu__link {
+    color: rgb(from var(--menu-top-level-font-color) r g b / var(--opacity-subdued-text));
+  }
+
+  .mega-menu__more-list-item:where(:hover, .active) .mega-menu__link {
+    color: var(--menu-top-level-font-color);
+  }
+
+  .mega-menu__more-list-item[aria-hidden='true'] {
+    display: none;
+  }
+
   .mega-menu__submenu {
     /* preserves the inherited grid layout when this submenu wrapper is used */
     display: contents;
@@ -680,116 +582,13 @@
       "default": "main-menu"
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "primary"
-    },
-    {
-      "type": "header",
-      "content": "t:content.typography"
-    },
-    {
-      "type": "select",
-      "id": "type_font_primary_size",
-      "label": "t:settings.top_level_size",
-      "options": [
-        {
-          "value": "0.625rem",
-          "label": "10px"
-        },
-        {
-          "value": "0.75rem",
-          "label": "12px"
-        },
-        {
-          "value": "0.875rem",
-          "label": "14px"
-        },
-        {
-          "value": "1rem",
-          "label": "16px"
-        },
-        {
-          "value": "1.125rem",
-          "label": "18px"
-        }
-      ],
-      "default": "1rem"
-    },
-    {
-      "type": "select",
-      "id": "menu_font_style",
-      "label": "t:settings.submenu_size",
-      "options": [
-        {
-          "value": "regular",
-          "label": "t:options.small"
-        },
-        {
-          "value": "inverse",
-          "label": "t:options.medium"
-        },
-        {
-          "value": "inverse_large",
-          "label": "t:options.large"
-        }
-      ],
-      "default": "inverse"
-    },
-    {
-      "type": "select",
-      "id": "type_font_primary_link",
-      "label": "t:settings.font",
-      "options": [
-        {
-          "value": "body",
-          "label": "t:options.body"
-        },
-        {
-          "value": "subheading",
-          "label": "t:options.subheading"
-        },
-        {
-          "value": "heading",
-          "label": "t:options.heading"
-        },
-        {
-          "value": "accent",
-          "label": "t:options.accent"
-        }
-      ],
-      "default": "heading"
-    },
-    {
-      "type": "select",
-      "id": "type_case_primary_link",
-      "label": "t:settings.text_case",
-      "options": [
-        {
-          "value": "none",
-          "label": "t:options.default"
-        },
-        {
-          "value": "uppercase",
-          "label": "t:options.uppercase"
-        }
-      ],
-      "default": "none"
-    },
-    {
-      "type": "header",
-      "content": "t:content.submenu_feature"
-    },
-    {
       "type": "select",
       "id": "menu_style",
-      "label": "t:settings.media_type",
-      "info": "t:info.media_type_info",
+      "label": "t:settings.style",
       "options": [
         {
           "value": "text",
-          "label": "t:options.none"
+          "label": "t:options.text_only"
         },
         {
           "value": "collection_images",
@@ -858,6 +657,270 @@
       "unit": "px",
       "default": 0,
       "visible_if": "{{ block.settings.menu_style != 'text' }}"
+    },
+    {
+      "type": "select",
+      "id": "product_title_case",
+      "label": "t:settings.product_title_case",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "default",
+      "visible_if": "{{ block.settings.menu_style == 'featured_products' }}"
+    },
+    {
+      "type": "select",
+      "id": "collection_title_case",
+      "label": "t:settings.collection_title_case",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "default",
+      "visible_if": "{{ block.settings.menu_style == 'featured_collections' or block.settings.menu_style == 'collection_images' }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "menu_font_style",
+      "label": "t:settings.text_hierarchy",
+      "options": [
+        {
+          "value": "regular",
+          "label": "t:options.classic"
+        },
+        {
+          "value": "inverse",
+          "label": "t:options.inverse"
+        },
+        {
+          "value": "inverse_large",
+          "label": "t:options.inverse_large"
+        }
+      ],
+      "default": "inverse"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography_primary"
+    },
+    {
+      "type": "select",
+      "id": "type_font_primary_link",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "body",
+          "label": "t:options.body"
+        },
+        {
+          "value": "subheading",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "heading",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "accent",
+          "label": "t:options.accent"
+        }
+      ],
+      "default": "heading"
+    },
+    {
+      "type": "select",
+      "id": "type_font_primary_size",
+      "label": "t:settings.size",
+      "options": [
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        },
+        {
+          "value": "1.25rem",
+          "label": "20px"
+        },
+        {
+          "value": "1.5rem",
+          "label": "24px"
+        },
+        {
+          "value": "2rem",
+          "label": "32px"
+        },
+        {
+          "value": "2.5rem",
+          "label": "40px"
+        },
+        {
+          "value": "3rem",
+          "label": "48px"
+        },
+        {
+          "value": "3.5rem",
+          "label": "56px"
+        },
+        {
+          "value": "4.5rem",
+          "label": "72px"
+        },
+        {
+          "value": "5.5rem",
+          "label": "88px"
+        },
+        {
+          "value": "7.5rem",
+          "label": "120px"
+        },
+        {
+          "value": "9.5rem",
+          "label": "152px"
+        },
+        {
+          "value": "11.5rem",
+          "label": "184px"
+        }
+      ],
+      "default": "1rem"
+    },
+    {
+      "type": "select",
+      "id": "type_case_primary_link",
+      "label": "t:settings.text_case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography_secondary"
+    },
+    {
+      "type": "select",
+      "id": "type_font_secondary_link",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "body",
+          "label": "t:options.body"
+        },
+        {
+          "value": "subheading",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "heading",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "accent",
+          "label": "t:options.accent"
+        }
+      ],
+      "default": "subheading"
+    },
+    {
+      "type": "select",
+      "id": "type_case_secondary_link",
+      "label": "t:settings.text_case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography_tertiary"
+    },
+    {
+      "type": "select",
+      "id": "type_font_tertiary_link",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "body",
+          "label": "t:options.body"
+        },
+        {
+          "value": "subheading",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "heading",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "accent",
+          "label": "t:options.accent"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "select",
+      "id": "type_case_tertiary_link",
+      "label": "t:settings.text_case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "none"
     },
     {
       "type": "header",

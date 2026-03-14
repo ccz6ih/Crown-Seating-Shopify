@@ -3,44 +3,41 @@
 
   @param {string} [class] - custom class to define in addition to text-block classes
   @param {string} [fallback_text] - fallback text if settings.text does not exist
-  @param {object} [block] - The block object
   @param {string} [width] - width of the text block
 {%- enddoc -%}
 
 {% liquid
-  assign block_settings = block.settings
-  assign plain_text = block_settings.text | strip_newlines | strip
-  assign visible_text = plain_text | strip_html
-  assign text_width = width | default: block_settings.width
+  assign plain_text = block.settings.text | strip_newlines | strip_html | strip
+  assign text_width = width | default: block.settings.width
 
-  if block_settings.font_size contains 'heading-lg' or block_settings.font_size contains 'heading-xl'
+  if block.settings.font_size contains 'heading-lg' or block.settings.font_size contains 'heading-xl'
     assign type = 'display'
-  elsif block_settings.font_size contains 'heading'
+  elsif block.settings.font_size contains 'heading'
     assign type = 'heading'
   else
     assign type = 'body'
   endif
-  if block_settings.type_preset == 'rte' or block_settings.type_preset == 'paragraph'
+  if block.settings.type_preset == 'rte' or block.settings.type_preset == 'paragraph'
     assign is_rte = true
   endif
 
   capture text_block_classes
     if text_width == '100%'
-      echo 'text-block--align-' | append: block_settings.alignment
-      if block_settings.max_width == 'none'
+      echo 'text-block--align-' | append: block.settings.alignment
+      if block.settings.max_width == 'none'
         echo ' text-block--full-width '
       endif
     endif
-    if block_settings.type_preset == 'custom'
+    if block.settings.type_preset == 'custom'
       echo ' custom-typography '
-      if block_settings.font_size != ''
+      if block.settings.font_size != ''
         echo ' custom-font-size '
       endif
-      if block_settings.color != ''
+      if block.settings.color != ''
         echo ' custom-color '
       endif
     endif
-    if block_settings.background
+    if block.settings.background
       echo ' text-block--background '
     endif
     if is_rte
@@ -50,28 +47,27 @@
 %}
 
 {% capture attributes %}
-  class="{{ class }} spacing-style text-block text-block--{{ block.id }} {{ block_settings.type_preset }}
+  class="{{ class }} spacing-style text-block text-block--{{ block.id }} {{ block.settings.type_preset }}
     {{ text_block_classes }}
   "
 
   style="
-    {% render 'spacing-padding', settings: block_settings %}
-    {% render 'typography-style', settings: block_settings %}
+    {% render 'spacing-padding', settings: block.settings %}
+    {% render 'typography-style', settings: block.settings %}
     --width: {{ text_width }};
-    --max-width: var(--max-width--{{ type }}-{{ block_settings.max_width }});
+    --max-width: var(--max-width--{{ type }}-{{ block.settings.max_width }});
     {% if text_width == "100%" %}
-      --text-align: {{ block_settings.alignment }};
+      --text-align: {{ block.settings.alignment }};
     {% endif %}
-    {% if block_settings.background %}
-      --text-background-color: {{ block_settings.background_color | default: 'rgb(255 255 255 / 1.0)' }};
-      --text-corner-radius: {{ block_settings.corner_radius }}px;
+    {% if block.settings.background %}
+      --text-background-color: {{ block.settings.background_color | default: 'rgb(255 255 255 / 1.0)' }};
+      --text-corner-radius: {{ block.settings.corner_radius }}px;
       --text-padding: max(var(--padding-2xs), calc((var(--text-corner-radius) + var(--padding-xs)) * (1 - cos(45deg))));
     {% endif %}
   "
 
   {{ block.shopify_attributes }}
 {% endcapture %}
-
 {% liquid
   # {{ attributes }} must be on the immediate HTML parent of the text to preserve
   # the click-to-edit connection in the theme editor. Any break between the text,
@@ -83,12 +79,12 @@
   endif
 %}
 
-{% if fallback_text != blank and visible_text == blank %}
-  <div {{ attributes | strip_newlines | strip }}>
+{% if fallback_text != blank and plain_text == blank %}
+  <div {{ attributes }}>
     {{ fallback_text }}
   </div>
 {% elsif plain_text != blank %}
-  <{{ element }} {{ attributes | strip_newlines | strip }}>
+  <{{ element }} {{ attributes }}>
     {{ block.settings.text }}
   </{{ element }}>
 {% endif %}
@@ -128,7 +124,7 @@
 
   .text-block > * {
     width: var(--width);
-    max-inline-size: min(100%, var(--max-width, 100%));
+    max-width: var(--max-width, 100%);
     text-align: var(--text-align, var(--text-align-default));
     text-wrap: var(--text-wrap);
   }

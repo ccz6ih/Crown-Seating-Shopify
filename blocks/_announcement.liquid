@@ -1,7 +1,6 @@
 
 
-{%- assign block_settings = block.settings -%}
-{%- assign plain_text = block_settings.text | strip_newlines | strip_html | strip -%}
+{% assign plain_text = block.settings.text | strip_newlines | strip_html | strip %}
 {%- assign block_index = section.blocks | find_index: 'id', block.id -%}
 
 {%- unless plain_text == '' -%}
@@ -14,11 +13,11 @@
       text-block--align-center
       text-block--full-width
       custom-typography
-      {% if block_settings.font_size != "" %}custom-font-size{% endif %}
-      {% if block_settings.weight != "" %}custom-font-weight{% endif %}
+      {% if block.settings.font_size != "" %}custom-font-size{% endif %}
+      {% if block.settings.weight != "" %}custom-font-weight{% endif %}
     "
     style="
-      {% render 'typography-style', settings: block_settings, preset: 'custom' %}
+      {% render 'typography-style', settings: block.settings, preset: 'custom' %}
       --width: 100%;
       --text-align: center;
       --line-height: 1;
@@ -30,13 +29,13 @@
       {{ block.settings.text }}
     </p>
 
-    {% if block_settings.link != blank %}
+    {% if block.settings.link != blank %}
       <a
         class="announcement-bar__link"
-        href="{{ block_settings.link }}"
+        href="{{ block.settings.link }}"
       >
         <span class="visually-hidden">
-          {{ block_settings.text | strip_html }}
+          {{ block.settings.text | strip_html }}
         </span>
       </a>
     {% endif %}
@@ -44,6 +43,17 @@
 {%- endunless -%}
 
 {% stylesheet %}
+  .text-block {
+    width: var(--width);
+    max-width: 100%;
+  }
+
+  .text-block > * {
+    width: var(--width);
+    max-width: var(--max-width, 100%);
+    text-align: var(--text-align);
+  }
+
   .text-block:not(.text-block--full-width).rte,
   .text-block:not(.text-block--full-width).paragraph {
     /* Safari doesn't support pretty, so fallback to balance */
@@ -313,11 +323,7 @@
   ],
   "presets": [
     {
-      "name": "t:names.announcement",
-      "settings": {
-        "font": "var(--font-subheading--family)",
-        "font_size": "0.75rem"
-      }
+      "name": "t:names.announcement"
     }
   ]
 }

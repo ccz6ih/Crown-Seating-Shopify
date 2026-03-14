@@ -3,6 +3,14 @@
 {% render 'cart-products' %}
 
 {% stylesheet %}
+  .cart-page--empty .cart-items__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-block-start: 0;
+    text-align: center;
+  }
+
   .cart-page__title + .cart-page__items {
     margin-block-start: var(--margin-lg);
   }
@@ -26,7 +34,6 @@
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "t:settings.aspect_ratio",
       "options": [
         {
           "value": "adapt",
@@ -41,7 +48,8 @@
           "label": "t:options.square"
         }
       ],
-      "default": "adapt"
+      "default": "adapt",
+      "label": "t:settings.aspect_ratio"
     },
     {
       "type": "checkbox",

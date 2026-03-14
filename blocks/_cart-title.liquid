@@ -1,31 +1,16 @@
 
 
-{% doc %}
-  Cart Title
-
-  Renders the cart title or empty cart state.
-
-  @param {boolean} [force_empty] - Force render empty cart state
-
-  @example
-  {% render 'cart-title', force_empty: true %}
-{% enddoc %}
-
-{% liquid
-  assign block_settings = block.settings
-%}
-
 <div
-  class="cart-title spacing-style text-{{ block_settings.alignment }}"
-  style="{% render 'spacing-style', settings: block_settings %}"
+  class="cart-title spacing-style text-{{ block.settings.alignment }}"
+  style="{% render 'spacing-style', settings: block.settings %}"
   {{ block.shopify_attributes }}
 >
-  <h1 class="{{ block_settings.type_preset | default: 'h2' }}">
-    {%- if cart.empty? or force_empty -%}
+  <h1 class="{{ block.settings.type_preset | default: 'h2' }}">
+    {%- if cart.empty? -%}
       {{ 'content.your_cart_is_empty' | t }}
     {%- else -%}
-      {{ block_settings.title }}
-      {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
+      {{ block.settings.title }}
+      {%- if block.settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
     {%- endif -%}
   </h1>
 </div>
@@ -49,19 +34,18 @@
   }
 
   .cart-title .cart-bubble[data-maintain-ratio] {
-    width: min(1lh, 26px);
-    height: min(1lh, 26px);
+    aspect-ratio: 1;
+    min-width: 26px;
   }
 
   .cart-title .cart-bubble__background {
-    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    background-color: rgb(from var(--color-foreground) r g b / var(--opacity-10-25));
   }
 
   .cart-title .cart-bubble__text {
     color: var(--color-foreground);
     font-family: var(--font-paragraph--family);
-    font-weight: var(--font-paragraph--weight);
-    font-size: clamp(var(--font-size--3xs), 0.75em, var(--font-size--xs));
+    font-size: clamp(var(--cart-font-size--2xs), 0.7lh, var(--cart-font-size--xs));
   }
 {% endstylesheet %}
 
@@ -74,7 +58,7 @@
       "type": "inline_richtext",
       "id": "title",
       "label": "t:settings.cart_title",
-      "default": "t:text_defaults.cart"
+      "default": "Cart"
     },
     {
       "type": "checkbox",

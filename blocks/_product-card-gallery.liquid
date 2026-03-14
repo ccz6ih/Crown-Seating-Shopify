@@ -15,48 +15,31 @@
 
 {% capture children %}
   {% unless product == blank %}
-    <div
-      class="product-badges product-badges--{{ settings.badge_position }}"
-      style="
-        --badge-border-radius: {{ settings.badge_corner_radius }}px;
-        --badge-font-family: var(--font-{{ settings.badge_font_family }}--family); --badge-font-weight: var(--font-{{ settings.badge_font_family }}--weight); --badge-text-transform: {{ settings.badge_text_transform }};
-      "
-    >
-      {%- if product.available == false or product.compare_at_price > product.price -%}
-        <div
-          class="
-            product-badges__badge product-badges__badge--rectangle
-            {% if product.available == false %} color-{{ settings.badge_sold_out_color_scheme }}{% elsif product.compare_at_price > product.price %} color-{{ settings.badge_sale_color_scheme }}{% endif %}
-          "
-        >
-          {%- if product.available == false -%}
-            {{ 'content.product_badge_sold_out' | t }}
-          {%- elsif product.compare_at_price > product.price -%}
-            {{ 'content.product_badge_sale' | t }}
-          {%- endif -%}
-        </div>
-      {%- endif -%}
-    </div>
-    {%  if settings.quick_add or settings.mobile_quick_add %}
+    {% render 'product-card-badges', product: product %}
+    {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add', product: product, section_id: section.id %}
     {% endif %}
   {% endunless %}
 {% endcapture %}
 
-{% if has_video and product_video != null %}
-  {%- comment -%} Video product: render video directly with card-gallery styling {%- endcomment -%}
-  <div
-    ref="cardGallery"
-    class="card-gallery card-gallery-{{ block.id }} spacing-style border-style"
-    style="
-      {% render 'border-override', settings: block.settings %}
-      {% render 'spacing-style', settings: block.settings %}
-      --gallery-aspect-ratio: {{ block.settings.image_ratio | default: '4 / 5' }};
-    "
-    data-product-id="{{ product.id }}"
-    data-image-ratio="{{ block.settings.image_ratio }}"
-    {{ block.shopify_attributes }}
-  >
+<div
+  class="card-gallery"
+  style="
+    --image-ratio: {{ block.settings.image_ratio }};
+    --border-width: {{ block.settings.border_width }}px;
+    --border-opacity: {{ block.settings.border_opacity | divided_by: 100.0 }};
+    --border-radius: {{ block.settings.border_radius }}px;
+    --padding-block-start: {{ block.settings.padding-block-start }}px;
+    --padding-block-end: {{ block.settings.padding-block-end }}px;
+    --padding-inline-start: {{ block.settings.padding-inline-start }}px;
+    --padding-inline-end: {{ block.settings.padding-inline-end }}px;
+    {% if block.settings.border != 'none' %}
+      border-style: {{ block.settings.border }};
+    {% endif %}
+  "
+>
+  {% if has_video and product_video != null %}
+    {% comment %} Use Shopify's video_tag with proper poster handling - prioritize video's cover image {% endcomment %}
     {% liquid
       assign poster_url = null
       if product_video.preview_image != null and product_video.preview_image != blank
@@ -92,12 +75,20 @@
           style: 'width: 100%; height: 100%; object-fit: cover;'
       }}
     {% endif %}
-    {{ children }}
-  </div>
-{% else %}
-  {%- comment -%} Non-video product: use standard card-gallery snippet {%- endcomment -%}
-  {% render 'card-gallery', children: children %}
-{% endif %}
+  {% else %}
+    {% if product != blank and product.featured_image %}
+      <img
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        alt="{{ product.featured_image.alt | escape }}"
+        style="width: 100%; height: 100%; object-fit: cover;"
+        loading="lazy"
+      >
+    {% else %}
+      {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {% endif %}
+  {% endif %}
+  {{ children }}
+</div>
 
 {% # Title and price for the zoomed out grid view %}
 <div class="product-grid-view-zoom-out--details">
@@ -105,53 +96,13 @@
     <h3 class="h4">{{ 'content.product_card_placeholder' | t }}</h3>
   {% else %}
     <h3 class="h4">{{ product.title }}</h3>
+    <div class="h6">
+      <product-price data-product-id="{{ product.id }}">
+        {% render 'price', product_resource: product, show_unit_price: false %}
+      </product-price>
+    </div>
   {% endif %}
 </div>
-
-{% stylesheet %}
-  .product-badges {
-    --badge-inset: max(var(--padding-xs), calc((var(--border-radius) + var(--padding-xs)) * (1 - cos(45deg))));
-
-    position: absolute;
-    z-index: var(--layer-flat);
-  }
-
-  .product-badges--bottom-left {
-    bottom: calc(var(--badge-inset) + var(--padding-block-start));
-    left: calc(var(--badge-inset) + var(--padding-inline-start));
-  }
-
-  .product-badges--top-left {
-    top: calc(var(--badge-inset) + var(--padding-block-start));
-    left: calc(var(--badge-inset) + var(--padding-inline-start));
-  }
-
-  .product-badges--top-right {
-    top: calc(var(--badge-inset) + var(--padding-block-start));
-    right: calc(var(--badge-inset) + var(--padding-inline-start));
-  }
-
-  .product-badges__badge {
-    --badge-font-size: var(--font-size--xs);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--color-foreground);
-    background: var(--color-background);
-    font-size: var(--badge-font-size);
-    font-family: var(--badge-font-family);
-    font-weight: var(--badge-font-weight);
-    text-transform: var(--badge-text-transform);
-    border-radius: var(--badge-border-radius);
-  }
-
-  .product-badges__badge--rectangle {
-    padding-block: var(--badge-rectangle-padding-block);
-    padding-inline: var(--badge-rectangle-padding-inline);
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
