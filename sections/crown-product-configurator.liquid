@@ -507,8 +507,11 @@
         document.getElementById('material-input').value = materialName;
         document.getElementById('material-price-input').value = materialPrice;
 
-        // Enable continue button
-        if (btnToColor) btnToColor.disabled = false;
+        // Auto-advance to color step after brief visual feedback
+        setTimeout(function() {
+          var colorStep = hasArms ? 3 : 2;
+          goToStep(colorStep);
+        }, 300);
 
         // Show appropriate color panel, hide message
         var msg = document.getElementById('crown-no-material-msg');
@@ -623,13 +626,14 @@
     --c-blue: #4A7BA7;
     --c-blue-light: #5A8BB7;
     --c-blue-dark: #3A6B97;
-    --c-gold: #C8A882;
-    --c-gold-light: #D4B892;
-    --c-cream: #FAF6F2;
+    --c-gold: #B8996F;
+    --c-gold-light: #C9AA80;
+    --c-cream: #F7F3EE;
+    --c-sand: #E8DDD0;
     --c-dark: #2C3E50;
     --c-text: #2C3E50;
     --c-text-muted: #7F8C8D;
-    --c-border: #E8E4E0;
+    --c-border: #E0D8CF;
     --c-bg: #FFFFFF;
     --c-radius: 8px;
     --c-radius-lg: 12px;
@@ -668,24 +672,19 @@
     border-radius: var(--c-radius-lg);
     overflow: hidden;
     background: var(--c-cream);
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border: 1px solid var(--c-border);
   }
 
   .crown-cfg__main-image {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    height: auto;
     display: block;
+    object-fit: contain;
   }
 
   .crown-cfg__video {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    height: auto;
     display: block;
   }
 
@@ -857,7 +856,7 @@
   }
 
   .crown-cfg__progress-step.completed .crown-cfg__progress-num {
-    background: var(--c-gold);
+    background: #27ae60;
     color: white;
   }
 
@@ -873,7 +872,7 @@
   }
 
   .crown-cfg__progress-step.completed .crown-cfg__progress-text {
-    color: var(--c-gold);
+    color: #27ae60;
   }
 
   .crown-cfg__progress-line {
