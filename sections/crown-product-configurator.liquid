@@ -1,20 +1,14 @@
 {% comment %}
-  Crown Seating Product Configurator
-  A luxurious product configuration experience for dental stools.
-  Replaces DPO (Dynamic Product Options) with native Shopify functionality.
-
-  Features:
-  - Upholstery material type selection with price modifiers
-  - Visual color swatch grids with fabric images
-  - Optional arm configuration with product images
-  - Dynamic price updates based on selections
-  - Conditional visibility (color grid shows based on material selection)
+  Crown Seating Product Configurator v2
+  Premium step-by-step configuration experience for dental stools.
+  Brand palette: #4A7BA7 (blue), #C8A882 (gold), #FAF6F2 (cream), #2C3E50 (dark)
 {% endcomment %}
 
 {% liquid
   assign product = closest.product | default: product
   assign current_variant = product.selected_or_first_available_variant
   assign base_price = current_variant.price
+  assign has_arms = section.settings.enable_arms
 %}
 
 <script type="application/ld+json">
@@ -22,150 +16,186 @@
 </script>
 
 <div
-  class="crown-configurator section color-{{ section.settings.color_scheme }}"
+  class="crown-cfg section color-{{ section.settings.color_scheme }}"
   data-section-id="{{ section.id }}"
   data-base-price="{{ base_price }}"
+  data-has-arms="{{ has_arms }}"
   {{ section.shopify_attributes }}
 >
-  <div class="crown-configurator__layout page-width">
+  <div class="crown-cfg__layout page-width">
+
     {%- comment -%} LEFT: Product Media Gallery {%- endcomment -%}
-    <div class="crown-configurator__media">
+    <div class="crown-cfg__media">
       {% if product.media.size > 0 %}
-        <div class="crown-configurator__media-main" id="crown-main-media">
-          {% assign first_media = product.featured_media | default: product.media[0] %}
+        {% comment %} Reorder media: videos first, then images {% endcomment %}
+        {% liquid
+          assign ordered_media = ''
+          assign video_indices = ''
+          assign image_indices = ''
+          for media in product.media
+            if media.media_type == 'video'
+              if video_indices == ''
+                assign video_indices = forloop.index0
+              else
+                assign video_indices = video_indices | append: ',' | append: forloop.index0
+              endif
+            else
+              if image_indices == ''
+                assign image_indices = forloop.index0
+              else
+                assign image_indices = image_indices | append: ',' | append: forloop.index0
+              endif
+            endif
+          endfor
+          if video_indices != ''
+            assign ordered_media = video_indices
+            if image_indices != ''
+              assign ordered_media = ordered_media | append: ',' | append: image_indices
+            endif
+          else
+            assign ordered_media = image_indices
+          endif
+          assign media_order = ordered_media | split: ','
+          assign first_idx = media_order[0] | plus: 0
+          assign first_media = product.media[first_idx]
+        %}
+
+        <div class="crown-cfg__media-main" id="crown-main-media">
           {% if first_media.media_type == 'video' %}
-            {{ first_media | video_tag: autoplay: false, muted: false, loop: false, playsinline: true, controls: true, class: 'crown-configurator__video' }}
+            {{ first_media | video_tag: autoplay: false, muted: false, loop: false, playsinline: true, controls: true, class: 'crown-cfg__video' }}
           {% else %}
             <img
               src="{{ first_media | image_url: width: 1200 }}"
               alt="{{ first_media.alt | escape }}"
-              class="crown-configurator__main-image"
+              class="crown-cfg__main-image"
               loading="eager"
             >
           {% endif %}
         </div>
+
         {% if product.media.size > 1 %}
-          <div class="crown-configurator__thumbnails">
-            {% for media in product.media %}
+          <div class="crown-cfg__thumbnails">
+            {% for idx_str in media_order %}
+              {% assign idx = idx_str | plus: 0 %}
+              {% assign media = product.media[idx] %}
               <button
-                class="crown-configurator__thumbnail {% if forloop.first %}active{% endif %}"
-                data-media-index="{{ forloop.index0 }}"
+                class="crown-cfg__thumb {% if forloop.first %}active{% endif %}"
+                data-media-index="{{ idx }}"
                 data-media-type="{{ media.media_type }}"
+                {% if media.media_type == 'video' %}
+                  data-video-html="{{ media | video_tag: autoplay: false, controls: true, playsinline: true, class: 'crown-cfg__video' | escape }}"
+                {% endif %}
                 aria-label="View {{ media.alt | default: product.title }}"
               >
                 {% if media.media_type == 'video' %}
-                  <img
-                    src="{{ media.preview_image | image_url: width: 120 }}"
-                    alt="{{ media.alt | escape }}"
-                    loading="lazy"
-                  >
-                  <span class="crown-configurator__play-badge">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                  <img src="{{ media.preview_image | image_url: width: 120 }}" alt="{{ media.alt | escape }}" loading="lazy">
+                  <span class="crown-cfg__play-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                   </span>
                 {% else %}
-                  <img
-                    src="{{ media | image_url: width: 120 }}"
-                    alt="{{ media.alt | escape }}"
-                    loading="lazy"
-                  >
+                  <img src="{{ media | image_url: width: 120 }}" alt="{{ media.alt | escape }}" loading="lazy">
                 {% endif %}
               </button>
             {% endfor %}
           </div>
         {% endif %}
       {% else %}
-        {{ 'product-1' | placeholder_svg_tag: 'crown-configurator__placeholder' }}
+        {{ 'product-1' | placeholder_svg_tag: 'crown-cfg__placeholder' }}
       {% endif %}
     </div>
 
-    {%- comment -%} RIGHT: Product Details + Configurator {%- endcomment -%}
-    <div class="crown-configurator__details">
-      {%- comment -%} Product Title & Price {%- endcomment -%}
-      <div class="crown-configurator__header">
+    {%- comment -%} RIGHT: Configurator {%- endcomment -%}
+    <div class="crown-cfg__details">
+
+      {%- comment -%} Header {%- endcomment -%}
+      <div class="crown-cfg__header">
         {% if section.settings.show_vendor and product.vendor %}
-          <p class="crown-configurator__vendor">{{ product.vendor }}</p>
+          <p class="crown-cfg__vendor">{{ product.vendor }}</p>
         {% endif %}
-        <h1 class="crown-configurator__title">{{ product.title }}</h1>
-        <div class="crown-configurator__price-display">
-          <span class="crown-configurator__base-label">Base Price</span>
-          <span class="crown-configurator__price" id="crown-base-price" data-base-price="{{ base_price }}">
-            {{ base_price | money }}
-          </span>
+        <h1 class="crown-cfg__title">{{ product.title }}</h1>
+        <div class="crown-cfg__price-hero">
+          <span class="crown-cfg__price-label">Starting at</span>
+          <span class="crown-cfg__price-amount" id="crown-base-price" data-base-price="{{ base_price }}">{{ base_price | money }}</span>
         </div>
       </div>
 
-      {%- comment -%} Product Description (collapsible) {%- endcomment -%}
+      {%- comment -%} Description {%- endcomment -%}
       {% if product.description != blank %}
-        <details class="crown-configurator__description-wrap" {% if section.settings.description_open %}open{% endif %}>
-          <summary class="crown-configurator__description-toggle">
+        <details class="crown-cfg__desc-wrap" {% if section.settings.description_open %}open{% endif %}>
+          <summary class="crown-cfg__desc-toggle">
             <span>Product Details</span>
-            <svg class="crown-configurator__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <svg class="crown-cfg__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
-          <div class="crown-configurator__description rte">
+          <div class="crown-cfg__desc rte">
             {{ product.description }}
           </div>
         </details>
       {% endif %}
 
-      <div class="crown-configurator__divider"></div>
-
-      {%- comment -%} === CONFIGURATOR OPTIONS === {%- endcomment -%}
+      {%- comment -%} === STEP-BY-STEP CONFIGURATOR === {%- endcomment -%}
       <form id="crown-product-form" action="/cart/add" method="post">
         <input type="hidden" name="id" value="{{ current_variant.id }}">
 
-        {%- comment -%} Arm Configuration (if enabled) {%- endcomment -%}
-        {% if section.settings.enable_arms %}
-          <div class="crown-configurator__option-group" data-option-group="arms">
-            <div class="crown-configurator__option-header">
-              <h3 class="crown-configurator__option-title">
-                <span class="crown-configurator__option-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                </span>
-                Select Arm Configuration
-              </h3>
-              <span class="crown-configurator__option-badge" id="arm-price-badge">Optional</span>
+        {%- comment -%} Progress Bar {%- endcomment -%}
+        <div class="crown-cfg__progress" id="crown-progress">
+          <div class="crown-cfg__progress-step active" data-step="1">
+            <span class="crown-cfg__progress-num">1</span>
+            <span class="crown-cfg__progress-text">{% if has_arms %}Arms{% else %}Material{% endif %}</span>
+          </div>
+          <div class="crown-cfg__progress-line"></div>
+          <div class="crown-cfg__progress-step" data-step="2">
+            <span class="crown-cfg__progress-num">2</span>
+            <span class="crown-cfg__progress-text">{% if has_arms %}Material{% else %}Color{% endif %}</span>
+          </div>
+          <div class="crown-cfg__progress-line"></div>
+          <div class="crown-cfg__progress-step" data-step="3">
+            <span class="crown-cfg__progress-num">3</span>
+            <span class="crown-cfg__progress-text">{% if has_arms %}Color{% else %}Review{% endif %}</span>
+          </div>
+          {% if has_arms %}
+            <div class="crown-cfg__progress-line"></div>
+            <div class="crown-cfg__progress-step" data-step="4">
+              <span class="crown-cfg__progress-num">4</span>
+              <span class="crown-cfg__progress-text">Review</span>
             </div>
-            <div class="crown-configurator__arm-grid">
-              <button
-                type="button"
-                class="crown-configurator__arm-card active"
-                data-arm-value="none"
-                data-arm-price="0"
-              >
-                <div class="crown-configurator__arm-card-inner">
-                  <div class="crown-configurator__arm-icon-wrap">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+          {% endif %}
+        </div>
+
+        {%- comment -%} ===== STEP: ARM CONFIGURATION (if enabled) ===== {%- endcomment -%}
+        {% if has_arms %}
+          <div class="crown-cfg__step active" data-step="1">
+            <div class="crown-cfg__step-header">
+              <div class="crown-cfg__step-badge">Step 1</div>
+              <h3 class="crown-cfg__step-title">Select Arm Configuration</h3>
+              <p class="crown-cfg__step-subtitle">Choose the arm style that best fits your needs</p>
+            </div>
+            <div class="crown-cfg__arm-grid">
+              <button type="button" class="crown-cfg__arm-card active" data-arm-value="none" data-arm-price="0">
+                <div class="crown-cfg__arm-inner">
+                  <div class="crown-cfg__arm-img-wrap">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
                   </div>
-                  <span class="crown-configurator__arm-name">No Arms</span>
-                  <span class="crown-configurator__arm-price">Included</span>
+                  <span class="crown-cfg__arm-name">No Arms</span>
+                  <span class="crown-cfg__arm-price-tag included">Included</span>
+                </div>
+                <div class="crown-cfg__card-check">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
               </button>
               {% for block in section.blocks %}
                 {% if block.type == 'arm_option' %}
-                  <button
-                    type="button"
-                    class="crown-configurator__arm-card"
-                    data-arm-value="{{ block.settings.arm_title | handleize }}"
-                    data-arm-price="{{ block.settings.arm_price | times: 100 }}"
-                    {{ block.shopify_attributes }}
-                  >
-                    <div class="crown-configurator__arm-card-inner">
+                  <button type="button" class="crown-cfg__arm-card" data-arm-value="{{ block.settings.arm_title | handleize }}" data-arm-price="{{ block.settings.arm_price | times: 100 }}" {{ block.shopify_attributes }}>
+                    <div class="crown-cfg__arm-inner">
                       {% if block.settings.arm_image != blank %}
-                        <img
-                          src="{{ block.settings.arm_image | image_url: width: 300 }}"
-                          alt="{{ block.settings.arm_title | escape }}"
-                          class="crown-configurator__arm-image"
-                          loading="lazy"
-                        >
+                        <img src="{{ block.settings.arm_image | image_url: width: 300 }}" alt="{{ block.settings.arm_title | escape }}" class="crown-cfg__arm-img" loading="lazy">
                       {% endif %}
-                      <span class="crown-configurator__arm-name">{{ block.settings.arm_title }}</span>
-                      <span class="crown-configurator__arm-price">
-                        {% if block.settings.arm_price > 0 %}
-                          +{{ block.settings.arm_price | times: 100 | money }}
-                        {% else %}
-                          Included
-                        {% endif %}
+                      <span class="crown-cfg__arm-name">{{ block.settings.arm_title }}</span>
+                      <span class="crown-cfg__arm-price-tag">
+                        {% if block.settings.arm_price > 0 %}+{{ block.settings.arm_price | times: 100 | money }}{% else %}Included{% endif %}
                       </span>
+                    </div>
+                    <div class="crown-cfg__card-check">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
                   </button>
                 {% endif %}
@@ -173,42 +203,40 @@
             </div>
             <input type="hidden" name="properties[Arm Configuration]" id="arm-config-input" value="No Arms">
             <input type="hidden" name="properties[_arm_price]" id="arm-price-input" value="0">
+            <div class="crown-cfg__step-nav">
+              <div></div>
+              <button type="button" class="crown-cfg__nav-btn crown-cfg__nav-btn--next" data-goto-step="2">
+                Continue to Material
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
           </div>
-          <div class="crown-configurator__divider"></div>
         {% endif %}
 
-        {%- comment -%} Upholstery Material Selection {%- endcomment -%}
-        <div class="crown-configurator__option-group" data-option-group="upholstery">
-          <div class="crown-configurator__option-header">
-            <h3 class="crown-configurator__option-title">
-              <span class="crown-configurator__option-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
-              </span>
-              Select Upholstery Material
-            </h3>
-            <span class="crown-configurator__option-badge crown-configurator__option-badge--required">Required</span>
+        {%- comment -%} ===== STEP: UPHOLSTERY MATERIAL ===== {%- endcomment -%}
+        <div class="crown-cfg__step {% unless has_arms %}active{% endunless %}" data-step="{% if has_arms %}2{% else %}1{% endif %}">
+          <div class="crown-cfg__step-header">
+            <div class="crown-cfg__step-badge">Step {% if has_arms %}2{% else %}1{% endif %}</div>
+            <h3 class="crown-cfg__step-title">Choose Your Upholstery</h3>
+            <p class="crown-cfg__step-subtitle">Select the material that matches your practice</p>
           </div>
-          <div class="crown-configurator__material-grid">
+          <div class="crown-cfg__material-grid">
             {% for block in section.blocks %}
               {% if block.type == 'material_type' %}
-                <button
-                  type="button"
-                  class="crown-configurator__material-card"
-                  data-material="{{ block.settings.material_title | handleize }}"
-                  data-material-price="{{ block.settings.material_price | times: 100 }}"
-                  data-color-group="{{ block.settings.material_title | handleize }}"
-                  {{ block.shopify_attributes }}
-                >
-                  <div class="crown-configurator__material-card-inner">
-                    <span class="crown-configurator__material-check">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                    </span>
-                    <span class="crown-configurator__material-name">{{ block.settings.material_title }}</span>
+                <button type="button" class="crown-cfg__material-card" data-material="{{ block.settings.material_title | handleize }}" data-material-price="{{ block.settings.material_price | times: 100 }}" data-color-group="{{ block.settings.material_title | handleize }}" {{ block.shopify_attributes }}>
+                  <div class="crown-cfg__material-inner">
+                    <div class="crown-cfg__material-icon">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+                    </div>
+                    <span class="crown-cfg__material-name">{{ block.settings.material_title }}</span>
                     {% if block.settings.material_price > 0 %}
-                      <span class="crown-configurator__material-upcharge">+{{ block.settings.material_price | times: 100 | money }}</span>
+                      <span class="crown-cfg__material-price">+{{ block.settings.material_price | times: 100 | money }}</span>
                     {% else %}
-                      <span class="crown-configurator__material-upcharge crown-configurator__material-upcharge--included">Included</span>
+                      <span class="crown-cfg__material-price included">Included in base</span>
                     {% endif %}
+                  </div>
+                  <div class="crown-cfg__card-check">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
                 </button>
               {% endif %}
@@ -216,117 +244,172 @@
           </div>
           <input type="hidden" name="properties[Upholstery Material]" id="material-input" value="">
           <input type="hidden" name="properties[_material_price]" id="material-price-input" value="0">
-        </div>
-
-        {%- comment -%} Color Selection Panels - rendered from snippet files {%- endcomment -%}
-        {% for block in section.blocks %}
-          {% if block.type == 'material_type' %}
-            {% assign mat_handle = block.settings.material_title | handleize %}
-            <div
-              class="crown-configurator__color-panel"
-              data-color-panel="{{ mat_handle }}"
-              style="display: none;"
-            >
-              <div class="crown-configurator__divider"></div>
-              <div class="crown-configurator__option-header">
-                <h3 class="crown-configurator__option-title">
-                  <span class="crown-configurator__option-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-                  </span>
-                  {{ block.settings.material_title }} Colors
-                </h3>
-                <span class="crown-configurator__selected-color" id="selected-color-{{ mat_handle }}">Choose a color</span>
-              </div>
-              {%- comment -%} Color preview strip - shows enlarged swatch when selected {%- endcomment -%}
-              <div class="crown-configurator__color-preview" id="color-preview-{{ mat_handle }}" style="display: none;">
-                <div class="crown-configurator__color-preview-swatch">
-                  <img src="" alt="" id="color-preview-img-{{ mat_handle }}" class="crown-configurator__color-preview-img">
-                </div>
-                <div class="crown-configurator__color-preview-info">
-                  <span class="crown-configurator__color-preview-name" id="color-preview-name-{{ mat_handle }}"></span>
-                  <span class="crown-configurator__color-preview-sku" id="color-preview-sku-{{ mat_handle }}"></span>
-                </div>
-              </div>
-              <div class="crown-configurator__swatch-grid">
-                {% case mat_handle %}
-                  {% when 'medical-grade-vinyl' %}
-                    {% render 'crown-colors-medical-grade-vinyl' %}
-                  {% when 'ultra-leather' %}
-                    {% render 'crown-colors-ultra-leather' %}
-                  {% when 'silvertex' %}
-                    {% render 'crown-colors-silvertex' %}
-                  {% when 'stakleen' %}
-                    {% render 'crown-colors-stakleen' %}
-                {% endcase %}
-              </div>
-            </div>
-          {% endif %}
-        {% endfor %}
-        <input type="hidden" name="properties[Color]" id="color-input" value="">
-        <input type="hidden" name="properties[Color SKU]" id="color-sku-input" value="">
-
-        <div class="crown-configurator__divider"></div>
-
-        {%- comment -%} Total Price & Add to Cart {%- endcomment -%}
-        <div class="crown-configurator__summary">
-          <div class="crown-configurator__total-row">
-            <span class="crown-configurator__total-label">Your Configuration</span>
-          </div>
-          <div class="crown-configurator__breakdown" id="crown-price-breakdown">
-            <div class="crown-configurator__breakdown-row">
-              <span>Base Price</span>
-              <span id="crown-summary-base">{{ base_price | money }}</span>
-            </div>
-          </div>
-          <div class="crown-configurator__total-row crown-configurator__total-row--final">
-            <span class="crown-configurator__total-label--final">Total</span>
-            <span class="crown-configurator__total-price" id="crown-total-price">{{ base_price | money }}</span>
+          <div class="crown-cfg__step-nav">
+            {% if has_arms %}
+              <button type="button" class="crown-cfg__nav-btn crown-cfg__nav-btn--back" data-goto-step="1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+            {% else %}
+              <div></div>
+            {% endif %}
+            <button type="button" class="crown-cfg__nav-btn crown-cfg__nav-btn--next" data-goto-step="{% if has_arms %}3{% else %}2{% endif %}" disabled id="btn-to-color">
+              Continue to Color
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
           </div>
         </div>
 
-        {% if section.settings.enable_quantity %}
-          <div class="crown-configurator__quantity">
-            <label for="crown-quantity" class="crown-configurator__quantity-label">Quantity</label>
-            <div class="crown-configurator__quantity-selector">
-              <button type="button" class="crown-configurator__qty-btn" data-action="decrease" aria-label="Decrease quantity">-</button>
-              <input type="number" id="crown-quantity" name="quantity" value="1" min="1" class="crown-configurator__qty-input">
-              <button type="button" class="crown-configurator__qty-btn" data-action="increase" aria-label="Increase quantity">+</button>
+        {%- comment -%} ===== STEP: COLOR SELECTION ===== {%- endcomment -%}
+        <div class="crown-cfg__step" data-step="{% if has_arms %}3{% else %}2{% endif %}">
+          <div class="crown-cfg__step-header">
+            <div class="crown-cfg__step-badge">Step {% if has_arms %}3{% else %}2{% endif %}</div>
+            <h3 class="crown-cfg__step-title">Pick Your Color</h3>
+            <p class="crown-cfg__step-subtitle">Browse and select from our premium fabric colors</p>
+          </div>
+
+          {% for block in section.blocks %}
+            {% if block.type == 'material_type' %}
+              {% assign mat_handle = block.settings.material_title | handleize %}
+              <div class="crown-cfg__color-panel" data-color-panel="{{ mat_handle }}" style="display: none;">
+                <div class="crown-cfg__color-panel-label">
+                  <span class="crown-cfg__color-panel-material">{{ block.settings.material_title }}</span>
+                  <span class="crown-cfg__selected-color" id="selected-color-{{ mat_handle }}">Tap a swatch below</span>
+                </div>
+
+                {%- comment -%} Color preview {%- endcomment -%}
+                <div class="crown-cfg__color-preview" id="color-preview-{{ mat_handle }}" style="display: none;">
+                  <div class="crown-cfg__preview-swatch">
+                    <img src="" alt="" id="color-preview-img-{{ mat_handle }}" class="crown-cfg__preview-img">
+                  </div>
+                  <div class="crown-cfg__preview-info">
+                    <span class="crown-cfg__preview-name" id="color-preview-name-{{ mat_handle }}"></span>
+                    <span class="crown-cfg__preview-sku" id="color-preview-sku-{{ mat_handle }}"></span>
+                  </div>
+                </div>
+
+                <div class="crown-cfg__swatch-grid">
+                  {% case mat_handle %}
+                    {% when 'medical-grade-vinyl' %}
+                      {% render 'crown-colors-medical-grade-vinyl' %}
+                    {% when 'ultra-leather' %}
+                      {% render 'crown-colors-ultra-leather' %}
+                    {% when 'silvertex' %}
+                      {% render 'crown-colors-silvertex' %}
+                    {% when 'stakleen' %}
+                      {% render 'crown-colors-stakleen' %}
+                  {% endcase %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+
+          <div class="crown-cfg__no-material-msg" id="crown-no-material-msg">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Please select a material first to see available colors</span>
+          </div>
+
+          <input type="hidden" name="properties[Color]" id="color-input" value="">
+          <input type="hidden" name="properties[Color SKU]" id="color-sku-input" value="">
+          <div class="crown-cfg__step-nav">
+            <button type="button" class="crown-cfg__nav-btn crown-cfg__nav-btn--back" data-goto-step="{% if has_arms %}2{% else %}1{% endif %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back
+            </button>
+            <button type="button" class="crown-cfg__nav-btn crown-cfg__nav-btn--next" data-goto-step="{% if has_arms %}4{% else %}3{% endif %}" disabled id="btn-to-review">
+              Review Configuration
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {%- comment -%} ===== STEP: REVIEW & ADD TO CART ===== {%- endcomment -%}
+        <div class="crown-cfg__step" data-step="{% if has_arms %}4{% else %}3{% endif %}">
+          <div class="crown-cfg__step-header">
+            <div class="crown-cfg__step-badge">Final Step</div>
+            <h3 class="crown-cfg__step-title">Review Your Configuration</h3>
+            <p class="crown-cfg__step-subtitle">Everything looks perfect? Add to cart below</p>
+          </div>
+
+          <div class="crown-cfg__review">
+            <div class="crown-cfg__review-item">
+              <span class="crown-cfg__review-label">Product</span>
+              <span class="crown-cfg__review-value">{{ product.title }}</span>
+            </div>
+            {% if has_arms %}
+              <div class="crown-cfg__review-item" id="review-arms">
+                <span class="crown-cfg__review-label">Arm Configuration</span>
+                <span class="crown-cfg__review-value" id="review-arm-value">No Arms</span>
+              </div>
+            {% endif %}
+            <div class="crown-cfg__review-item" id="review-material">
+              <span class="crown-cfg__review-label">Upholstery</span>
+              <span class="crown-cfg__review-value" id="review-material-value">—</span>
+            </div>
+            <div class="crown-cfg__review-item" id="review-color">
+              <span class="crown-cfg__review-label">Color</span>
+              <span class="crown-cfg__review-value" id="review-color-value">—</span>
             </div>
           </div>
-        {% endif %}
 
-        <button
-          type="submit"
-          class="crown-configurator__add-to-cart"
-          id="crown-add-to-cart"
-          {% unless current_variant.available %}disabled{% endunless %}
-        >
-          {% if current_variant.available %}
-            <span class="crown-configurator__cart-text">Add to Cart</span>
-            <span class="crown-configurator__cart-price" id="crown-cart-price">{{ base_price | money }}</span>
-          {% else %}
-            Sold Out
+          <div class="crown-cfg__summary">
+            <div class="crown-cfg__summary-label">Your Configuration</div>
+            <div class="crown-cfg__breakdown" id="crown-price-breakdown">
+              <div class="crown-cfg__breakdown-row">
+                <span>Base Price</span>
+                <span id="crown-summary-base">{{ base_price | money }}</span>
+              </div>
+            </div>
+            <div class="crown-cfg__summary-total">
+              <span>Total</span>
+              <span class="crown-cfg__total-price" id="crown-total-price">{{ base_price | money }}</span>
+            </div>
+          </div>
+
+          {% if section.settings.enable_quantity %}
+            <div class="crown-cfg__quantity">
+              <label for="crown-quantity" class="crown-cfg__qty-label">Quantity</label>
+              <div class="crown-cfg__qty-wrap">
+                <button type="button" class="crown-cfg__qty-btn" data-action="decrease" aria-label="Decrease quantity">−</button>
+                <input type="number" id="crown-quantity" name="quantity" value="1" min="1" class="crown-cfg__qty-input">
+                <button type="button" class="crown-cfg__qty-btn" data-action="increase" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
           {% endif %}
-        </button>
 
-        {% if section.settings.show_dynamic_checkout and current_variant.available %}
-          {{ form | payment_button }}
-        {% endif %}
+          <button type="submit" class="crown-cfg__atc" id="crown-add-to-cart" {% unless current_variant.available %}disabled{% endunless %}>
+            {% if current_variant.available %}
+              <span class="crown-cfg__atc-text" id="crown-cart-text">Add to Cart</span>
+              <span class="crown-cfg__atc-price" id="crown-cart-price">{{ base_price | money }}</span>
+            {% else %}
+              <span>Sold Out</span>
+            {% endif %}
+          </button>
+
+          <div class="crown-cfg__step-nav">
+            <button type="button" class="crown-cfg__nav-btn crown-cfg__nav-btn--back" data-goto-step="{% if has_arms %}3{% else %}2{% endif %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back to Colors
+            </button>
+            <div></div>
+          </div>
+        </div>
+
       </form>
 
       {%- comment -%} Trust Badges {%- endcomment -%}
       {% if section.settings.show_trust_badges %}
-        <div class="crown-configurator__trust">
-          <div class="crown-configurator__trust-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="crown-cfg__trust">
+          <div class="crown-cfg__trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             <span>Secure Checkout</span>
           </div>
-          <div class="crown-configurator__trust-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-3M5.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/></svg>
+          <div class="crown-cfg__trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-3M5.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/></svg>
             <span>Free Shipping</span>
           </div>
-          <div class="crown-configurator__trust-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div class="crown-cfg__trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span>Quality Guaranteed</span>
           </div>
         </div>
@@ -337,140 +420,165 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const section = document.querySelector('.crown-configurator');
+    var section = document.querySelector('.crown-cfg');
     if (!section) return;
 
-    const basePrice = parseInt(section.dataset.basePrice, 10);
-    let selectedMaterial = null;
-    let materialPrice = 0;
-    let armPrice = 0;
-    let selectedColor = null;
+    var basePrice = parseInt(section.dataset.basePrice, 10);
+    var hasArms = section.dataset.hasArms === 'true';
+    var selectedMaterial = null;
+    var materialPrice = 0;
+    var armPrice = 0;
+    var selectedColor = null;
+    var currentStep = 1;
 
     function formatMoney(cents) {
-      return '$' + (cents / 100).toFixed(2);
+      return '$' + (cents / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
+    // === Step Navigation ===
+    function goToStep(step) {
+      currentStep = step;
+      section.querySelectorAll('.crown-cfg__step').forEach(function(s) {
+        s.classList.toggle('active', parseInt(s.dataset.step) === step);
+      });
+      // Update progress
+      section.querySelectorAll('.crown-cfg__progress-step').forEach(function(p) {
+        var pStep = parseInt(p.dataset.step);
+        p.classList.toggle('active', pStep === step);
+        p.classList.toggle('completed', pStep < step);
+      });
+      // Scroll to top of configurator on step change
+      section.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+
+    section.querySelectorAll('[data-goto-step]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var target = parseInt(this.dataset.gotoStep);
+        goToStep(target);
+      });
+    });
+
+    // === Price Display ===
     function updatePriceDisplay() {
-      const total = basePrice + materialPrice + armPrice;
-      const totalEl = document.getElementById('crown-total-price');
-      const cartPriceEl = document.getElementById('crown-cart-price');
-      const breakdownEl = document.getElementById('crown-price-breakdown');
+      var total = basePrice + materialPrice + armPrice;
+      var totalEl = document.getElementById('crown-total-price');
+      var cartPriceEl = document.getElementById('crown-cart-price');
+      var breakdownEl = document.getElementById('crown-price-breakdown');
 
       if (totalEl) totalEl.textContent = formatMoney(total);
       if (cartPriceEl) cartPriceEl.textContent = formatMoney(total);
 
-      // Update breakdown
-      let html = '<div class="crown-configurator__breakdown-row"><span>Base Price</span><span>' + formatMoney(basePrice) + '</span></div>';
+      var html = '<div class="crown-cfg__breakdown-row"><span>Base Price</span><span>' + formatMoney(basePrice) + '</span></div>';
       if (materialPrice > 0) {
-        html += '<div class="crown-configurator__breakdown-row"><span>Upholstery Upgrade</span><span>+' + formatMoney(materialPrice) + '</span></div>';
+        html += '<div class="crown-cfg__breakdown-row"><span>Upholstery Upgrade</span><span>+' + formatMoney(materialPrice) + '</span></div>';
       }
       if (armPrice > 0) {
-        html += '<div class="crown-configurator__breakdown-row"><span>Arm Configuration</span><span>+' + formatMoney(armPrice) + '</span></div>';
+        html += '<div class="crown-cfg__breakdown-row"><span>Arm Configuration</span><span>+' + formatMoney(armPrice) + '</span></div>';
       }
       if (breakdownEl) breakdownEl.innerHTML = html;
     }
 
-    // Material selection
-    const materialCards = section.querySelectorAll('.crown-configurator__material-card');
+    // === Arm Selection ===
+    var armCards = section.querySelectorAll('.crown-cfg__arm-card');
+    armCards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        armCards.forEach(function(c) { c.classList.remove('active'); });
+        this.classList.add('active');
+        armPrice = parseInt(this.dataset.armPrice, 10) || 0;
+        var armName = this.querySelector('.crown-cfg__arm-name').textContent.trim();
+        document.getElementById('arm-config-input').value = armName;
+        document.getElementById('arm-price-input').value = armPrice;
+        var reviewArmVal = document.getElementById('review-arm-value');
+        if (reviewArmVal) reviewArmVal.textContent = armName + (armPrice > 0 ? ' (+' + formatMoney(armPrice) + ')' : '');
+        updatePriceDisplay();
+      });
+    });
+
+    // === Material Selection ===
+    var materialCards = section.querySelectorAll('.crown-cfg__material-card');
+    var btnToColor = document.getElementById('btn-to-color');
     materialCards.forEach(function(card) {
       card.addEventListener('click', function() {
         materialCards.forEach(function(c) { c.classList.remove('active'); });
         this.classList.add('active');
-
         selectedMaterial = this.dataset.material;
         materialPrice = parseInt(this.dataset.materialPrice, 10) || 0;
+        var materialName = this.querySelector('.crown-cfg__material-name').textContent.trim();
+        document.getElementById('material-input').value = materialName;
+        document.getElementById('material-price-input').value = materialPrice;
 
-        // Update hidden inputs
-        var materialInput = document.getElementById('material-input');
-        var materialPriceInput = document.getElementById('material-price-input');
-        if (materialInput) materialInput.value = this.querySelector('.crown-configurator__material-name').textContent.trim();
-        if (materialPriceInput) materialPriceInput.value = materialPrice;
+        // Enable continue button
+        if (btnToColor) btnToColor.disabled = false;
 
-        // Show/hide color panels
-        var panels = section.querySelectorAll('.crown-configurator__color-panel');
-        panels.forEach(function(panel) {
+        // Show appropriate color panel, hide message
+        var msg = document.getElementById('crown-no-material-msg');
+        if (msg) msg.style.display = 'none';
+        section.querySelectorAll('.crown-cfg__color-panel').forEach(function(panel) {
           if (panel.dataset.colorPanel === selectedMaterial) {
             panel.style.display = '';
-            panel.style.animation = 'crownFadeIn 0.3s ease';
+            panel.style.animation = 'crownSlideIn 0.35s ease';
           } else {
             panel.style.display = 'none';
           }
         });
 
-        // Reset color selection when changing material
+        // Reset color
         selectedColor = null;
         document.getElementById('color-input').value = '';
         document.getElementById('color-sku-input').value = '';
-        section.querySelectorAll('.crown-configurator__swatch').forEach(function(s) { s.classList.remove('active'); });
-        section.querySelectorAll('[id^="selected-color-"]').forEach(function(el) { el.textContent = 'Choose a color'; });
-        // Hide all color previews
-        section.querySelectorAll('.crown-configurator__color-preview').forEach(function(p) { p.style.display = 'none'; });
+        section.querySelectorAll('.crown-cfg__swatch').forEach(function(s) { s.classList.remove('active'); });
+        section.querySelectorAll('[id^="selected-color-"]').forEach(function(el) { el.textContent = 'Tap a swatch below'; });
+        section.querySelectorAll('.crown-cfg__color-preview').forEach(function(p) { p.style.display = 'none'; });
+        var btnToReview = document.getElementById('btn-to-review');
+        if (btnToReview) btnToReview.disabled = true;
+
+        // Update review
+        var reviewMatVal = document.getElementById('review-material-value');
+        if (reviewMatVal) reviewMatVal.textContent = materialName + (materialPrice > 0 ? ' (+' + formatMoney(materialPrice) + ')' : '');
 
         updatePriceDisplay();
-        validateForm();
       });
     });
 
-    // Color swatch selection
-    section.querySelectorAll('.crown-configurator__swatch').forEach(function(swatch) {
+    // === Color Swatch Selection ===
+    var btnToReview = document.getElementById('btn-to-review');
+    section.querySelectorAll('.crown-cfg__swatch').forEach(function(swatch) {
       swatch.addEventListener('click', function() {
         var group = this.dataset.materialGroup;
-        // Deselect others in same group
-        section.querySelectorAll('.crown-configurator__swatch[data-material-group="' + group + '"]').forEach(function(s) { s.classList.remove('active'); });
+        section.querySelectorAll('.crown-cfg__swatch[data-material-group="' + group + '"]').forEach(function(s) { s.classList.remove('active'); });
         this.classList.add('active');
-
         selectedColor = this.dataset.colorName;
         document.getElementById('color-input').value = selectedColor;
         document.getElementById('color-sku-input').value = this.dataset.colorSku || '';
 
+        // Enable review button
+        if (btnToReview) btnToReview.disabled = false;
+
         var selectedLabel = document.getElementById('selected-color-' + group);
         if (selectedLabel) selectedLabel.textContent = selectedColor;
 
-        // Update color preview panel
+        // Update preview
         var preview = document.getElementById('color-preview-' + group);
         var previewImg = document.getElementById('color-preview-img-' + group);
         var previewName = document.getElementById('color-preview-name-' + group);
         var previewSku = document.getElementById('color-preview-sku-' + group);
         if (preview) {
-          var swatchImg = this.querySelector('.crown-configurator__swatch-img');
-          if (swatchImg && previewImg) {
-            previewImg.src = swatchImg.src;
-            previewImg.alt = this.dataset.colorName;
-          }
+          var swatchImg = this.querySelector('.crown-cfg__swatch-img');
+          if (swatchImg && previewImg) { previewImg.src = swatchImg.src; previewImg.alt = this.dataset.colorName; }
           if (previewName) previewName.textContent = this.dataset.colorName;
           if (previewSku) previewSku.textContent = this.dataset.colorSku ? 'SKU: ' + this.dataset.colorSku : '';
           preview.style.display = '';
-          preview.style.animation = 'crownFadeIn 0.25s ease';
+          preview.style.animation = 'crownSlideIn 0.25s ease';
         }
 
-        validateForm();
+        // Update review
+        var reviewColorVal = document.getElementById('review-color-value');
+        if (reviewColorVal) reviewColorVal.textContent = selectedColor;
       });
     });
 
-    // Arm selection
-    var armCards = section.querySelectorAll('.crown-configurator__arm-card');
-    armCards.forEach(function(card) {
-      card.addEventListener('click', function() {
-        armCards.forEach(function(c) { c.classList.remove('active'); });
-        this.classList.add('active');
-
-        armPrice = parseInt(this.dataset.armPrice, 10) || 0;
-        var armName = this.querySelector('.crown-configurator__arm-name').textContent.trim();
-
-        document.getElementById('arm-config-input').value = armName;
-        document.getElementById('arm-price-input').value = armPrice;
-
-        var badge = document.getElementById('arm-price-badge');
-        if (badge) {
-          badge.textContent = armPrice > 0 ? '+' + formatMoney(armPrice) : 'Optional';
-        }
-
-        updatePriceDisplay();
-      });
-    });
-
-    // Quantity controls
-    var qtyBtns = section.querySelectorAll('.crown-configurator__qty-btn');
+    // === Quantity ===
+    var qtyBtns = section.querySelectorAll('.crown-cfg__qty-btn');
     var qtyInput = document.getElementById('crown-quantity');
     qtyBtns.forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -482,77 +590,52 @@
       });
     });
 
-    // Thumbnail gallery
-    var thumbnails = section.querySelectorAll('.crown-configurator__thumbnail');
+    // === Thumbnail Gallery ===
+    var thumbnails = section.querySelectorAll('.crown-cfg__thumb');
     var mainMedia = document.getElementById('crown-main-media');
-
     thumbnails.forEach(function(thumb) {
       thumb.addEventListener('click', function() {
         thumbnails.forEach(function(t) { t.classList.remove('active'); });
         this.classList.add('active');
-
-        var idx = parseInt(this.dataset.mediaIndex, 10);
-        var imgEl = this.querySelector('img');
-        if (!imgEl || !mainMedia) return;
-
+        if (!mainMedia) return;
         var mediaType = this.dataset.mediaType;
-        if (mediaType === 'video') {
-          // For videos, we reload the page to the media - simplest reliable approach
-          var src = imgEl.src;
-          mainMedia.innerHTML = '<img src="' + src + '" alt="" class="crown-configurator__main-image" style="opacity:0.6"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--crown-gold);">&#9654;</div>';
+        if (mediaType === 'video' && this.dataset.videoHtml) {
+          mainMedia.innerHTML = this.dataset.videoHtml;
         } else {
-          var src = imgEl.src.replace(/width=\d+/, 'width=1200').replace(/(\?\S*)/, '?width=1200');
-          mainMedia.innerHTML = '<img src="' + src + '" alt="" class="crown-configurator__main-image">';
+          var imgEl = this.querySelector('img');
+          if (imgEl) {
+            var src = imgEl.src.replace(/width=\d+/, 'width=1200');
+            mainMedia.innerHTML = '<img src="' + src + '" alt="" class="crown-cfg__main-image">';
+          }
         }
       });
     });
-
-    // Form validation
-    function validateForm() {
-      var addBtn = document.getElementById('crown-add-to-cart');
-      if (!addBtn) return;
-
-      var cartText = addBtn.querySelector('.crown-configurator__cart-text');
-      if (!cartText) return;
-
-      var hasMaterial = document.getElementById('material-input').value !== '';
-      var hasColor = document.getElementById('color-input').value !== '';
-
-      if (hasMaterial && hasColor) {
-        addBtn.disabled = false;
-        cartText.textContent = 'Add to Cart';
-      } else if (!hasMaterial) {
-        addBtn.disabled = true;
-        cartText.textContent = 'Select Upholstery Material';
-      } else if (!hasColor) {
-        addBtn.disabled = true;
-        cartText.textContent = 'Select a Color';
-      }
-    }
-
-    // Initial state
-    validateForm();
   });
 </script>
 
 {% stylesheet %}
-  @keyframes crownFadeIn {
-    from { opacity: 0; transform: translateY(8px); }
+  @keyframes crownSlideIn {
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .crown-configurator {
-    --crown-accent: #1a1a2e;
-    --crown-accent-light: #16213e;
-    --crown-gold: #c9a96e;
-    --crown-gold-light: #d4b87a;
-    --crown-border: #e5e5e5;
-    --crown-bg-subtle: #fafaf8;
-    --crown-radius: 8px;
-    --crown-radius-lg: 12px;
+  .crown-cfg {
+    --c-blue: #4A7BA7;
+    --c-blue-light: #5A8BB7;
+    --c-blue-dark: #3A6B97;
+    --c-gold: #C8A882;
+    --c-gold-light: #D4B892;
+    --c-cream: #FAF6F2;
+    --c-dark: #2C3E50;
+    --c-text: #2C3E50;
+    --c-text-muted: #7F8C8D;
+    --c-border: #E8E4E0;
+    --c-bg: #FFFFFF;
+    --c-radius: 8px;
+    --c-radius-lg: 12px;
   }
 
-  .crown-configurator__layout {
+  .crown-cfg__layout {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -560,46 +643,53 @@
   }
 
   @media (min-width: 750px) {
-    .crown-configurator__layout {
-      grid-template-columns: 40% 1fr;
+    .crown-cfg__layout {
+      grid-template-columns: 42% 1fr;
       gap: 2.5rem;
-      padding: 3rem 0;
+      padding: 2.5rem 0;
     }
   }
 
   @media (min-width: 990px) {
-    .crown-configurator__layout {
-      grid-template-columns: 38% 1fr;
+    .crown-cfg__layout {
+      grid-template-columns: 45% 1fr;
       gap: 3rem;
     }
   }
 
-  /* Media Gallery */
-  .crown-configurator__media {
+  /* ====== MEDIA GALLERY ====== */
+  .crown-cfg__media {
     position: sticky;
     top: 2rem;
     align-self: start;
   }
 
-  .crown-configurator__media-main {
-    border-radius: var(--crown-radius-lg);
+  .crown-cfg__media-main {
+    border-radius: var(--c-radius-lg);
     overflow: hidden;
-    background: var(--crown-bg-subtle);
+    background: var(--c-cream);
     aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid var(--c-border);
   }
 
-  .crown-configurator__main-image,
-  .crown-configurator__video {
+  .crown-cfg__main-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
   }
 
-  .crown-configurator__thumbnails {
+  .crown-cfg__video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .crown-cfg__thumbnails {
     display: flex;
     gap: 0.5rem;
     margin-top: 0.75rem;
@@ -608,244 +698,389 @@
     scrollbar-width: thin;
   }
 
-  .crown-configurator__thumbnail {
+  .crown-cfg__thumb {
     flex: 0 0 auto;
     width: 64px;
     height: 64px;
-    border-radius: var(--crown-radius);
+    border-radius: var(--c-radius);
     overflow: hidden;
-    border: 2px solid transparent;
+    border: 2px solid var(--c-border);
     cursor: pointer;
-    background: var(--crown-bg-subtle);
+    background: var(--c-cream);
     padding: 0;
     position: relative;
     transition: border-color 0.2s;
   }
 
-  .crown-configurator__thumbnail.active {
-    border-color: var(--crown-gold);
+  .crown-cfg__thumb.active {
+    border-color: var(--c-blue);
   }
 
-  .crown-configurator__thumbnail img {
+  .crown-cfg__thumb:hover {
+    border-color: var(--c-gold);
+  }
+
+  .crown-cfg__thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .crown-configurator__play-badge {
+  .crown-cfg__play-icon {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.35);
     color: white;
+    border-radius: inherit;
   }
 
-  /* Details */
-  .crown-configurator__header {
-    margin-bottom: 1.5rem;
+  @media (max-width: 749px) {
+    .crown-cfg__media { position: static; }
   }
 
-  .crown-configurator__vendor {
+  /* ====== HEADER ====== */
+  .crown-cfg__header {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .crown-cfg__vendor {
     text-transform: uppercase;
     letter-spacing: 0.15em;
     font-size: 0.75rem;
-    color: var(--crown-gold);
-    margin-bottom: 0.5rem;
+    color: var(--c-gold);
+    margin: 0 0 0.4rem;
     font-weight: 600;
   }
 
-  .crown-configurator__title {
-    font-size: 1.75rem;
-    font-weight: 400;
-    line-height: 1.2;
+  .crown-cfg__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--c-dark);
+    margin: 0 0 0.75rem;
     letter-spacing: -0.01em;
-    margin: 0 0 1rem;
   }
 
   @media (min-width: 750px) {
-    .crown-configurator__title {
-      font-size: 2.25rem;
-    }
+    .crown-cfg__title { font-size: 2rem; }
   }
 
-  .crown-configurator__price-display {
+  .crown-cfg__price-hero {
     display: flex;
     align-items: baseline;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
-  .crown-configurator__base-label {
+  .crown-cfg__price-label {
     font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #888;
+    letter-spacing: 0.08em;
+    color: var(--c-text-muted);
   }
 
-  .crown-configurator__price {
-    font-size: 1.5rem;
-    font-weight: 300;
-    letter-spacing: -0.02em;
+  .crown-cfg__price-amount {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--c-blue);
   }
 
-  /* Description */
-  .crown-configurator__description-wrap {
-    margin-bottom: 0.5rem;
+  /* ====== DESCRIPTION ====== */
+  .crown-cfg__desc-wrap {
+    margin-bottom: 1.25rem;
   }
 
-  .crown-configurator__description-toggle {
+  .crown-cfg__desc-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    padding: 0.75rem 0;
+    padding: 0.65rem 0;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--c-dark);
     list-style: none;
   }
 
-  .crown-configurator__description-toggle::-webkit-details-marker { display: none; }
+  .crown-cfg__desc-toggle::-webkit-details-marker { display: none; }
 
-  .crown-configurator__chevron {
-    transition: transform 0.2s;
-  }
+  .crown-cfg__chevron { transition: transform 0.2s; color: var(--c-text-muted); }
+  details[open] .crown-cfg__chevron { transform: rotate(180deg); }
 
-  details[open] .crown-configurator__chevron {
-    transform: rotate(180deg);
-  }
-
-  .crown-configurator__description {
+  .crown-cfg__desc {
     padding-bottom: 1rem;
     font-size: 0.9rem;
     line-height: 1.6;
-    color: #555;
+    color: var(--c-text);
   }
 
-  .crown-configurator__divider {
-    height: 1px;
-    background: var(--crown-border);
-    margin: 1.25rem 0;
+  /* ====== PROGRESS BAR ====== */
+  .crown-cfg__progress {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--c-cream);
+    border-radius: var(--c-radius-lg);
+    border: 1px solid var(--c-border);
   }
 
-  /* Option Groups */
-  .crown-configurator__option-header {
+  .crown-cfg__progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+  }
+
+  .crown-cfg__progress-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--c-border);
+    color: var(--c-text-muted);
+    transition: all 0.3s;
+  }
+
+  .crown-cfg__progress-step.active .crown-cfg__progress-num {
+    background: var(--c-blue);
+    color: white;
+  }
+
+  .crown-cfg__progress-step.completed .crown-cfg__progress-num {
+    background: var(--c-gold);
+    color: white;
+  }
+
+  .crown-cfg__progress-text {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--c-text-muted);
+    transition: color 0.3s;
+  }
+
+  .crown-cfg__progress-step.active .crown-cfg__progress-text {
+    color: var(--c-blue);
+  }
+
+  .crown-cfg__progress-step.completed .crown-cfg__progress-text {
+    color: var(--c-gold);
+  }
+
+  .crown-cfg__progress-line {
+    flex: 1;
+    height: 2px;
+    background: var(--c-border);
+    margin: 0 0.5rem;
+    min-width: 12px;
+  }
+
+  /* ====== STEPS ====== */
+  .crown-cfg__step {
+    display: none;
+    animation: crownSlideIn 0.35s ease;
+  }
+
+  .crown-cfg__step.active {
+    display: block;
+  }
+
+  .crown-cfg__step-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .crown-cfg__step-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--c-blue);
+    background: rgba(74, 123, 167, 0.1);
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    margin-bottom: 0.5rem;
+  }
+
+  .crown-cfg__step-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--c-dark);
+    margin: 0 0 0.25rem;
+  }
+
+  .crown-cfg__step-subtitle {
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    margin: 0;
+  }
+
+  /* ====== STEP NAV ====== */
+  .crown-cfg__step-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-border);
   }
 
-  .crown-configurator__option-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin: 0;
-    display: flex;
+  .crown-cfg__nav-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--c-radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
   }
 
-  .crown-configurator__option-icon {
-    color: var(--crown-gold);
-    display: flex;
+  .crown-cfg__nav-btn--next {
+    background: var(--c-blue);
+    color: white;
   }
 
-  .crown-configurator__option-badge {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 0.25rem 0.75rem;
-    border-radius: 100px;
-    background: var(--crown-bg-subtle);
-    color: #888;
-    font-weight: 500;
+  .crown-cfg__nav-btn--next:hover:not(:disabled) {
+    background: var(--c-blue-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74,123,167,0.25);
   }
 
-  .crown-configurator__option-badge--required {
-    background: #fff3e0;
-    color: #e65100;
+  .crown-cfg__nav-btn--next:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 
-  /* Arm Grid */
-  .crown-configurator__arm-grid {
+  .crown-cfg__nav-btn--back {
+    background: transparent;
+    color: var(--c-text-muted);
+    border: 1px solid var(--c-border);
+  }
+
+  .crown-cfg__nav-btn--back:hover {
+    color: var(--c-dark);
+    border-color: var(--c-dark);
+  }
+
+  /* ====== ARM GRID ====== */
+  .crown-cfg__arm-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 0.75rem;
   }
 
-  .crown-configurator__arm-card {
-    border: 2px solid var(--crown-border);
-    border-radius: var(--crown-radius-lg);
+  .crown-cfg__arm-card {
+    border: 2px solid var(--c-border);
+    border-radius: var(--c-radius-lg);
     padding: 0;
     background: white;
     cursor: pointer;
     transition: all 0.2s;
+    position: relative;
     overflow: hidden;
   }
 
-  .crown-configurator__arm-card:hover {
-    border-color: var(--crown-gold-light);
+  .crown-cfg__arm-card:hover {
+    border-color: var(--c-gold-light);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   }
 
-  .crown-configurator__arm-card.active {
-    border-color: var(--crown-gold);
-    box-shadow: 0 0 0 1px var(--crown-gold);
+  .crown-cfg__arm-card.active {
+    border-color: var(--c-blue);
+    box-shadow: 0 0 0 1px var(--c-blue);
+    background: rgba(74,123,167,0.03);
   }
 
-  .crown-configurator__arm-card-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem 0.5rem;
-    gap: 0.5rem;
-    text-align: center;
+  .crown-cfg__arm-card.active .crown-cfg__card-check {
+    opacity: 1;
   }
 
-  .crown-configurator__arm-image {
-    width: 80px;
-    height: 60px;
-    object-fit: contain;
-  }
-
-  .crown-configurator__arm-icon-wrap {
-    width: 80px;
-    height: 60px;
+  .crown-cfg__card-check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--c-blue);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ccc;
+    opacity: 0;
+    transition: opacity 0.2s;
   }
 
-  .crown-configurator__arm-name {
-    font-size: 0.8rem;
-    font-weight: 500;
+  .crown-cfg__arm-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.85rem 0.5rem;
+    gap: 0.4rem;
+    text-align: center;
+  }
+
+  .crown-cfg__arm-img {
+    width: 70px;
+    height: 52px;
+    object-fit: contain;
+  }
+
+  .crown-cfg__arm-img-wrap {
+    width: 70px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-text-muted);
+  }
+
+  .crown-cfg__arm-name {
+    font-size: 0.78rem;
+    font-weight: 600;
     line-height: 1.2;
+    color: var(--c-dark);
   }
 
-  .crown-configurator__arm-price {
-    font-size: 0.75rem;
-    color: var(--crown-gold);
-    font-weight: 500;
+  .crown-cfg__arm-price-tag {
+    font-size: 0.72rem;
+    color: var(--c-blue);
+    font-weight: 600;
   }
 
-  /* Material Grid */
-  .crown-configurator__material-grid {
+  .crown-cfg__arm-price-tag.included {
+    color: #27ae60;
+  }
+
+  /* ====== MATERIAL GRID ====== */
+  .crown-cfg__material-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
   }
 
   @media (min-width: 500px) {
-    .crown-configurator__material-grid {
+    .crown-cfg__material-grid {
       grid-template-columns: repeat(4, 1fr);
     }
   }
 
-  .crown-configurator__material-card {
-    border: 2px solid var(--crown-border);
-    border-radius: var(--crown-radius-lg);
+  .crown-cfg__material-card {
+    border: 2px solid var(--c-border);
+    border-radius: var(--c-radius-lg);
     padding: 0;
     background: white;
     cursor: pointer;
@@ -854,153 +1089,174 @@
     overflow: hidden;
   }
 
-  .crown-configurator__material-card:hover {
-    border-color: var(--crown-gold-light);
+  .crown-cfg__material-card:hover {
+    border-color: var(--c-gold-light);
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
-  .crown-configurator__material-card.active {
-    border-color: var(--crown-gold);
-    background: linear-gradient(135deg, #faf8f3 0%, #fff 100%);
-    box-shadow: 0 0 0 1px var(--crown-gold);
+  .crown-cfg__material-card.active {
+    border-color: var(--c-blue);
+    background: rgba(74,123,167,0.03);
+    box-shadow: 0 0 0 1px var(--c-blue);
   }
 
-  .crown-configurator__material-card.active .crown-configurator__material-check {
+  .crown-cfg__material-card.active .crown-cfg__card-check {
     opacity: 1;
   }
 
-  .crown-configurator__material-card-inner {
-    padding: 1rem 0.75rem;
+  .crown-cfg__material-inner {
+    padding: 1rem 0.6rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.35rem;
     text-align: center;
-    position: relative;
   }
 
-  .crown-configurator__material-check {
-    position: absolute;
-    top: 0;
-    right: 0;
-    color: var(--crown-gold);
-    opacity: 0;
-    transition: opacity 0.2s;
+  .crown-cfg__material-icon {
+    color: var(--c-gold);
+    margin-bottom: 0.15rem;
   }
 
-  .crown-configurator__material-name {
-    font-size: 0.85rem;
+  .crown-cfg__material-name {
+    font-size: 0.82rem;
     font-weight: 600;
     line-height: 1.2;
+    color: var(--c-dark);
   }
 
-  .crown-configurator__material-upcharge {
-    font-size: 0.75rem;
-    color: var(--crown-gold);
+  .crown-cfg__material-price {
+    font-size: 0.72rem;
+    color: var(--c-blue);
+    font-weight: 600;
+  }
+
+  .crown-cfg__material-price.included {
+    color: #27ae60;
+  }
+
+  /* ====== COLOR PANEL ====== */
+  .crown-cfg__color-panel-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .crown-cfg__color-panel-material {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--c-dark);
+  }
+
+  .crown-cfg__selected-color {
+    font-size: 0.82rem;
+    color: var(--c-gold);
     font-weight: 500;
   }
 
-  .crown-configurator__material-upcharge--included {
-    color: #4caf50;
+  .crown-cfg__no-material-msg {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: var(--c-cream);
+    border-radius: var(--c-radius-lg);
+    border: 1px dashed var(--c-border);
+    color: var(--c-text-muted);
+    font-size: 0.85rem;
   }
 
-  /* Color Preview Panel */
-  .crown-configurator__color-preview {
+  .crown-cfg__no-material-msg svg { color: var(--c-gold); flex-shrink: 0; }
+
+  /* Color Preview */
+  .crown-cfg__color-preview {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 0.75rem 1rem;
-    background: var(--crown-bg-subtle);
-    border-radius: var(--crown-radius-lg);
+    background: var(--c-cream);
+    border-radius: var(--c-radius-lg);
     margin-bottom: 1rem;
-    border: 1px solid var(--crown-border);
+    border: 1px solid var(--c-border);
   }
 
-  .crown-configurator__color-preview-swatch {
-    width: 64px;
-    height: 64px;
-    border-radius: var(--crown-radius);
+  .crown-cfg__preview-swatch {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--c-radius);
     overflow: hidden;
     flex-shrink: 0;
-    border: 2px solid var(--crown-gold);
-    box-shadow: 0 2px 8px rgba(201, 169, 110, 0.2);
+    border: 2px solid var(--c-blue);
+    box-shadow: 0 2px 8px rgba(74,123,167,0.15);
   }
 
-  .crown-configurator__color-preview-img {
+  .crown-cfg__preview-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
 
-  .crown-configurator__color-preview-info {
+  .crown-cfg__preview-info {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
   }
 
-  .crown-configurator__color-preview-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--crown-accent);
+  .crown-cfg__preview-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-dark);
   }
 
-  .crown-configurator__color-preview-sku {
-    font-size: 0.75rem;
-    color: #999;
+  .crown-cfg__preview-sku {
+    font-size: 0.72rem;
+    color: var(--c-text-muted);
     letter-spacing: 0.05em;
   }
 
-  /* Color Swatches */
-  .crown-configurator__selected-color {
-    font-size: 0.85rem;
-    color: var(--crown-gold);
-    font-weight: 500;
-  }
-
-  .crown-configurator__swatch-grid {
+  /* Swatch Grid */
+  .crown-cfg__swatch-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
     gap: 0.5rem;
   }
 
   @media (min-width: 750px) {
-    .crown-configurator__swatch-grid {
-      grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-    }
+    .crown-cfg__swatch-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
   }
 
   @media (min-width: 990px) {
-    .crown-configurator__swatch-grid {
-      grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
-    }
+    .crown-cfg__swatch-grid { grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); }
   }
 
-  .crown-configurator__swatch {
+  .crown-cfg__swatch {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: var(--crown-radius);
-    border: 2px solid var(--crown-border);
+    border-radius: var(--c-radius);
+    border: 2px solid var(--c-border);
     overflow: visible;
     cursor: pointer;
     padding: 0;
     position: relative;
-    background: var(--crown-bg-subtle);
+    background: var(--c-cream);
     transition: all 0.15s;
   }
 
-  /* Tooltip */
-  .crown-configurator__swatch::after {
+  /* Swatch Tooltip */
+  .crown-cfg__swatch::after {
     content: attr(data-color-name);
     position: absolute;
     bottom: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%) translateY(4px);
-    background: var(--crown-accent);
+    background: var(--c-dark);
     color: white;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
     padding: 0.3rem 0.6rem;
     border-radius: 4px;
     white-space: nowrap;
@@ -1013,190 +1269,207 @@
     text-overflow: ellipsis;
   }
 
-  .crown-configurator__swatch::before {
+  .crown-cfg__swatch::before {
     content: '';
     position: absolute;
     bottom: calc(100% + 2px);
     left: 50%;
     transform: translateX(-50%) translateY(4px);
     border: 4px solid transparent;
-    border-top-color: var(--crown-accent);
+    border-top-color: var(--c-dark);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.15s, transform 0.15s;
     z-index: 10;
   }
 
-  .crown-configurator__swatch:hover::after,
-  .crown-configurator__swatch:hover::before {
+  .crown-cfg__swatch:hover::after,
+  .crown-cfg__swatch:hover::before {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
 
-  .crown-configurator__swatch:hover {
-    border-color: var(--crown-gold-light);
+  .crown-cfg__swatch:hover {
+    border-color: var(--c-gold);
     transform: scale(1.08);
     z-index: 5;
   }
 
-  .crown-configurator__swatch.active {
-    border-color: var(--crown-gold);
-    box-shadow: 0 0 0 2px var(--crown-gold), 0 2px 8px rgba(201, 169, 110, 0.3);
+  .crown-cfg__swatch.active {
+    border-color: var(--c-blue);
+    box-shadow: 0 0 0 2px var(--c-blue), 0 2px 8px rgba(74,123,167,0.25);
     transform: scale(1.1);
     z-index: 6;
   }
 
-  .crown-configurator__swatch-img {
+  .crown-cfg__swatch-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: calc(var(--crown-radius) - 2px);
+    border-radius: calc(var(--c-radius) - 2px);
   }
 
-  .crown-configurator__swatch-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: #aaa;
-  }
-
-  .crown-configurator__swatch-check {
+  .crown-cfg__swatch-check {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,0.25);
+    background: rgba(74,123,167,0.2);
     opacity: 0;
     transition: opacity 0.15s;
+    border-radius: calc(var(--c-radius) - 2px);
   }
 
-  .crown-configurator__swatch.active .crown-configurator__swatch-check {
+  .crown-cfg__swatch.active .crown-cfg__swatch-check {
     opacity: 1;
   }
 
-  .crown-configurator__swatch-count {
-    font-size: 0.75rem;
-    color: #aaa;
-    margin-top: 0.5rem;
-  }
-
-  /* Summary */
-  .crown-configurator__summary {
-    background: var(--crown-bg-subtle);
-    border-radius: var(--crown-radius-lg);
-    padding: 1.25rem;
+  /* ====== REVIEW ====== */
+  .crown-cfg__review {
+    background: var(--c-cream);
+    border-radius: var(--c-radius-lg);
+    padding: 1rem 1.25rem;
     margin-bottom: 1rem;
+    border: 1px solid var(--c-border);
   }
 
-  .crown-configurator__total-row {
-    margin-bottom: 0.75rem;
+  .crown-cfg__review-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
   }
 
-  .crown-configurator__total-label {
+  .crown-cfg__review-item:last-child {
+    border-bottom: none;
+  }
+
+  .crown-cfg__review-label {
     font-size: 0.8rem;
+    color: var(--c-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  .crown-cfg__review-value {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--c-dark);
+  }
+
+  /* ====== SUMMARY ====== */
+  .crown-cfg__summary {
+    background: white;
+    border-radius: var(--c-radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 2px solid var(--c-border);
+  }
+
+  .crown-cfg__summary-label {
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #888;
+    color: var(--c-text-muted);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
   }
 
-  .crown-configurator__breakdown {
-    border-bottom: 1px solid var(--crown-border);
+  .crown-cfg__breakdown {
+    border-bottom: 1px solid var(--c-border);
     padding-bottom: 0.75rem;
     margin-bottom: 0.75rem;
   }
 
-  .crown-configurator__breakdown-row {
+  .crown-cfg__breakdown-row {
     display: flex;
     justify-content: space-between;
     font-size: 0.85rem;
-    padding: 0.25rem 0;
-    color: #555;
+    padding: 0.2rem 0;
+    color: var(--c-text);
   }
 
-  .crown-configurator__total-row--final {
+  .crown-cfg__summary-total {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0;
   }
 
-  .crown-configurator__total-label--final {
-    font-size: 1rem;
-    font-weight: 600;
+  .crown-cfg__summary-total > span:first-child {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-dark);
   }
 
-  .crown-configurator__total-price {
+  .crown-cfg__total-price {
     font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--crown-accent);
+    font-weight: 700;
+    color: var(--c-blue);
   }
 
-  /* Quantity */
-  .crown-configurator__quantity {
+  /* ====== QUANTITY ====== */
+  .crown-cfg__quantity {
     display: flex;
     align-items: center;
     gap: 1rem;
     margin-bottom: 1rem;
   }
 
-  .crown-configurator__quantity-label {
+  .crown-cfg__qty-label {
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--c-dark);
   }
 
-  .crown-configurator__quantity-selector {
+  .crown-cfg__qty-wrap {
     display: flex;
-    border: 1px solid var(--crown-border);
-    border-radius: var(--crown-radius);
+    border: 1px solid var(--c-border);
+    border-radius: var(--c-radius);
     overflow: hidden;
   }
 
-  .crown-configurator__qty-btn {
+  .crown-cfg__qty-btn {
     width: 40px;
     height: 40px;
     background: white;
     border: none;
     cursor: pointer;
     font-size: 1.1rem;
+    color: var(--c-dark);
     transition: background 0.15s;
   }
 
-  .crown-configurator__qty-btn:hover {
-    background: var(--crown-bg-subtle);
-  }
+  .crown-cfg__qty-btn:hover { background: var(--c-cream); }
 
-  .crown-configurator__qty-input {
+  .crown-cfg__qty-input {
     width: 50px;
     text-align: center;
     border: none;
-    border-left: 1px solid var(--crown-border);
-    border-right: 1px solid var(--crown-border);
+    border-left: 1px solid var(--c-border);
+    border-right: 1px solid var(--c-border);
     font-size: 0.9rem;
+    color: var(--c-dark);
     -moz-appearance: textfield;
   }
 
-  .crown-configurator__qty-input::-webkit-outer-spin-button,
-  .crown-configurator__qty-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
+  .crown-cfg__qty-input::-webkit-outer-spin-button,
+  .crown-cfg__qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-  /* Add to Cart */
-  .crown-configurator__add-to-cart {
+  /* ====== ADD TO CART ====== */
+  .crown-cfg__atc {
     width: 100%;
     padding: 1rem 2rem;
-    background: var(--crown-accent);
+    background: linear-gradient(135deg, var(--c-blue) 0%, var(--c-blue-dark) 100%);
     color: white;
     border: none;
-    border-radius: var(--crown-radius);
+    border-radius: var(--c-radius);
     font-size: 1rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -1204,53 +1477,45 @@
     align-items: center;
   }
 
-  .crown-configurator__add-to-cart:hover:not(:disabled) {
-    background: var(--crown-accent-light);
+  .crown-cfg__atc:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(26,26,46,0.2);
+    box-shadow: 0 6px 20px rgba(74,123,167,0.3);
   }
 
-  .crown-configurator__add-to-cart:disabled {
+  .crown-cfg__atc:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
-  .crown-configurator__cart-price {
-    font-weight: 300;
-    opacity: 0.8;
+  .crown-cfg__atc-price {
+    font-weight: 400;
+    opacity: 0.85;
   }
 
-  /* Trust Badges */
-  .crown-configurator__trust {
+  /* ====== TRUST ====== */
+  .crown-cfg__trust {
     display: flex;
     justify-content: center;
     gap: 1.5rem;
     margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--crown-border);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-border);
   }
 
-  .crown-configurator__trust-item {
+  .crown-cfg__trust-item {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 0.75rem;
-    color: #888;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    color: var(--c-text-muted);
+    font-weight: 500;
   }
 
-  .crown-configurator__trust-item svg {
-    color: var(--crown-gold);
-  }
+  .crown-cfg__trust-item svg { color: var(--c-gold); }
 
   @media (max-width: 749px) {
-    .crown-configurator__media {
-      position: static;
-    }
-    .crown-configurator__trust {
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-    }
+    .crown-cfg__trust { flex-direction: column; align-items: center; gap: 0.5rem; }
+    .crown-cfg__progress-text { display: none; }
   }
 {% endstylesheet %}
 
