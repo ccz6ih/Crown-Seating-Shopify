@@ -50,7 +50,7 @@
       "settings": {
         "color_scheme": "scheme-1",
         "show_vendor": true,
-        "description_open": true,
+        "description_open": false,
         "enable_arms": false,
         "enable_quantity": true,
         "show_dynamic_checkout": false,
