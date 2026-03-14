@@ -11,70 +11,69 @@
   "sections": {
     "crown-configurator": {
       "type": "crown-product-configurator",
-      "settings": {
-        "color_scheme": "scheme-1",
-        "show_vendor": true,
-        "description_open": false,
-        "enable_arms": true,
-        "enable_quantity": true,
-        "show_dynamic_checkout": false,
-        "show_trust_badges": true
-      },
       "blocks": {
         "arm_2d_single": {
           "type": "arm_option",
           "settings": {
             "arm_title": "2D Single Arm",
-            "arm_price": 385
+            "arm_price": 385,
+            "arm_image": "shopify://shop_images/2D-ARM.png"
           }
         },
         "arm_2d_pair": {
           "type": "arm_option",
           "settings": {
             "arm_title": "2D Arm Pairs",
-            "arm_price": 642
+            "arm_price": 642,
+            "arm_image": "shopify://shop_images/2D-ARM-2_1.png"
           }
         },
         "arm_dcra_single": {
           "type": "arm_option",
           "settings": {
             "arm_title": "DCRA Single Arm",
-            "arm_price": 185
+            "arm_price": 185,
+            "arm_image": "shopify://shop_images/DCRA-ARM.png"
           }
         },
         "arm_dcra_pair": {
           "type": "arm_option",
           "settings": {
             "arm_title": "DCRA Arm Pairs",
-            "arm_price": 362
+            "arm_price": 362,
+            "arm_image": "shopify://shop_images/dpo_custom_option_42115_dcra-arm-2.png"
           }
         },
         "arm_posiflex_single": {
           "type": "arm_option",
           "settings": {
             "arm_title": "Posiflex Single Arm",
-            "arm_price": 385
+            "arm_price": 385,
+            "arm_image": "shopify://shop_images/PosiflexArms.jpg"
           }
         },
         "arm_posiflex_pair": {
           "type": "arm_option",
           "settings": {
             "arm_title": "Posiflex Pair Arms",
-            "arm_price": 642
+            "arm_price": 642,
+            "arm_image": "shopify://shop_images/dpo_custom_option_49816_appuis-coudes-posiflex-anime.gif"
           }
         },
         "arm_t_ratchet": {
           "type": "arm_option",
           "settings": {
             "arm_title": "T Ratchet Arm",
-            "arm_price": 385
+            "arm_price": 385,
+            "arm_image": "shopify://shop_images/dpo_custom_option_35565_trachetarm.png"
           }
         },
         "arm_adjustable_black": {
           "type": "arm_option",
           "settings": {
             "arm_title": "Adjustable Black Arms",
-            "arm_price": 160
+            "arm_price": 160,
+            "arm_image": "shopify://shop_images/replacement-arms_1.webp"
           }
         },
         "material_vinyl": {
@@ -119,11 +118,57 @@
         "material_ultra",
         "material_silvertex",
         "material_stakleen"
-      ]
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_vendor": true,
+        "description_open": false,
+        "enable_arms": true,
+        "enable_quantity": true,
+        "show_dynamic_checkout": false,
+        "show_trust_badges": true
+      }
     },
     "product-recommendations": {
       "type": "product-recommendations",
-      "settings": {}
+      "blocks": {
+        "static-product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 16,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "settings": {
+        "product": "",
+        "recommendation_type": "related",
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "max_products": 4,
+        "columns": 4,
+        "mobile_columns": "2",
+        "columns_gap": 16,
+        "rows_gap": 16,
+        "icons_style": "arrow",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "gap": 12,
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
