@@ -27,33 +27,34 @@
     {%- comment -%} LEFT: Product Media Gallery {%- endcomment -%}
     <div class="crown-cfg__media">
       {% if product.media.size > 0 %}
-        {% comment %} Reorder media: videos first, then images {% endcomment %}
+        {% comment %} Order: featured image first, then videos, then remaining images {% endcomment %}
         {% liquid
-          assign ordered_media = ''
+          assign featured_idx = 0
           assign video_indices = ''
-          assign image_indices = ''
+          assign other_image_indices = ''
           for media in product.media
-            if media.media_type == 'video'
+            if media.id == product.featured_media.id
+              assign featured_idx = forloop.index0
+            elsif media.media_type == 'video'
               if video_indices == ''
                 assign video_indices = forloop.index0
               else
                 assign video_indices = video_indices | append: ',' | append: forloop.index0
               endif
             else
-              if image_indices == ''
-                assign image_indices = forloop.index0
+              if other_image_indices == ''
+                assign other_image_indices = forloop.index0
               else
-                assign image_indices = image_indices | append: ',' | append: forloop.index0
+                assign other_image_indices = other_image_indices | append: ',' | append: forloop.index0
               endif
             endif
           endfor
+          assign ordered_media = featured_idx | append: ''
           if video_indices != ''
-            assign ordered_media = video_indices
-            if image_indices != ''
-              assign ordered_media = ordered_media | append: ',' | append: image_indices
-            endif
-          else
-            assign ordered_media = image_indices
+            assign ordered_media = ordered_media | append: ',' | append: video_indices
+          endif
+          if other_image_indices != ''
+            assign ordered_media = ordered_media | append: ',' | append: other_image_indices
           endif
           assign media_order = ordered_media | split: ','
           assign first_idx = media_order[0] | plus: 0
