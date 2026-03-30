@@ -63,7 +63,17 @@
 
         <div class="crown-cfg__media-main" id="crown-main-media">
           {% if first_media.media_type == 'video' %}
-            {{ first_media | video_tag: autoplay: false, muted: false, loop: false, playsinline: true, controls: true, class: 'crown-cfg__video' }}
+            <div class="crown-cfg__video-poster" data-video-html="{{ first_media | video_tag: autoplay: false, controls: true, playsinline: true, class: 'crown-cfg__video' | escape }}">
+              <img
+                src="{{ first_media.preview_image | image_url: width: 1200 }}"
+                alt="{{ first_media.alt | escape }}"
+                class="crown-cfg__main-image"
+                loading="eager"
+              >
+              <button type="button" class="crown-cfg__video-play" aria-label="Play video">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+              </button>
+            </div>
           {% else %}
             <img
               src="{{ first_media | image_url: width: 1200 }}"
@@ -687,6 +697,19 @@
       });
     });
 
+    // === Video Poster Play Button ===
+    var videoPoster = mainMedia ? mainMedia.querySelector('.crown-cfg__video-poster') : null;
+    if (videoPoster) {
+      videoPoster.addEventListener('click', function() {
+        var videoHtml = this.dataset.videoHtml;
+        if (videoHtml) {
+          mainMedia.innerHTML = videoHtml;
+          var vid = mainMedia.querySelector('video');
+          if (vid) vid.play();
+        }
+      });
+    }
+
     // === Watch Video Button ===
     var watchBtn = section.querySelector('.crown-cfg__watch-video');
     if (watchBtn && mainMedia) {
@@ -786,6 +809,32 @@
     max-width: 100%;
     height: auto;
     display: block;
+  }
+
+  .crown-cfg__video-poster {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .crown-cfg__video-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s;
+  }
+
+  .crown-cfg__video-play:hover {
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .crown-cfg__video-play svg {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
   }
 
   .crown-cfg__thumbnails {
