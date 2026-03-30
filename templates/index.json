@@ -834,16 +834,16 @@
         "max_products": 16,
         "columns": 5,
         "mobile_columns": "1",
-        "columns_gap": 10,
-        "rows_gap": 10,
+        "columns_gap": 19,
+        "rows_gap": 19,
         "icons_style": "arrow",
         "icons_shape": "none",
         "section_width": "full-width",
         "horizontal_alignment": "center",
         "gap": 10,
         "color_scheme": "scheme-6",
-        "padding-block-start": 12,
-        "padding-block-end": 10
+        "padding-block-start": 19,
+        "padding-block-end": 19
       }
     },
     "product_list_xpT3aG": {
