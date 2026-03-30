@@ -53,8 +53,8 @@
         "description_open": false,
         "enable_arms": false,
         "enable_quantity": true,
-        "show_dynamic_checkout": false,
-        "show_trust_badges": true
+        "show_dynamic_checkout": true,
+        "show_trust_badges": false
       }
     },
     "product-recommendations": {
