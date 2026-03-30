@@ -730,6 +730,7 @@
     --c-bg: #FFFFFF;
     --c-radius: 8px;
     --c-radius-lg: 12px;
+    overflow-x: hidden;
   }
 
   .crown-cfg__layout {
@@ -759,6 +760,7 @@
     position: sticky;
     top: 2rem;
     align-self: start;
+    min-width: 0;
   }
 
   .crown-cfg__media-main {
@@ -775,8 +777,13 @@
     object-fit: contain;
   }
 
+  .crown-cfg__details {
+    min-width: 0;
+  }
+
   .crown-cfg__video {
     width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
   }
@@ -986,6 +993,16 @@
     font-size: 0.9rem;
     line-height: 1.6;
     color: var(--c-text);
+    overflow-x: hidden;
+    word-break: break-word;
+  }
+
+  .crown-cfg__desc img,
+  .crown-cfg__desc iframe,
+  .crown-cfg__desc video,
+  .crown-cfg__desc table {
+    max-width: 100%;
+    height: auto;
   }
 
   /* ====== PROGRESS BAR ====== */
@@ -1815,7 +1832,6 @@
   @media (max-width: 749px) {
     .crown-cfg__trust { flex-direction: column; align-items: center; gap: 0.5rem; }
     .crown-cfg__progress-text { display: none; }
-    .crown-cfg__layout { overflow-x: hidden; }
 
     /* Arm cards – mobile */
     .crown-cfg__arm-inner { padding: 0.6rem 0.35rem; }
