@@ -691,16 +691,17 @@
         var materialName = document.getElementById('material-input').value;
         var armName = document.getElementById('arm-config-input') ? document.getElementById('arm-config-input').value : '';
 
-        // Build line items array
+        // Build line items array (add-ons first so base stool appears at top of cart)
         var items = [];
 
-        // 1. Base stool product
-        var baseProps = {};
-        if (materialName) baseProps['Upholstery Material'] = materialName;
-        if (colorName) baseProps['Color'] = colorName;
-        if (colorSku) baseProps['Color SKU'] = colorSku;
-        if (armName && armName !== 'No Arms') baseProps['Arm Configuration'] = armName;
-        items.push({ id: parseInt(baseVariantId), quantity: qty, properties: baseProps });
+        // 1. Arm configuration (if selected)
+        if (selectedArmVariantId) {
+          items.push({
+            id: parseInt(selectedArmVariantId),
+            quantity: qty,
+            properties: { '_For': '{{ product.title | escape }}', 'Type': armName }
+          });
+        }
 
         // 2. Upholstery upgrade (if not base/included)
         if (selectedMaterialVariantId) {
@@ -711,14 +712,13 @@
           });
         }
 
-        // 3. Arm configuration (if selected)
-        if (selectedArmVariantId) {
-          items.push({
-            id: parseInt(selectedArmVariantId),
-            quantity: qty,
-            properties: { '_For': '{{ product.title | escape }}', 'Type': armName }
-          });
-        }
+        // 3. Base stool product (added last so it appears first in cart)
+        var baseProps = {};
+        if (materialName) baseProps['Upholstery Material'] = materialName;
+        if (colorName) baseProps['Color'] = colorName;
+        if (colorSku) baseProps['Color SKU'] = colorSku;
+        if (armName && armName !== 'No Arms') baseProps['Arm Configuration'] = armName;
+        items.push({ id: parseInt(baseVariantId), quantity: qty, properties: baseProps });
 
         // Disable button and show loading
         var origText = document.getElementById('crown-cart-text');
