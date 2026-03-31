@@ -17,7 +17,8 @@
           "settings": {
             "arm_title": "2D Single Arm",
             "arm_price": 385,
-            "arm_image": "shopify://shop_images/2D-ARM.png"
+            "arm_image": "shopify://shop_images/2D-ARM.png",
+            "upgrade_variant_id": "46373492949163"
           }
         },
         "arm_2d_pair": {
@@ -25,7 +26,8 @@
           "settings": {
             "arm_title": "2D Arm Pairs",
             "arm_price": 642,
-            "arm_image": "shopify://shop_images/2D-ARM-2_1.png"
+            "arm_image": "shopify://shop_images/2D-ARM-2_1.png",
+            "upgrade_variant_id": "46373492981931"
           }
         },
         "arm_dcra_single": {
@@ -33,7 +35,8 @@
           "settings": {
             "arm_title": "DCRA Single Arm",
             "arm_price": 185,
-            "arm_image": "shopify://shop_images/DCRA-ARM.png"
+            "arm_image": "shopify://shop_images/DCRA-ARM.png",
+            "upgrade_variant_id": "46373493014699"
           }
         },
         "arm_dcra_pair": {
@@ -41,7 +44,8 @@
           "settings": {
             "arm_title": "DCRA Arm Pairs",
             "arm_price": 362,
-            "arm_image": "shopify://shop_images/dpo_custom_option_42115_dcra-arm-2.png"
+            "arm_image": "shopify://shop_images/dpo_custom_option_42115_dcra-arm-2.png",
+            "upgrade_variant_id": "46373493047467"
           }
         },
         "arm_posiflex_single": {
@@ -49,7 +53,8 @@
           "settings": {
             "arm_title": "Posiflex Single Arm",
             "arm_price": 385,
-            "arm_image": "shopify://shop_images/PosiflexArms.jpg"
+            "arm_image": "shopify://shop_images/PosiflexArms.jpg",
+            "upgrade_variant_id": "46373493080235"
           }
         },
         "arm_posiflex_pair": {
@@ -57,7 +62,8 @@
           "settings": {
             "arm_title": "Posiflex Pair Arms",
             "arm_price": 642,
-            "arm_image": "shopify://shop_images/dpo_custom_option_49816_appuis-coudes-posiflex-anime.gif"
+            "arm_image": "shopify://shop_images/dpo_custom_option_49816_appuis-coudes-posiflex-anime.gif",
+            "upgrade_variant_id": "46373493113003"
           }
         },
         "arm_t_ratchet": {
@@ -65,7 +71,8 @@
           "settings": {
             "arm_title": "T Ratchet Arm",
             "arm_price": 385,
-            "arm_image": "shopify://shop_images/dpo_custom_option_35565_trachetarm.png"
+            "arm_image": "shopify://shop_images/dpo_custom_option_35565_trachetarm.png",
+            "upgrade_variant_id": "46373496357035"
           }
         },
         "arm_adjustable_black": {
@@ -73,35 +80,40 @@
           "settings": {
             "arm_title": "Adjustable Black Arms",
             "arm_price": 160,
-            "arm_image": "shopify://shop_images/replacement-arms_1.webp"
+            "arm_image": "shopify://shop_images/replacement-arms_1.webp",
+            "upgrade_variant_id": "46373493145771"
           }
         },
         "material_vinyl": {
           "type": "material_type",
           "settings": {
             "material_title": "Medical Grade Vinyl",
-            "material_price": 0
+            "material_price": 0,
+            "upgrade_variant_id": ""
           }
         },
         "material_ultra": {
           "type": "material_type",
           "settings": {
             "material_title": "Ultra Leather",
-            "material_price": 180
+            "material_price": 180,
+            "upgrade_variant_id": "46373481873579"
           }
         },
         "material_silvertex": {
           "type": "material_type",
           "settings": {
             "material_title": "Silvertex",
-            "material_price": 180
+            "material_price": 180,
+            "upgrade_variant_id": "46373481906347"
           }
         },
         "material_stakleen": {
           "type": "material_type",
           "settings": {
             "material_title": "StaKleen",
-            "material_price": 180
+            "material_price": 180,
+            "upgrade_variant_id": "46373481939115"
           }
         }
       },

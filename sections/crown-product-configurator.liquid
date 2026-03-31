@@ -218,7 +218,7 @@
               </button>
               {% for block in section.blocks %}
                 {% if block.type == 'arm_option' %}
-                  <button type="button" class="crown-cfg__arm-card" data-arm-value="{{ block.settings.arm_title | handleize }}" data-arm-price="{{ block.settings.arm_price | times: 100 }}" {{ block.shopify_attributes }}>
+                  <button type="button" class="crown-cfg__arm-card" data-arm-value="{{ block.settings.arm_title | handleize }}" data-arm-price="{{ block.settings.arm_price | times: 100 }}" data-upgrade-variant-id="{{ block.settings.upgrade_variant_id }}" {{ block.shopify_attributes }}>
                     <div class="crown-cfg__arm-inner">
                       {% if block.settings.arm_image != blank %}
                         <img src="{{ block.settings.arm_image | image_url: width: 300 }}" alt="{{ block.settings.arm_title | escape }}" class="crown-cfg__arm-img" loading="lazy">
@@ -257,7 +257,7 @@
           <div class="crown-cfg__material-grid">
             {% for block in section.blocks %}
               {% if block.type == 'material_type' %}
-                <button type="button" class="crown-cfg__material-card" data-material="{{ block.settings.material_title | handleize }}" data-material-price="{{ block.settings.material_price | times: 100 }}" data-color-group="{{ block.settings.material_title | handleize }}" {{ block.shopify_attributes }}>
+                <button type="button" class="crown-cfg__material-card" data-material="{{ block.settings.material_title | handleize }}" data-material-price="{{ block.settings.material_price | times: 100 }}" data-color-group="{{ block.settings.material_title | handleize }}" data-upgrade-variant-id="{{ block.settings.upgrade_variant_id }}" {{ block.shopify_attributes }}>
                   <div class="crown-cfg__material-inner">
                     <div class="crown-cfg__material-icon">
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
@@ -415,7 +415,7 @@
             </div>
           {% endif %}
 
-          <button type="submit" class="crown-cfg__atc" id="crown-add-to-cart" {% unless current_variant.available %}disabled{% endunless %}>
+          <button type="button" class="crown-cfg__atc" id="crown-add-to-cart" {% unless current_variant.available %}disabled{% endunless %}>
             {% if current_variant.available %}
               <span class="crown-cfg__atc-text" id="crown-cart-text">Add to Cart</span>
               <span class="crown-cfg__atc-price" id="crown-cart-price">{{ base_price | money }}</span>
@@ -511,6 +511,8 @@
     var armPrice = 0;
     var selectedColor = null;
     var currentStep = 1;
+    var selectedMaterialVariantId = null;
+    var selectedArmVariantId = null;
 
     function formatMoney(cents) {
       return '$' + (cents / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -566,6 +568,7 @@
         armCards.forEach(function(c) { c.classList.remove('active'); });
         this.classList.add('active');
         armPrice = parseInt(this.dataset.armPrice, 10) || 0;
+        selectedArmVariantId = this.dataset.upgradeVariantId || null;
         var armName = this.querySelector('.crown-cfg__arm-name').textContent.trim();
         document.getElementById('arm-config-input').value = armName;
         document.getElementById('arm-price-input').value = armPrice;
@@ -584,6 +587,7 @@
         this.classList.add('active');
         selectedMaterial = this.dataset.material;
         materialPrice = parseInt(this.dataset.materialPrice, 10) || 0;
+        selectedMaterialVariantId = this.dataset.upgradeVariantId || null;
         var materialName = this.querySelector('.crown-cfg__material-name').textContent.trim();
         document.getElementById('material-input').value = materialName;
         document.getElementById('material-price-input').value = materialPrice;
@@ -673,6 +677,78 @@
         qtyInput.value = val;
       });
     });
+
+    // === Add to Cart (AJAX multi-item) ===
+    var atcBtn = document.getElementById('crown-add-to-cart');
+    if (atcBtn) {
+      atcBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (atcBtn.disabled) return;
+        var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
+        var baseVariantId = document.querySelector('#crown-product-form input[name="id"]').value;
+        var colorName = document.getElementById('color-input').value;
+        var colorSku = document.getElementById('color-sku-input').value;
+        var materialName = document.getElementById('material-input').value;
+        var armName = document.getElementById('arm-config-input') ? document.getElementById('arm-config-input').value : '';
+
+        // Build line items array
+        var items = [];
+
+        // 1. Base stool product
+        var baseProps = {};
+        if (materialName) baseProps['Upholstery Material'] = materialName;
+        if (colorName) baseProps['Color'] = colorName;
+        if (colorSku) baseProps['Color SKU'] = colorSku;
+        if (armName && armName !== 'No Arms') baseProps['Arm Configuration'] = armName;
+        items.push({ id: parseInt(baseVariantId), quantity: qty, properties: baseProps });
+
+        // 2. Upholstery upgrade (if not base/included)
+        if (selectedMaterialVariantId) {
+          items.push({
+            id: parseInt(selectedMaterialVariantId),
+            quantity: qty,
+            properties: { '_For': '{{ product.title | escape }}', 'Material': materialName }
+          });
+        }
+
+        // 3. Arm configuration (if selected)
+        if (selectedArmVariantId) {
+          items.push({
+            id: parseInt(selectedArmVariantId),
+            quantity: qty,
+            properties: { '_For': '{{ product.title | escape }}', 'Type': armName }
+          });
+        }
+
+        // Disable button and show loading
+        var origText = document.getElementById('crown-cart-text');
+        var origContent = origText ? origText.textContent : '';
+        if (origText) origText.textContent = 'Adding...';
+        atcBtn.disabled = true;
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: items })
+        })
+        .then(function(res) {
+          if (!res.ok) throw new Error('Cart error');
+          return res.json();
+        })
+        .then(function() {
+          if (origText) origText.textContent = 'Added!';
+          setTimeout(function() {
+            window.location.href = '/cart';
+          }, 600);
+        })
+        .catch(function(err) {
+          console.error('Add to cart failed:', err);
+          if (origText) origText.textContent = origContent;
+          atcBtn.disabled = false;
+          alert('There was an error adding to cart. Please try again.');
+        });
+      });
+    }
 
     // === Thumbnail Gallery ===
     var thumbnails = section.querySelectorAll('.crown-cfg__thumb');
@@ -1961,6 +2037,12 @@
           "label": "Price upcharge ($)",
           "default": 0,
           "info": "Additional cost in dollars (e.g., 180 for $180 upcharge)"
+        },
+        {
+          "type": "text",
+          "id": "upgrade_variant_id",
+          "label": "Upgrade variant ID",
+          "info": "Variant ID from the Upholstery Upgrade product. Leave blank for included/base material."
         }
       ]
     },
@@ -1985,6 +2067,12 @@
           "type": "image_picker",
           "id": "arm_image",
           "label": "Arm image"
+        },
+        {
+          "type": "text",
+          "id": "upgrade_variant_id",
+          "label": "Upgrade variant ID",
+          "info": "Variant ID from the Arm Configuration product"
         }
       ]
     }

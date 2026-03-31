@@ -16,28 +16,32 @@
           "type": "material_type",
           "settings": {
             "material_title": "Medical Grade Vinyl",
-            "material_price": 0
+            "material_price": 0,
+            "upgrade_variant_id": ""
           }
         },
         "material_ultra": {
           "type": "material_type",
           "settings": {
             "material_title": "Ultra Leather",
-            "material_price": 180
+            "material_price": 180,
+            "upgrade_variant_id": "46373481873579"
           }
         },
         "material_silvertex": {
           "type": "material_type",
           "settings": {
             "material_title": "Silvertex",
-            "material_price": 180
+            "material_price": 180,
+            "upgrade_variant_id": "46373481906347"
           }
         },
         "material_stakleen": {
           "type": "material_type",
           "settings": {
             "material_title": "StaKleen",
-            "material_price": 180
+            "material_price": 180,
+            "upgrade_variant_id": "46373481939115"
           }
         }
       },
