@@ -708,7 +708,7 @@
           items.push({
             id: parseInt(selectedMaterialVariantId),
             quantity: qty,
-            properties: { '_For': '{{ product.title | escape }}', 'Material': materialName }
+            properties: { '_For': '{{ product.title | escape }}', 'Material': materialName, 'Color': colorName }
           });
         }
 
