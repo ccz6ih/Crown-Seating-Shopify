@@ -11,6 +11,7 @@
       </div>
     {% endif %}
 
+    <div class="material-colors__filter-chips"></div>
     <div class="material-colors-grid">
       {% for block in section.blocks %}
         <div
@@ -95,6 +96,46 @@
     grid-template-columns: repeat(auto-fill, minmax({{ section.settings.grid_item_width }}px, 1fr));
     gap: {{ section.settings.grid_gap }}px;
     margin-bottom: 30px;
+  }
+
+  .material-colors__filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    justify-content: center;
+  }
+
+  .material-colors__filter-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+
+  .material-colors__filter-chip:hover {
+    border-color: #c8a86e;
+    background: #fdf8ef;
+  }
+
+  .material-colors__filter-chip.active {
+    background: #1a2a3a;
+    color: #fff;
+    border-color: #1a2a3a;
+  }
+
+  .material-color-item.is-filtered-out {
+    display: none;
   }
 
   .material-color-item {
@@ -247,6 +288,78 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // === Color Filter Chips ===
+    (function() {
+      var sectionEl = document.getElementById('vinyl-colors-{{ section.id }}');
+      if (!sectionEl) return;
+
+      var colorFamilyMap = {
+        'White': 'neutral', 'Reflection': 'neutral', 'Dream': 'neutral', 'Snow': 'neutral',
+        'Natural': 'neutral', 'Wheat': 'neutral', 'Coffee Cream': 'neutral', 'Beige': 'neutral',
+        'Sea Grass': 'neutral', 'Saddle Tan': 'neutral', 'Camelback': 'neutral', 'Bucksuede': 'neutral',
+        'Tawny': 'brown', 'Outback': 'brown', 'Tea Leaf': 'brown', 'All Spice': 'brown',
+        'Chocolate': 'brown', 'Fudge': 'brown',
+        'Marigold': 'warm', 'Persimmon': 'warm', 'Nasturtium': 'warm', 'Deep Clay': 'warm', 'Manzanita': 'warm',
+        'Red Cent': 'warm', 'Tomato': 'warm', 'American Beauty': 'warm', 'Candy Apple': 'warm', 'Berry': 'warm',
+        'Very Berry': 'warm', 'Magenta': 'warm',
+        'Grape': 'warm', 'Port': 'warm', 'Burgundy': 'warm', 'New Burgundy': 'warm', 'Black Plum': 'warm',
+        'Wood Violet': 'purple', 'Purple Iris': 'purple', 'New Purple': 'purple',
+        'Pumice': 'blue', 'Colonial Blue': 'blue', 'Cerulean': 'blue', 'Neptune': 'blue',
+        'BlueJay': 'blue', 'Marina': 'blue', 'Royal Blue': 'blue', 'Regal Blue': 'blue',
+        'Blueberry': 'blue', 'Cordovan': 'blue', 'Midnight Blue': 'blue', 'Navy': 'blue',
+        'Aqua': 'blue', 'Light Teal': 'blue', 'SeaFoam': 'blue', 'Horizon Blue': 'blue',
+        'Harbour': 'blue', 'Blue Nile': 'blue', 'Jade': 'blue', 'Spruce': 'blue',
+        'Leap Frog': 'green', 'Raintree': 'green', 'Green Tea': 'green', 'Vizcaya Palm': 'green',
+        'Grass': 'green', 'Emerald': 'green', 'Everglade': 'green', 'Hunter Green': 'green',
+        'Lite Gray': 'gray', 'Gris': 'gray', 'Gray': 'gray', 'Cadet': 'gray', 'Slate': 'gray', 'Coal': 'gray',
+        'Otter': 'gray', 'Black': 'gray'
+      };
+
+      var chipLabels = { neutral: 'Neutrals', brown: 'Earth Tones', warm: 'Warm Colors', blue: 'Blues & Teals', green: 'Greens', purple: 'Purples', gray: 'Grays & Blacks' };
+      var chipOrder = ['neutral', 'brown', 'warm', 'blue', 'green', 'purple', 'gray'];
+
+      var families = new Set();
+      sectionEl.querySelectorAll('.material-color-item[data-name]').forEach(function(item) {
+        var family = colorFamilyMap[item.dataset.name];
+        if (family) { item.dataset.colorFamily = family; families.add(family); }
+      });
+
+      var chipContainer = sectionEl.querySelector('.material-colors__filter-chips');
+      if (!chipContainer || families.size === 0) return;
+
+      var allChip = document.createElement('button');
+      allChip.type = 'button';
+      allChip.className = 'material-colors__filter-chip active';
+      allChip.textContent = 'All Colors';
+      allChip.dataset.filter = 'all';
+      chipContainer.appendChild(allChip);
+
+      chipOrder.forEach(function(key) {
+        if (!families.has(key)) return;
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'material-colors__filter-chip';
+        chip.textContent = chipLabels[key];
+        chip.dataset.filter = key;
+        chipContainer.appendChild(chip);
+      });
+
+      chipContainer.addEventListener('click', function(e) {
+        var chip = e.target.closest('.material-colors__filter-chip');
+        if (!chip) return;
+        chipContainer.querySelectorAll('.material-colors__filter-chip').forEach(function(c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        var filter = chip.dataset.filter;
+        sectionEl.querySelectorAll('.material-color-item').forEach(function(item) {
+          if (filter === 'all' || item.dataset.colorFamily === filter) {
+            item.classList.remove('is-filtered-out');
+          } else {
+            item.classList.add('is-filtered-out');
+          }
+        });
+      });
+    })();
+
     const modal = document.getElementById('material-modal');
     const modalClose = document.querySelector('.material-modal__close');
 
