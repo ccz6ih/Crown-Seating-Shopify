@@ -1566,19 +1566,35 @@
     letter-spacing: 0.05em;
   }
 
-  /* Swatch Grid */
+  /* Swatch Grid — color family groups */
   .crown-cfg__swatch-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .crown-cfg__family-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-text-muted);
+    margin-bottom: 0.35rem;
+    padding-left: 2px;
+  }
+
+  .crown-cfg__family-swatches {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
     gap: 0.5rem;
   }
 
   @media (min-width: 750px) {
-    .crown-cfg__swatch-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
+    .crown-cfg__family-swatches { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
   }
 
   @media (min-width: 990px) {
-    .crown-cfg__swatch-grid { grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); }
+    .crown-cfg__family-swatches { grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); }
   }
 
   .crown-cfg__swatch {
