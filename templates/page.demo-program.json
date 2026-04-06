@@ -65,6 +65,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
+            "image": "shopify://shop_images/all.png",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
