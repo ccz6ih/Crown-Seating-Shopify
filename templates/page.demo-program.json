@@ -203,7 +203,7 @@
                   "name": "t:names.heading",
                   "settings": {
                     "text": "<h4><strong>Shipping & Handling</strong></h4>",
-                    "width": "fit-content",
+                    "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
                     "type_preset": "rte",
@@ -255,7 +255,7 @@
                   "name": "t:names.heading",
                   "settings": {
                     "text": "<h4><strong>End of Trial Options</strong></h4>",
-                    "width": "fit-content",
+                    "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
                     "type_preset": "rte",
@@ -307,8 +307,8 @@
                   "name": "t:names.heading",
                   "settings": {
                     "text": "<h4>Dealer Discount Eligibility</h4>",
-                    "width": "fit-content",
-                    "max_width": "normal",
+                    "width": "100%",
+                    "max_width": "none",
                     "alignment": "left",
                     "type_preset": "rte",
                     "font": "var(--font-body--family)",
