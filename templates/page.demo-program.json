@@ -87,7 +87,7 @@
               "type": "text",
               "name": "t:names.caption",
               "settings": {
-                "text": "<p><strong>Thank you for your interest in Crown Seating stools.</strong><br/>We recognize that ergonomic needs vary greatly from one individual to another, and<br/>because of this, <strong>one size simply does not fit all.</strong> To ensure every customer is matched<br/>with the perfect seating solution, we offer our 30day demo program. This allows you to try any of our stool models in your own workspace and experience the fit, comfort, and support firsthand before making a final decision.</p>",
+                "text": "<p><strong>Thank you for your interest in Crown Seating stools.</strong><br/>We recognize that ergonomic needs vary greatly from one individual to another, and<br/>because of this, <strong>one size simply does not fit all.</strong> To ensure every customer is matched<br/>with the perfect seating solution, we offer our 30 day demo program. This allows you to try any of our stool models in your own workspace and experience the fit, comfort, and support firsthand before making a final decision.</p>",
                 "width": "fit-content",
                 "max_width": "none",
                 "alignment": "left",
@@ -280,7 +280,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>At the end of the 30day trial period, the customer may choose to:<br/>1.<strong> Purchase the stool,</strong> in which case they will receive credit for the return shipping,<br/>OR<br/>2. <strong>Return the stool </strong>to Crown Seating at their own shipping expense.</p>",
+                    "text": "<p>At the end of the 30 day trial period, the customer may choose to:<br/>1.<strong> Purchase the stool,</strong> in which case they will receive credit for the return shipping,<br/>OR<br/>2. <strong>Return the stool </strong>to Crown Seating at their own shipping expense.</p>",
                     "width": "fit-content",
                     "max_width": "none",
                     "alignment": "left",
