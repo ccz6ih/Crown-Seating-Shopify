@@ -14,6 +14,7 @@
       "blocks": {
         "arm_2d_single": {
           "type": "arm_option",
+          "disabled": true,
           "settings": {
             "arm_title": "2D Single Arm",
             "arm_price": 385,
