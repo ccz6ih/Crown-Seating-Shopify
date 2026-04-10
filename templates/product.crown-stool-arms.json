@@ -14,7 +14,6 @@
       "blocks": {
         "arm_2d_single": {
           "type": "arm_option",
-          "disabled": true,
           "settings": {
             "arm_title": "2D Single Arm",
             "arm_price": 385,
@@ -51,6 +50,7 @@
         },
         "arm_posiflex_single": {
           "type": "arm_option",
+          "disabled": true,
           "settings": {
             "arm_title": "Posiflex Single Arm",
             "arm_price": 385,
@@ -60,6 +60,7 @@
         },
         "arm_posiflex_pair": {
           "type": "arm_option",
+          "disabled": true,
           "settings": {
             "arm_title": "Posiflex Pair Arms",
             "arm_price": 642,
