@@ -24,7 +24,7 @@ gated, built and tested on a **duplicated product template** first.
 |---|---|---|
 | Demo price | **$300 flat**, black vinyl only | Not all-in; shipping is separate |
 | Shipping | **Existing Shopify shipping rates** (~$97) at checkout | No custom shipping logic to build |
-| Modeling | **One `30-Day Demo` product**, $300 black variant | Stool model captured as a line-item property |
+| Modeling | **One `30-Day Demo Stool` product**, $300 black variant | Stool model captured as a line-item property. Chosen over per-model variants because the catalog has 40+ stool models that churn (drafts/archived/dupes); one product works for every current & future model with zero per-model upkeep. Model still shows in order exports + HubSpot via the `Model` property. Upgrade path to per-model variants exists if variant-level reporting is ever needed. |
 | Placement | **Secondary CTA panel on the product page** | New standalone section, added to a duplicated template first |
 | 2-stool limit | **Hard cap of 2 demo units** | Enforced in cart JS; server-side function optional (see §7) |
 | Order tagging | **Shopify Flow** adds tag `demo` on order create | HubSpot syncs the tag |

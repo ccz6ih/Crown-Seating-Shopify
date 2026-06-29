@@ -1,17 +1,19 @@
 {% comment %}
   Crown Seating — 30-Day Demo CTA
   Standalone "try before you buy" panel for product pages.
-  Adds a fixed-price demo line item ($300, black vinyl) via the same /cart/add.js
-  pattern as the configurator. Does NOT touch crown-product-configurator.liquid.
+  Adds the fixed-price 30-Day Demo Stool product ($300, black vinyl) via the same
+  /cart/add.js pattern as the configurator, capturing the stool model as a clean
+  line-item property. Does NOT touch crown-product-configurator.liquid.
+  One demo product covers every model (model name comes from the page's product.title).
   Enforces a hard cap of N demo units in the cart (default 2).
   Spec: docs/DEMO-PROGRAM.md
 {% endcomment %}
 
 {% liquid
   assign product = closest.product | default: product
-  assign demo_variant = section.settings.demo_variant_id | strip
+  assign demo_product = section.settings.demo_product
+  assign demo_variant = demo_product.selected_or_first_available_variant
   assign max_units = section.settings.max_demo_units | default: 2
-  assign price_cents = section.settings.demo_price | times: 100
 %}
 
 <div
@@ -24,7 +26,7 @@
       {% comment %} Setup guard — only the merchant sees this in the editor {% endcomment %}
       <div class="crown-demo__setup">
         <strong>Demo CTA not configured.</strong>
-        Add your 30-Day Demo product's variant ID in this section's settings.
+        Pick your “30-Day Stool Demo” product in this section’s settings.
       </div>
     {% else %}
       <div class="crown-demo__card">
@@ -41,7 +43,7 @@
         <p class="crown-demo__model">You're demoing the <strong>{{ product.title }}</strong> — black vinyl, 30-day trial.</p>
 
         <div class="crown-demo__price-row">
-          <span class="crown-demo__price">{{ price_cents | money }}</span>
+          <span class="crown-demo__price">{{ demo_variant.price | money }}</span>
           <span class="crown-demo__price-note">demo fee · + shipping</span>
         </div>
 
@@ -49,7 +51,7 @@
           type="button"
           class="crown-demo__btn"
           id="crown-demo-start-{{ section.id }}"
-          data-variant="{{ demo_variant }}"
+          data-variant="{{ demo_variant.id }}"
           data-model="{{ product.title | escape }}"
           data-handle="{{ product.handle }}"
           data-max="{{ max_units }}"
@@ -341,17 +343,10 @@
   "class": "crown-demo-cta",
   "settings": [
     {
-      "type": "text",
-      "id": "demo_variant_id",
-      "label": "Demo variant ID",
-      "info": "Variant ID of the 30-Day Stool Demo product ($300, black vinyl). Required."
-    },
-    {
-      "type": "number",
-      "id": "demo_price",
-      "label": "Demo price ($)",
-      "default": 300,
-      "info": "Display only. Must match the demo product's actual price."
+      "type": "product",
+      "id": "demo_product",
+      "label": "Demo product",
+      "info": "Select the 30-Day Stool Demo product ($300, black vinyl). Its price and variant are used automatically. Required."
     },
     {
       "type": "number",

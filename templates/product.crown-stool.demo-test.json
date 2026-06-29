@@ -63,8 +63,7 @@
     "crown-demo-cta": {
       "type": "crown-demo-cta",
       "settings": {
-        "demo_variant_id": "",
-        "demo_price": 300,
+        "demo_product": "30-day-demo-stool",
         "max_demo_units": 2,
         "heading": "Not ready to commit? Try it for 30 days.",
         "subtext": "Demo this stool in your own space. Ships in black vinyl. Shipping is calculated at checkout.",
