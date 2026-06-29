@@ -65,8 +65,7 @@
       "settings": {
         "demo_product": "30-day-demo-stool",
         "max_demo_units": 2,
-        "heading": "Not ready to commit? Try it for 30 days.",
-        "subtext": "Demo this stool in your own space. Ships in black vinyl. Shipping is calculated at checkout.",
+        "note": "Decide to keep it and your $300 demo is applied to your order — not the right fit? Just send it back within 30 days.",
         "terms_page": "",
         "color_scheme": "scheme-1"
       }

@@ -10,7 +10,12 @@
 {% endcomment %}
 
 {% liquid
-  assign product = closest.product | default: product
+  comment
+    `host` = the product whose PAGE this section sits on (e.g. Aspen C70DS).
+    Prefer the global `product` (the page product); fall back to closest.product.
+    Do NOT confuse with section.settings.demo_product (the 30-Day Demo Stool).
+  endcomment
+  assign host = product | default: closest.product
   assign demo_product = section.settings.demo_product
   assign demo_variant = demo_product.selected_or_first_available_variant
   assign max_units = section.settings.max_demo_units | default: 2
@@ -35,12 +40,12 @@
           <span>30-Day Demo Program</span>
         </div>
 
-        <h3 class="crown-demo__heading">{{ section.settings.heading | default: 'Not ready to commit? Try it for 30 days.' }}</h3>
+        <h3 class="crown-demo__heading">Try the {{ host.title }} for 30 days</h3>
         <p class="crown-demo__subtext">
-          {{ section.settings.subtext | default: 'Demo this stool in your own space. Ships in black vinyl. Shipping is calculated at checkout.' }}
+          Demo the <strong>{{ host.title }}</strong> in your own workspace for a full 30 days, shipped in black vinyl.
+          {{ section.settings.note | default: 'Decide to keep it and your $300 demo is applied to your order — not the right fit? Just send it back within 30 days.' }}
+          You can demo up to {{ max_units }} stools at a time; shipping is calculated at checkout.
         </p>
-
-        <p class="crown-demo__model">You're demoing the <strong>{{ product.title }}</strong> — black vinyl, 30-day trial.</p>
 
         <div class="crown-demo__price-row">
           <span class="crown-demo__price">{{ demo_variant.price | money }}</span>
@@ -52,8 +57,8 @@
           class="crown-demo__btn"
           id="crown-demo-start-{{ section.id }}"
           data-variant="{{ demo_variant.id }}"
-          data-model="{{ product.title | escape }}"
-          data-handle="{{ product.handle }}"
+          data-model="{{ host.title | escape }}"
+          data-handle="{{ host.handle }}"
           data-max="{{ max_units }}"
         >
           <span class="crown-demo__btn-text">Start a 30-Day Demo</span>
@@ -65,11 +70,11 @@
         <ul class="crown-demo__points">
           <li>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Try up to {{ max_units }} stools at a time
+            $300 demo fee applied to your order if you keep it
           </li>
           <li>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Buy within the trial and get return shipping credited
+            Full 30 days to decide — return it if it's not the right fit
           </li>
           <li>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -355,16 +360,11 @@
       "default": 2
     },
     {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Not ready to commit? Try it for 30 days."
-    },
-    {
       "type": "textarea",
-      "id": "subtext",
-      "label": "Subtext",
-      "default": "Demo this stool in your own space. Ships in black vinyl. Shipping is calculated at checkout."
+      "id": "note",
+      "label": "Policy line",
+      "info": "The middle sentence of the description. Edit this to match your exact demo terms (e.g. whether the $300 is applied to the order).",
+      "default": "Decide to keep it and your $300 demo is applied to your order — not the right fit? Just send it back within 30 days."
     },
     {
       "type": "url",
