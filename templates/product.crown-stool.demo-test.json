@@ -409,9 +409,9 @@
   },
   "order": [
     "crown-configurator",
-    "crown-demo-cta",
     "product-recommendations",
     "section_nDfTBL",
-    "177490758253596826"
+    "177490758253596826",
+    "crown-demo-cta"
   ]
 }
