@@ -1,0 +1,418 @@
+/*
+ * ------------------------------------------------------------
+ * Demo-program TEST template — duplicate of product.crown-stool.json
+ * with the Crown Demo CTA section added. Assign a TEST product to
+ * this template; real products stay on product.crown-stool.json.
+ * See docs/DEMO-PROGRAM.md
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "crown-configurator": {
+      "type": "crown-product-configurator",
+      "blocks": {
+        "material_vinyl": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Medical Grade Vinyl",
+            "material_price": 0,
+            "upgrade_variant_id": ""
+          }
+        },
+        "material_ultra": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Ultra Leather",
+            "material_price": 180,
+            "upgrade_variant_id": "46373481873579"
+          }
+        },
+        "material_silvertex": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "Silvertex",
+            "material_price": 180,
+            "upgrade_variant_id": "46373481906347"
+          }
+        },
+        "material_stakleen": {
+          "type": "material_type",
+          "settings": {
+            "material_title": "StaKleen",
+            "material_price": 180,
+            "upgrade_variant_id": "46373481939115"
+          }
+        }
+      },
+      "block_order": [
+        "material_vinyl",
+        "material_ultra",
+        "material_silvertex",
+        "material_stakleen"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_vendor": true,
+        "description_open": false,
+        "enable_arms": false,
+        "enable_quantity": true,
+        "show_dynamic_checkout": true,
+        "show_trust_badges": false
+      }
+    },
+    "crown-demo-cta": {
+      "type": "crown-demo-cta",
+      "settings": {
+        "demo_variant_id": "",
+        "demo_price": 300,
+        "max_demo_units": 2,
+        "heading": "Not ready to commit? Try it for 30 days.",
+        "subtext": "Demo this stool in your own space. Ships in black vinyl. Shipping is calculated at checkout.",
+        "terms_page": "",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "blocks": {
+        "static-product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 16,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "settings": {
+        "product": "",
+        "recommendation_type": "related",
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "max_products": 4,
+        "columns": 4,
+        "mobile_columns": "2",
+        "columns_gap": 16,
+        "rows_gap": 16,
+        "icons_style": "arrow",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "gap": 12,
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "section_nDfTBL": {
+      "type": "section",
+      "blocks": {
+        "text_GiBGqq": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h3>Frequently asked questions</h3>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "accordion_FWb8AW": {
+          "type": "accordion",
+          "name": "t:names.accordion",
+          "settings": {
+            "icon": "caret",
+            "dividers": true,
+            "type_preset": "h5",
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "accordion_row_FNdg4a": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_dash_row",
+              "settings": {
+                "heading": "{{ closest.product.title }} Description",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_a7zrQ6": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "{{ closest.product.description }}",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_a7zrQ6"
+              ]
+            },
+            "accordion_row_h8tGcz": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Product Features",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_7MnxhT": {
+                  "type": "text",
+                  "settings": {
+                    "text": "{{ closest.product.metafields.custom.product_features | metafield_tag }}",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_7MnxhT"
+              ]
+            },
+            "accordion_row_LR8p6t": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Specifications",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_WTji9Y": {
+                  "type": "text",
+                  "settings": {
+                    "text": "{{ closest.product.metafields.custom.product_specifications | metafield_tag }}",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_WTji9Y"
+              ]
+            },
+            "accordion_row_wGzDft": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_dash_row",
+              "settings": {
+                "heading": "How much does shipping cost?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_aKJhBK": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>Shipping is calculated based on your location and the items in your order. You will always know the shipping price before you purchase.</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_aKJhBK"
+              ]
+            }
+          },
+          "block_order": [
+            "accordion_row_FNdg4a",
+            "accordion_row_h8tGcz",
+            "accordion_row_LR8p6t",
+            "accordion_row_wGzDft"
+          ]
+        }
+      },
+      "block_order": [
+        "text_GiBGqq",
+        "accordion_FWb8AW"
+      ],
+      "name": "t:names.faq_section",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 32,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-6",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "177490758253596826": {
+      "type": "_blocks",
+      "blocks": {
+        "judge_me_reviews_review_widget_iGfeAL": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "real_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_iGfeAL"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    }
+  },
+  "order": [
+    "crown-configurator",
+    "crown-demo-cta",
+    "product-recommendations",
+    "section_nDfTBL",
+    "177490758253596826"
+  ]
+}
