@@ -27,7 +27,7 @@ gated, built and tested on a **duplicated product template** first.
 | Modeling | **One `30-Day Demo Stool` product**, $300 black variant | Stool model captured as a line-item property. Chosen over per-model variants because the catalog has 40+ stool models that churn (drafts/archived/dupes); one product works for every current & future model with zero per-model upkeep. Model still shows in order exports + HubSpot via the `Model` property. Upgrade path to per-model variants exists if variant-level reporting is ever needed. |
 | Placement | **Secondary CTA panel on the product page** | New standalone section, added to a duplicated template first |
 | 2-stool limit | **Hard cap of 2 demo units** | Enforced in cart JS; server-side function optional (see §7) |
-| Order tagging | **Shopify Flow** adds tag `demo` on order create | HubSpot syncs the tag |
+| Tagging | **Shopify Flow** adds order tag `demo` + customer tag `demo-active` on order create | HubSpot's tag sync is unreliable (not in official field list) — so HubSpot enrolls on the synced **order/product**, tags are best-effort + Shopify-side ops. See §8. |
 
 ### Still to confirm
 - **Return shipping policy wording.** End-of-trial: purchase → credit return shipping; or
@@ -194,25 +194,63 @@ JS on click (mirrors the configurator's pattern):
 
 ---
 
-## 8. Order tagging — Shopify Flow (no code)
+## 8. Tagging — Shopify Flow (no code)
 
-Flow: **`Tag demo orders`**
+> **Key fact (verified July 2026):** HubSpot's official Shopify Data Sync field list does
+> **not** include tags — not customer tags, not order tags. Third-party guides claim customer
+> tags sync to a contact property, but it's inconsistent (see the HubSpot community thread on
+> tag-sync "not working as expected"). **So we do two things:** (a) set both an order tag and a
+> customer tag for Shopify-side ops and best-effort HubSpot sync, and (b) enroll the HubSpot
+> workflow on the **synced order/product**, which is reliable, rather than depending on a tag.
+> **Metafields are explicitly not synced either**, so don't rely on those.
+
+### Which tag does what
+
+| Tag | Object | Set when | Purpose |
+|---|---|---|---|
+| `demo` | **Order** | Order created | Shopify-side source of truth: filter/report/fulfill demo orders. Never changes. |
+| `demo-active` | **Customer** | Order created | The customer-level state; the one with a shot at reaching HubSpot. Enroll on this. |
+| `demo-converted` | **Customer** | They buy | Swap in when the demo converts to a sale. |
+| `demo-returned` | **Customer** | Stool comes back | Swap in when returned without buying. |
+
+The three `demo-*` customer states are mutually exclusive — use them to enroll **and un-enroll**
+the workflow cleanly (e.g. converting/returning drops them out of the reminder sequence).
+
+### Flow 1 — `Tag demo orders` (order create)
 - **Trigger:** Order created
-- **Condition:** any line item where `product.hasTag "demo"` is true (or `product.type == "Demo"`)
+- **Condition:** any line item where `product` is the **30-Day Demo Stool** (match by product,
+  or `product.hasTag "demo"` / `product.type == "Demo"`)
 - **Actions:**
   1. Add **order tag** `demo`
-  2. (optional) Add **customer tag** `demo-active`
-  3. (optional) Add order note: `Demo program — clock starts at delivery`
+  2. Add **customer tag** `demo-active`
+  3. Add order note: `Demo program — 30-day clock starts at delivery`
 
-HubSpot's Shopify connector syncs orders and contacts; the `demo` tag (or a synced order
-property) is the **enrollment trigger** for the workflow in §9.
+### Flows 2 & 3 — state transitions (manage explicitly)
+- **`Demo converted`** — when the customer later buys (order create, non-demo purchase, or a
+  manual trigger your team fires): remove customer tag `demo-active`, add `demo-converted`.
+- **`Demo returned`** — fired by your team (e.g. a manual Flow trigger or an admin action when
+  the return is received): remove `demo-active`, add `demo-returned`.
+  These two are the state changes that pull a contact out of the HubSpot reminder sequence.
 
 ---
 
 ## 9. HubSpot lifecycle (config, not theme code)
 
-Enroll contacts whose order has tag `demo`. Clock = delivery date if available, else
-ship date + estimated transit (§2 open item).
+**Enrollment — use the order/product, not a tag (reliable):** enroll contacts who have an
+associated **Order** containing the **30-Day Demo Stool** product. Orders sync one-way into
+HubSpot's **Orders object** (the old Deals-based approach was discontinued), and line-item/
+product data syncs reliably — unlike tags. This is a strong reason we kept the **single** demo
+product: every demo order contains that one identifiable product.
+
+**Best-effort tag enrollment (only if verified in your portal):** if a test order shows the
+customer tag on the synced contact, you may additionally enroll on `demo-active`. Verify first
+(place one test demo order → check the contact for a Shopify tags property) before building on it.
+
+**Un-enrollment:** remove from the sequence when the contact's state becomes `demo-converted`
+or `demo-returned` (or, product-based, when a non-demo order is associated / the demo is marked
+returned by your team).
+
+Clock = delivery date if available, else ship date + estimated transit (§2 open item).
 
 | Day | Email | Purpose |
 |---|---|---|
