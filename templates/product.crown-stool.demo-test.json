@@ -1,9 +1,10 @@
 /*
  * ------------------------------------------------------------
- * Demo-program TEST template — duplicate of product.crown-stool.json
- * with the Crown Demo CTA section added. Assign a TEST product to
- * this template; real products stay on product.crown-stool.json.
- * See docs/DEMO-PROGRAM.md
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
 {
@@ -58,16 +59,6 @@
         "enable_quantity": true,
         "show_dynamic_checkout": true,
         "show_trust_badges": false
-      }
-    },
-    "crown-demo-cta": {
-      "type": "crown-demo-cta",
-      "settings": {
-        "demo_product": "30-day-demo-stool",
-        "max_demo_units": 2,
-        "note": "Decide to keep it and your $300 demo is applied to your order — not the right fit? Just send it back within 30 days.",
-        "terms_page": "",
-        "color_scheme": "scheme-1"
       }
     },
     "product-recommendations": {
@@ -403,6 +394,16 @@
         "gradient_direction": "to top",
         "padding-block-start": 0,
         "padding-block-end": 0
+      }
+    },
+    "crown-demo-cta": {
+      "type": "crown-demo-cta",
+      "settings": {
+        "demo_product": "30-day-demo-stool",
+        "max_demo_units": 2,
+        "note": "Decide to keep it and your $100 demo is applied to your order — not the right fit? Just send it back within 30 days.",
+        "terms_page": "",
+        "color_scheme": "scheme-1"
       }
     }
   },
