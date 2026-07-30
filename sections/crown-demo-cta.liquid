@@ -1,7 +1,7 @@
 {% comment %}
   Crown Seating — 30-Day Demo CTA
   Standalone "try before you buy" panel for product pages.
-  Adds the fixed-price 30-Day Demo Stool product ($100, black vinyl) via the same
+  Adds the fixed-price 30-Day Demo Stool product ($300, black vinyl) via the same
   /cart/add.js pattern as the configurator, capturing the stool model as a clean
   line-item property. Does NOT touch crown-product-configurator.liquid.
   One demo product covers every model (model name comes from the page's product.title).
@@ -43,13 +43,13 @@
         <h3 class="crown-demo__heading">Try the {{ host.title }} for 30 days</h3>
         <p class="crown-demo__subtext">
           Demo the <strong>{{ host.title }}</strong> in your own workspace for a full 30 days, shipped in black vinyl.
-          {{ section.settings.note | default: 'Decide to keep it and your $100 demo is applied to your order — not the right fit? Just send it back within 30 days.' }}
+          {{ section.settings.note | default: 'The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs).' }}
           You can demo up to {{ max_units }} stools at a time; shipping is calculated at checkout.
         </p>
 
         <div class="crown-demo__price-row">
           <span class="crown-demo__price">{{ demo_variant.price | money }}</span>
-          <span class="crown-demo__price-note">demo fee · + shipping</span>
+          <span class="crown-demo__price-note">refundable demo fee · + shipping</span>
         </div>
 
         <button
@@ -70,7 +70,7 @@
         <ul class="crown-demo__points">
           <li>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            $100 demo fee applied to your order if you keep it
+            {{ demo_variant.price | money }} refundable demo fee — applied to your stool or return shipping
           </li>
           <li>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -351,7 +351,7 @@
       "type": "product",
       "id": "demo_product",
       "label": "Demo product",
-      "info": "Select the 30-Day Stool Demo product ($100, black vinyl). Its price and variant are used automatically. Required."
+      "info": "Select the 30-Day Stool Demo product ($300, black vinyl). Its price and variant are used automatically. Required."
     },
     {
       "type": "number",
@@ -363,8 +363,8 @@
       "type": "textarea",
       "id": "note",
       "label": "Policy line",
-      "info": "The middle sentence of the description. Edit this to match your exact demo terms (e.g. whether the $100 is applied to the order).",
-      "default": "Decide to keep it and your $100 demo is applied to your order — not the right fit? Just send it back within 30 days."
+      "info": "The middle sentence of the description. Edit this to match your exact demo terms (how the refundable fee is applied). Avoid hard-coding the dollar amount here — the price above reads live from the product.",
+      "default": "The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs)."
     },
     {
       "type": "url",

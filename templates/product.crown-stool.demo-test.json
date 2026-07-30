@@ -401,7 +401,7 @@
       "settings": {
         "demo_product": "30-day-demo-stool",
         "max_demo_units": 2,
-        "note": "Decide to keep it and your $100 demo is applied to your order — not the right fit? Just send it back within 30 days.",
+        "note": "The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs).",
         "terms_page": "",
         "color_scheme": "scheme-1"
       }

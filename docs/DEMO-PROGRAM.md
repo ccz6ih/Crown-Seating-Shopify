@@ -22,7 +22,7 @@ gated, built and tested on a **duplicated product template** first.
 
 | Decision | Choice | Notes |
 |---|---|---|
-| Demo price | **$300 flat**, black vinyl only | Not all-in; shipping is separate |
+| Demo price | **$100 refundable demo fee**, black vinyl only | Refundable deposit: applied toward the stool if kept, or toward return shipping if returned (minus costs). Shipping separate. Copy pulls the amount live from the product so it never drifts. |
 | Shipping | **Existing Shopify shipping rates** (~$97) at checkout | No custom shipping logic to build |
 | Modeling | **One `30-Day Demo Stool` product**, $300 black variant | Stool model captured as a line-item property. Chosen over per-model variants because the catalog has 40+ stool models that churn (drafts/archived/dupes); one product works for every current & future model with zero per-model upkeep. Model still shows in order exports + HubSpot via the `Model` property. Upgrade path to per-model variants exists if variant-level reporting is ever needed. |
 | Placement | **Secondary CTA panel on the product page** | New standalone section, added to a duplicated template first |
