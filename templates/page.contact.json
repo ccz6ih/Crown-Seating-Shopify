@@ -79,7 +79,7 @@
             "text_jrgQcg": {
               "type": "text",
               "settings": {
-                "text": "<p>Please submit the following form and a member of our staff will contact you within 24 hours.<br/><br/></p>",
+                "text": "<h3>Please call us at <a href=\"tel:3036931104\" title=\"tel:3036931104\">(303)693-1104.</a><br/><br/></h3>",
                 "width": "100%",
                 "max_width": "none",
                 "alignment": "center",
@@ -141,6 +141,7 @@
     },
     "custom_liquid_Hg9G76": {
       "type": "custom-liquid",
+      "disabled": true,
       "name": "t:names.custom_liquid",
       "settings": {
         "custom_liquid": "<script src=\"https://js.hsforms.net/forms/embed/39508280.js\" defer></script>\n<div class=\"hs-form-frame\" data-region=\"na1\" data-form-id=\"c369e787-a1d9-4ffa-8b9e-bae1456511de\" data-portal-id=\"39508280\"></div>",
