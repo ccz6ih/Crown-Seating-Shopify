@@ -284,55 +284,9 @@ class QuizABTesting {
   }
 
   applyVariantB() {
-    // Variant B: More urgency and social proof
-    document.addEventListener('DOMContentLoaded', () => {
-      // Change submit button text
-      const submitBtn = document.getElementById('submitBtn');
-      if (submitBtn) {
-        submitBtn.innerHTML = 'Get My Results Now 🎯';
-      }
-
-      // Add urgency messaging to header
-      const quizHeader = document.querySelector('.quiz-header p');
-      if (quizHeader) {
-        quizHeader.innerHTML += '<br><strong style="color: #e74c3c;">⚡ Limited Time: Get 10% off your recommended model with code QUIZ10!</strong>';
-      }
-
-      // Update trust indicators with more dynamic numbers
-      const trustStats = document.querySelector('.trust-stats');
-      if (trustStats) {
-        trustStats.innerHTML = `
-          <div class="trust-stat">
-            <h4>523</h4>
-            <p>Dentists Matched This Week</p>
-          </div>
-          <div class="trust-stat">
-            <h4>98%</h4>
-            <p>Report Perfect Fit</p>
-          </div>
-          <div class="trust-stat">
-            <h4>4.9★</h4>
-            <p>Average Rating (2,847 reviews)</p>
-          </div>
-          <div class="trust-stat">
-            <h4>30-Day</h4>
-            <p>Comfort Guarantee</p>
-          </div>
-        `;
-      }
-
-      // Add social proof to questions
-      const questionCards = document.querySelectorAll('.question-card');
-      questionCards.forEach((card, index) => {
-        if (index === 0) { // Height question
-          const socialProof = document.createElement('div');
-          socialProof.className = 'social-proof-indicator';
-          socialProof.style.cssText = 'background: #f0f8ff; padding: 10px; border-radius: 8px; margin: 15px 0; text-align: center; font-size: 0.9em; color: #667eea;';
-          socialProof.innerHTML = '👥 87% of dentists your height chose our recommended model';
-          card.querySelector('.options').before(socialProof);
-        }
-      });
-    });
+    // Variant B used to inject urgency copy, invented statistics and a discount code into the page.
+    // None of those claims could be verified, so variant B is now identical to A and only the
+    // assignment is still recorded (see applyVariant). Add real, verified variations here.
   }
 }
 

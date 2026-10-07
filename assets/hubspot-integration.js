@@ -298,7 +298,7 @@ class ConversionOptimization {
 
   setupExitIntent() {
     document.addEventListener('mouseleave', (e) => {
-      if (e.clientY <= 0 && !this.exitIntentShown && !this.isQuizComplete()) {
+      if (e.clientY <= 0 && !this.exitIntentShown && this.hasStartedQuiz() && !this.isQuizComplete()) {
         this.showExitIntentPopup();
         this.exitIntentShown = true;
       }
@@ -310,85 +310,38 @@ class ConversionOptimization {
     return results && results.style.display !== 'none';
   }
 
+  hasStartedQuiz() {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('crownQuizState.v2') || 'null');
+      return !!(saved && saved.answers && Object.keys(saved.answers).length > 0);
+    } catch (e) {
+      return false;
+    }
+  }
+
   showExitIntentPopup() {
     const popup = document.createElement('div');
-    popup.className = 'exit-intent-popup';
-    popup.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 0.3s ease-out;
-    `;
-    
+    popup.className = 'cq-exit';
+    popup.setAttribute('role', 'dialog');
+    popup.setAttribute('aria-modal', 'true');
+    popup.setAttribute('aria-labelledby', 'cq-exit-title');
     popup.innerHTML = `
-      <div style="
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        max-width: 500px;
-        text-align: center;
-        position: relative;
-        animation: slideIn 0.3s ease-out;
-      ">
-        <button onclick="this.closest('.exit-intent-popup').remove()" style="
-          position: absolute;
-          top: 10px;
-          right: 15px;
-          background: none;
-          border: none;
-          font-size: 24px;
-          cursor: pointer;
-          color: #999;
-        ">&times;</button>
-        <h3 style="color: #667eea; margin-bottom: 15px;">🤔 Wait! Don't Leave Empty-Handed</h3>
-        <p style="margin-bottom: 20px;">You're just a few clicks away from finding your perfect dental stool!</p>
-        <div style="margin: 20px 0;">
-          <h4 style="color: #2c3e50; margin-bottom: 10px;">🎁 Complete the quiz and get:</h4>
-          <ul style="text-align: left; display: inline-block; margin: 0; padding-left: 20px;">
-            <li>✅ Personalized recommendations from 48 models</li>
-            <li>✅ Exclusive discount code (save 10%)</li>
-            <li>✅ Free ergonomic assessment guide</li>
-            <li>✅ Priority support from seating specialists</li>
-          </ul>
-        </div>
-        <button onclick="this.closest('.exit-intent-popup').remove()" style="
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          border: none;
-          padding: 12px 30px;
-          border-radius: 5px;
-          cursor: pointer;
-          font-size: 16px;
-          font-weight: bold;
-          margin-top: 15px;
-        ">Continue My Quiz</button>
-      </div>
-    `;
-    
-    // Add CSS animations
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      @keyframes slideIn {
-        from { transform: translateY(-20px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-    `;
-    document.head.appendChild(style);
-    
+      <div class="cq-exit__box">
+        <button type="button" class="cq-exit__close" aria-label="Close">&times;</button>
+        <h3 class="cq-exit__title" id="cq-exit-title">Your answers are saved</h3>
+        <p class="cq-exit__text">You are partway through. Pick up where you left off and see which Crown stool fits you best.</p>
+        <button type="button" class="cq-exit__btn">Continue the quiz</button>
+      </div>`;
+
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    const close = () => { popup.remove(); document.removeEventListener('keydown', onKey); };
+    popup.addEventListener('click', (e) => { if (e.target === popup) close(); });
+    popup.querySelector('.cq-exit__close').addEventListener('click', close);
+    popup.querySelector('.cq-exit__btn').addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
     document.body.appendChild(popup);
-    
-    // Track exit intent
+    popup.querySelector('.cq-exit__btn').focus();
+
     if (typeof gtag !== 'undefined') {
       gtag('event', 'exit_intent_triggered', {
         'event_category': 'Crown Seating Quiz'
