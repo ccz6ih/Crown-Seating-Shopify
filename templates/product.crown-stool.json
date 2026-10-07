@@ -395,12 +395,23 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
+    },
+    "crown-demo-cta": {
+      "type": "crown-demo-cta",
+      "settings": {
+        "demo_product": "30-day-demo-stool",
+        "max_demo_units": 2,
+        "note": "The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs).",
+        "terms_page": "",
+        "color_scheme": "scheme-1"
+      }
     }
   },
   "order": [
     "crown-configurator",
     "product-recommendations",
     "section_nDfTBL",
-    "177490758253596826"
+    "177490758253596826",
+    "crown-demo-cta"
   ]
 }

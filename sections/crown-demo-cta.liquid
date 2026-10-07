@@ -44,8 +44,25 @@
         <p class="crown-demo__subtext">
           Demo the <strong>{{ host.title }}</strong> in your own workspace for a full 30 days, shipped in black vinyl.
           {{ section.settings.note | default: 'The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs).' }}
-          You can demo up to {{ max_units }} stools at a time; shipping is calculated at checkout.
+          You can demo up to {{ max_units }} units at a time; shipping is calculated at checkout.
         </p>
+
+        {% if section.blocks.size > 0 %}
+          <fieldset class="crown-demo__arms" id="crown-demo-arms-{{ section.id }}">
+            <legend class="crown-demo__arms-legend">Choose the arms for your demo <span>(installed, in black vinyl)</span></legend>
+            <div class="crown-demo__arms-grid">
+              {% for block in section.blocks %}
+                <label class="crown-demo__arm" {{ block.shopify_attributes }}>
+                  <input type="radio" name="crown-demo-arm-{{ section.id }}" value="{{ block.settings.arm_title | escape }}">
+                  {% if block.settings.arm_image != blank %}
+                    <img src="{{ block.settings.arm_image | image_url: width: 160 }}" alt="" width="64" height="64" loading="lazy">
+                  {% endif %}
+                  <span class="crown-demo__arm-name">{{ block.settings.arm_title }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% endif %}
 
         <div class="crown-demo__price-row">
           <span class="crown-demo__price">{{ demo_variant.price | money }}</span>
@@ -78,7 +95,7 @@
           </li>
           <li>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Ships unassembled in black vinyl
+            {{ section.settings.shipping_note | default: 'Ships unassembled in black vinyl' }}
           </li>
         </ul>
 
@@ -122,9 +139,22 @@
       return count;
     }
 
+    // Arm picker only exists on templates where arm blocks are configured (assistant stools).
+    var armGroup = document.getElementById('crown-demo-arms-' + sectionId);
+    function selectedArm() {
+      if (!armGroup) return null;
+      var checked = armGroup.querySelector('input[type="radio"]:checked');
+      return checked ? checked.value : '';
+    }
+
     btn.addEventListener('click', function () {
       if (btn.disabled) return;
       clearMsg();
+      var arm = selectedArm();
+      if (armGroup && !arm) {
+        showMsg('Please choose the arms for your demo stool.');
+        return;
+      }
       var origText = btn.querySelector('.crown-demo__btn-text');
       var origLabel = origText ? origText.textContent : '';
       btn.disabled = true;
@@ -135,10 +165,21 @@
         .then(function (cart) {
           var existing = demoUnitsInCart(cart);
           if (existing + 1 > maxUnits) {
-            showMsg('You can demo up to ' + maxUnits + ' stools at a time. Review your cart to continue.');
+            showMsg('You can demo up to ' + maxUnits + ' units at a time. Review your cart to continue.');
             btn.disabled = false;
             if (origText) origText.textContent = origLabel;
             return null;
+          }
+          var props = {
+            'Model': btn.dataset.model,
+            'Upholstery': 'Black Vinyl',
+            'Trial': '30 days',
+            '_demo': 'true',
+            '_demo_model_handle': btn.dataset.handle
+          };
+          if (arm) {
+            props['Arms'] = arm + ' (Black Vinyl)';
+            props['_demo_arm'] = arm;
           }
           return fetch('/cart/add.js', {
             method: 'POST',
@@ -147,13 +188,7 @@
               items: [{
                 id: demoVariantId,
                 quantity: 1,
-                properties: {
-                  'Model': btn.dataset.model,
-                  'Upholstery': 'Black Vinyl',
-                  'Trial': '30 days',
-                  '_demo': 'true',
-                  '_demo_model_handle': btn.dataset.handle
-                }
+                properties: props
               }]
             })
           }).then(function (res) {
@@ -252,6 +287,69 @@
 
   .crown-demo__model strong {
     color: var(--cd-blue-dark);
+  }
+
+  .crown-demo__arms {
+    border: 0;
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+
+  .crown-demo__arms-legend {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--cd-dark);
+    padding: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .crown-demo__arms-legend span {
+    font-weight: 400;
+    color: var(--cd-muted);
+  }
+
+  .crown-demo__arms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .crown-demo__arm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    text-align: center;
+    padding: 0.6rem 0.5rem;
+    background: #fff;
+    border: 2px solid var(--cd-border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--cd-dark);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .crown-demo__arm input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .crown-demo__arm img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+
+  .crown-demo__arm:has(input:checked) {
+    border-color: var(--cd-blue);
+    box-shadow: 0 0 0 1px var(--cd-blue);
+  }
+
+  .crown-demo__arm:has(input:focus-visible) {
+    outline: 2px solid var(--cd-blue);
+    outline-offset: 2px;
   }
 
   .crown-demo__price-row {
@@ -367,6 +465,13 @@
       "default": "The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs)."
     },
     {
+      "type": "text",
+      "id": "shipping_note",
+      "label": "Shipping / finish bullet",
+      "info": "Third checkmark in the list. Use the default for stools; override for chairs if they don't ship unassembled.",
+      "default": "Ships unassembled in black vinyl"
+    },
+    {
       "type": "url",
       "id": "terms_page",
       "label": "Demo terms page"
@@ -376,6 +481,25 @@
       "id": "color_scheme",
       "label": "Color scheme",
       "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "arm_option",
+      "name": "Arm option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "arm_title",
+          "label": "Arm name",
+          "default": "2D Single Arm"
+        },
+        {
+          "type": "image_picker",
+          "id": "arm_image",
+          "label": "Arm image"
+        }
+      ]
     }
   ],
   "presets": [
