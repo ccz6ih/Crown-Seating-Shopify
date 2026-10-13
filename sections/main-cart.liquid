@@ -1,4 +1,34 @@
-
+{%- comment -%}
+  Demo-program backstop: the 30-Day Demo Stool is a fee line that must always say WHICH stool is
+  being demoed (set by the Demo CTA). If one arrives without a Model (old link, bookmark, edited
+  cart), warn the customer and block checkout so we never receive an order we can't fulfil.
+{%- endcomment -%}
+{%- assign demo_missing_model = false -%}
+{%- for item in cart.items -%}
+  {%- if item.product.handle == '30-day-demo-stool' and item.properties['Model'] == blank -%}
+    {%- assign demo_missing_model = true -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if demo_missing_model -%}
+  <div class="demo-cart-block page-width" role="alert">
+    <strong>We need to know which stool you want to demo.</strong>
+    Please remove the demo fee from your cart, open the stool you'd like to try, and choose “Start a 30-Day Demo” on its page.
+    <a href="{{ routes.collections_url }}">Browse stools</a>
+  </div>
+  <style>
+    .demo-cart-block { margin: 1rem auto; padding: 1rem 1.25rem; background: #fdeceb; border: 1px solid #e3a9a5; border-radius: 8px; color: #7d1a17; }
+    .demo-cart-block a { color: inherit; font-weight: 700; text-decoration: underline; margin-left: 0.5rem; }
+    .cart__checkout-button, shopify-accelerated-checkout-cart, .additional-checkout-buttons { pointer-events: none !important; opacity: 0.35 !important; }
+  </style>
+  <script>
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[name="checkout"], .cart__checkout-button')) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+    document.addEventListener('submit', function (e) {
+      if (e.target.closest && e.target.matches('form[action*="/cart"]')) e.preventDefault();
+    }, true);
+  </script>
+{%- endif -%}
 
 <cart-items-component
   class="cart-items-component"

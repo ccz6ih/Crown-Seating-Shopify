@@ -19,7 +19,22 @@
   assign demo_product = section.settings.demo_product
   assign demo_variant = demo_product.selected_or_first_available_variant
   assign max_units = section.settings.max_demo_units | default: 2
+
+  comment
+    Render nothing on (a) the demo product's own page, and (b) products missing the required tag.
+    The tag lets the CTA sit on a shared template (product.json) and still only show on seating.
+  endcomment
+  assign show_cta = true
+  if host.handle == demo_product.handle
+    assign show_cta = false
+  endif
+  if section.settings.required_tag != blank
+    unless host.tags contains section.settings.required_tag
+      assign show_cta = false
+    endunless
+  endif
 %}
+{% unless show_cta %}{% if request.design_mode %}<div class="crown-demo__setup page-width"><strong>Demo CTA hidden on this product.</strong> It only shows on products tagged “{{ section.settings.required_tag }}” (and never on the demo product itself).</div>{% endif %}{% else %}
 
 <div
   class="crown-demo section color-{{ section.settings.color_scheme }}"
@@ -76,6 +91,8 @@
           data-variant="{{ demo_variant.id }}"
           data-model="{{ host.title | escape }}"
           data-handle="{{ host.handle }}"
+          data-sku="{{ host.selected_or_first_available_variant.sku | escape }}"
+          data-url="{{ host.url | prepend: shop.url | escape }}"
           data-max="{{ max_units }}"
         >
           <span class="crown-demo__btn-text">Start a 30-Day Demo</span>
@@ -177,6 +194,9 @@
             '_demo': 'true',
             '_demo_model_handle': btn.dataset.handle
           };
+          // Extra identifiers so fulfilment never has to call the customer to ask "which stool?"
+          if (btn.dataset.sku) props['Model SKU'] = btn.dataset.sku;
+          if (btn.dataset.url) props['Model Page'] = btn.dataset.url;
           if (arm) {
             props['Arms'] = arm + ' (Black Vinyl)';
             props['_demo_arm'] = arm;
@@ -208,6 +228,7 @@
     });
   })();
 </script>
+{% endunless %}
 
 {% stylesheet %}
   .crown-demo {
@@ -470,6 +491,12 @@
       "label": "Shipping / finish bullet",
       "info": "Third checkmark in the list. Use the default for stools; override for chairs if they don't ship unassembled.",
       "default": "Ships unassembled in black vinyl"
+    },
+    {
+      "type": "text",
+      "id": "required_tag",
+      "label": "Only show on products with this tag",
+      "info": "Leave blank to show on every product that uses this template. On shared templates (product.json) set it to demo-eligible and tag each seating product with it."
     },
     {
       "type": "url",

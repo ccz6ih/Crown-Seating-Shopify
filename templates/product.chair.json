@@ -15,9 +15,9 @@
         "demo_product": "30-day-demo-stool",
         "max_demo_units": 2,
         "note": "The demo fee is fully refundable — keep the chair and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs).",
-        "shipping_note": "Ships in black vinyl",
         "terms_page": "",
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "required_tag": "demo-eligible"
       }
     },
     "main": {

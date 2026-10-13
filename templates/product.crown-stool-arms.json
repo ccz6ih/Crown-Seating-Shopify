@@ -186,65 +186,13 @@
     },
     "crown-demo-cta": {
       "type": "crown-demo-cta",
-      "blocks": {
-        "demo_arm_2d_single": {
-          "type": "arm_option",
-          "settings": {
-            "arm_title": "2D Single Arm",
-            "arm_image": "shopify://shop_images/2D-ARM.png"
-          }
-        },
-        "demo_arm_2d_pair": {
-          "type": "arm_option",
-          "settings": {
-            "arm_title": "2D Arm Pairs",
-            "arm_image": "shopify://shop_images/2D-ARM-2_1.png"
-          }
-        },
-        "demo_arm_dcra_single": {
-          "type": "arm_option",
-          "settings": {
-            "arm_title": "DCRA Single Arm",
-            "arm_image": "shopify://shop_images/DCRA-ARM.png"
-          }
-        },
-        "demo_arm_dcra_pair": {
-          "type": "arm_option",
-          "settings": {
-            "arm_title": "DCRA Arm Pairs",
-            "arm_image": "shopify://shop_images/dpo_custom_option_42115_dcra-arm-2.png"
-          }
-        },
-        "demo_arm_t_ratchet": {
-          "type": "arm_option",
-          "settings": {
-            "arm_title": "T Ratchet Arm",
-            "arm_image": "shopify://shop_images/dpo_custom_option_35565_trachetarm.png"
-          }
-        },
-        "demo_arm_adjustable_black": {
-          "type": "arm_option",
-          "settings": {
-            "arm_title": "Adjustable Black Arms",
-            "arm_image": "shopify://shop_images/replacement-arms_1.webp"
-          }
-        }
-      },
-      "block_order": [
-        "demo_arm_2d_single",
-        "demo_arm_2d_pair",
-        "demo_arm_dcra_single",
-        "demo_arm_dcra_pair",
-        "demo_arm_t_ratchet",
-        "demo_arm_adjustable_black"
-      ],
       "settings": {
         "demo_product": "30-day-demo-stool",
         "max_demo_units": 2,
         "note": "The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs).",
-        "shipping_note": "Ships unassembled in black vinyl, with your chosen arms",
         "terms_page": "",
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "required_tag": "demo-eligible"
       }
     }
   },

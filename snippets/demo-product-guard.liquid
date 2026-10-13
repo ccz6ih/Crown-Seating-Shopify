@@ -1,0 +1,20 @@
+{% comment %}
+  The "30-Day Demo Stool" is a fee line item that is only ever added by the Demo CTA
+  (sections/crown-demo-cta.liquid), which records which stool is being demoed.
+  Its own product page must never be a buying page: a customer who lands on it can add the
+  fee with no model attached (orders CS#1743 / CS#1745).
+
+  The product has to stay published so /cart/add.js can add it, so we block the page instead:
+  noindex + send visitors to the demo program page. Skipped in the theme editor so the
+  product can still be previewed and edited.
+{% endcomment %}
+{%- assign demo_guard_handle = '30-day-demo-stool' -%}
+{%- if template.name == 'product' and product.handle == demo_guard_handle and request.design_mode == false -%}
+  {%- assign demo_guard_target = '/collections/all' -%}
+  {%- if pages['demo-program'].title != blank -%}
+    {%- assign demo_guard_target = pages['demo-program'].url -%}
+  {%- endif -%}
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="refresh" content="0; url={{ demo_guard_target }}">
+  <script>window.location.replace({{ demo_guard_target | json }});</script>
+{%- endif -%}
