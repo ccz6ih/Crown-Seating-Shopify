@@ -218,14 +218,25 @@
               </button>
               {% for block in section.blocks %}
                 {% if block.type == 'arm_option' %}
-                  <button type="button" class="crown-cfg__arm-card" data-arm-value="{{ block.settings.arm_title | handleize }}" data-arm-price="{{ block.settings.arm_price | times: 100 }}" data-upgrade-variant-id="{{ block.settings.upgrade_variant_id }}" {{ block.shopify_attributes }}>
+                  {%- comment -%}
+                    Price shown = price charged. The cart charges the Shopify variant, so read the variant's
+                    price here instead of trusting a number typed into the block (they drifted apart).
+                    Falls back to the block's arm_price only if the variant can't be found.
+                  {%- endcomment -%}
+                  {%- assign arm_cents = block.settings.arm_price | times: 100 -%}
+                  {%- assign arm_variant_id = block.settings.upgrade_variant_id | strip -%}
+                  {%- for v in all_products['arm-configuration'].variants -%}
+                    {%- assign v_id = v.id | append: '' -%}
+                    {%- if v_id == arm_variant_id -%}{%- assign arm_cents = v.price -%}{%- endif -%}
+                  {%- endfor -%}
+                  <button type="button" class="crown-cfg__arm-card" data-arm-value="{{ block.settings.arm_title | handleize }}" data-arm-price="{{ arm_cents }}" data-upgrade-variant-id="{{ block.settings.upgrade_variant_id }}" {{ block.shopify_attributes }}>
                     <div class="crown-cfg__arm-inner">
                       {% if block.settings.arm_image != blank %}
                         <img src="{{ block.settings.arm_image | image_url: width: 300 }}" alt="{{ block.settings.arm_title | escape }}" class="crown-cfg__arm-img" loading="lazy">
                       {% endif %}
                       <span class="crown-cfg__arm-name">{{ block.settings.arm_title }}</span>
                       <span class="crown-cfg__arm-price-tag">
-                        {% if block.settings.arm_price > 0 %}+{{ block.settings.arm_price | times: 100 | money }}{% else %}Included{% endif %}
+                        {% if arm_cents > 0 %}+{{ arm_cents | money }}{% else %}Included{% endif %}
                       </span>
                     </div>
                     <div class="crown-cfg__card-check">
@@ -257,14 +268,23 @@
           <div class="crown-cfg__material-grid">
             {% for block in section.blocks %}
               {% if block.type == 'material_type' %}
-                <button type="button" class="crown-cfg__material-card" data-material="{{ block.settings.material_title | handleize }}" data-material-price="{{ block.settings.material_price | times: 100 }}" data-color-group="{{ block.settings.material_title | handleize }}" data-upgrade-variant-id="{{ block.settings.upgrade_variant_id }}" {{ block.shopify_attributes }}>
+                {%- comment -%} Same rule as arms: show the real variant price that the cart will charge. {%- endcomment -%}
+                {%- assign mat_cents = block.settings.material_price | times: 100 -%}
+                {%- assign mat_variant_id = block.settings.upgrade_variant_id | strip -%}
+                {%- if mat_variant_id != blank -%}
+                  {%- for v in all_products['upholstery-upgrade'].variants -%}
+                    {%- assign v_id = v.id | append: '' -%}
+                    {%- if v_id == mat_variant_id -%}{%- assign mat_cents = v.price -%}{%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+                <button type="button" class="crown-cfg__material-card" data-material="{{ block.settings.material_title | handleize }}" data-material-price="{{ mat_cents }}" data-color-group="{{ block.settings.material_title | handleize }}" data-upgrade-variant-id="{{ block.settings.upgrade_variant_id }}" {{ block.shopify_attributes }}>
                   <div class="crown-cfg__material-inner">
                     <div class="crown-cfg__material-icon">
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
                     </div>
                     <span class="crown-cfg__material-name">{{ block.settings.material_title }}</span>
-                    {% if block.settings.material_price > 0 %}
-                      <span class="crown-cfg__material-price">+{{ block.settings.material_price | times: 100 | money }}</span>
+                    {% if mat_cents > 0 %}
+                      <span class="crown-cfg__material-price">+{{ mat_cents | money }}</span>
                     {% else %}
                       <span class="crown-cfg__material-price included">Included in base</span>
                     {% endif %}

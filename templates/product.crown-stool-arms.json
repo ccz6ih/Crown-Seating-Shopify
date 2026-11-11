@@ -16,7 +16,7 @@
           "type": "arm_option",
           "settings": {
             "arm_title": "2D Single Arm",
-            "arm_price": 385,
+            "arm_price": 400,
             "arm_image": "shopify://shop_images/2D-ARM.png",
             "upgrade_variant_id": "46373492949163"
           }
@@ -25,7 +25,7 @@
           "type": "arm_option",
           "settings": {
             "arm_title": "2D Arm Pairs",
-            "arm_price": 642,
+            "arm_price": 800,
             "arm_image": "shopify://shop_images/2D-ARM-2_1.png",
             "upgrade_variant_id": "46373492981931"
           }
@@ -34,7 +34,7 @@
           "type": "arm_option",
           "settings": {
             "arm_title": "DCRA Single Arm",
-            "arm_price": 185,
+            "arm_price": 235,
             "arm_image": "shopify://shop_images/DCRA-ARM.png",
             "upgrade_variant_id": "46373493014699"
           }
@@ -43,7 +43,7 @@
           "type": "arm_option",
           "settings": {
             "arm_title": "DCRA Arm Pairs",
-            "arm_price": 362,
+            "arm_price": 400,
             "arm_image": "shopify://shop_images/dpo_custom_option_42115_dcra-arm-2.png",
             "upgrade_variant_id": "46373493047467"
           }
