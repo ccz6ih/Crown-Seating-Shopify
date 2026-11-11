@@ -24,7 +24,7 @@
           "type": "material_type",
           "settings": {
             "material_title": "Ultra Leather",
-            "material_price": 180,
+            "material_price": 200,
             "upgrade_variant_id": "46373481873579"
           }
         },
@@ -32,7 +32,7 @@
           "type": "material_type",
           "settings": {
             "material_title": "Silvertex",
-            "material_price": 180,
+            "material_price": 200,
             "upgrade_variant_id": "46373481906347"
           }
         },
@@ -40,7 +40,7 @@
           "type": "material_type",
           "settings": {
             "material_title": "StaKleen",
-            "material_price": 180,
+            "material_price": 200,
             "upgrade_variant_id": "46373481939115"
           }
         }
@@ -402,9 +402,10 @@
         "demo_product": "30-day-demo-stool",
         "max_demo_units": 2,
         "note": "The demo fee is fully refundable — keep the stool and it goes toward your purchase, or return it and it goes toward return shipping (minus any costs).",
+        "shipping_note": "Ships unassembled in black vinyl",
+        "required_tag": "demo-eligible",
         "terms_page": "",
-        "color_scheme": "scheme-1",
-        "required_tag": "demo-eligible"
+        "color_scheme": "scheme-1"
       }
     }
   },
