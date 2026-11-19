@@ -398,6 +398,7 @@
     },
     "crown-demo-cta": {
       "type": "crown-demo-cta",
+      "disabled": true,
       "settings": {
         "demo_product": "30-day-demo-stool",
         "max_demo_units": 2,
